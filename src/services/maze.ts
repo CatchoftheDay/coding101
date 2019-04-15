@@ -249,8 +249,6 @@ export function move(location: Location, direction: Direction): Location {
     case Direction.RIGHT:
       return { x: location.x + 1, y: location.y };
   }
-
-  debugger;
 }
 
 /**
