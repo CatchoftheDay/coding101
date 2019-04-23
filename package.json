@@ -8,9 +8,12 @@
     "@types/react": "16.8.10",
     "@types/react-dom": "16.8.3",
     "@types/seedrandom": "^2.4.28",
+    "deox": "^1.4.0",
     "react": "^16.8.5",
     "react-dom": "^16.8.5",
     "react-scripts": "2.1.8",
+    "redux": "^4.0.1",
+    "reselect": "^4.0.0",
     "seedrandom": "^3.0.1",
     "typescript": "3.3.4000"
   },

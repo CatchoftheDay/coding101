@@ -1,4 +1,4 @@
-import Maze, { Direction, Location, move } from "./maze";
+import Maze, { Direction, move } from "./maze";
 
 describe("Maze", () => {
   it("Should generate maze with the correct size", () => {
@@ -11,12 +11,12 @@ describe("Maze", () => {
 
   it("Should be possible to reach every cell", () => {
     const maze = new Maze({ width: 11 });
-    const visitedCells = new Set<string>();
+    const visitedCells = new Set();
 
     traverse({ x: 0, y: 0 });
     expect(visitedCells.size).toEqual(maze.width * maze.height);
 
-    function traverse(location: Location) {
+    function traverse(location) {
       if (visitedCells.has(getKey(location))) {
         return;
       } else if (!maze.contains(location)) {
@@ -34,7 +34,7 @@ describe("Maze", () => {
       );
     }
 
-    function getKey(location: Location): string {
+    function getKey(location) {
       return JSON.stringify(location);
     }
   });

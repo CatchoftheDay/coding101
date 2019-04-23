@@ -233,6 +233,38 @@ class Maze {
 }
 
 /**
+ * Returns the direction you would face if you turned left from the given direction
+ */
+export function leftOf(direction: Direction) {
+  switch (direction) {
+    case Direction.UP:
+      return Direction.LEFT;
+    case Direction.RIGHT:
+      return Direction.UP;
+    case Direction.DOWN:
+      return Direction.RIGHT;
+    case Direction.LEFT:
+      return Direction.DOWN;
+  }
+}
+
+/**
+ * Returns the direction you would face if you turned right from the given direction
+ */
+export function rightOf(direction: Direction) {
+  switch (direction) {
+    case Direction.UP:
+      return Direction.RIGHT;
+    case Direction.RIGHT:
+      return Direction.DOWN;
+    case Direction.DOWN:
+      return Direction.LEFT;
+    case Direction.LEFT:
+      return Direction.UP;
+  }
+}
+
+/**
  * Returns the location delta for moving one step in a given direction
  *
  * @param location
