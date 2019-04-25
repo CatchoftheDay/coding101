@@ -1,8 +1,20 @@
 import { Direction } from "../maze/maze";
-import { moveForward, turnLeft, turnRight } from "./actions";
+import {
+  moveForward,
+  startNextAnimation,
+  turnLeft,
+  turnRight
+} from "./actions";
 import reducer, { initialState as reducerInitialState } from "./reducer";
 import Maze from "../maze/maze";
-import { crashedSelector, facingSelector, locationSelector } from "./selectors";
+import {
+  getCrashed,
+  getDisplayedCrashed,
+  getDisplayedFacing,
+  getDisplayedLocation,
+  getFacing,
+  getLocation
+} from "./selectors";
 
 const initialState = {
   ...reducerInitialState,
@@ -57,7 +69,7 @@ describe("Runner reducers", () => {
 
     tests.forEach(({ actionCreator, facing, expected }) =>
       expect(
-        facingSelector(reducer({ ...initialState, facing }, actionCreator()))
+        getFacing(reducer({ ...initialState, facing }, actionCreator()))
       ).toEqual(expected)
     );
   });
@@ -68,9 +80,9 @@ describe("Runner reducers", () => {
       moveForward()
     );
 
-    expect(crashedSelector(newState)).toEqual(false);
-    expect(locationSelector(newState).x).toEqual(1);
-    expect(locationSelector(newState).y).toEqual(0);
+    expect(getCrashed(newState)).toEqual(false);
+    expect(getLocation(newState).x).toEqual(1);
+    expect(getLocation(newState).y).toEqual(0);
   });
 
   it("Should detect collisions", () => {
@@ -79,9 +91,9 @@ describe("Runner reducers", () => {
       moveForward()
     );
 
-    expect(crashedSelector(newState)).toEqual(true);
-    expect(facingSelector(newState)).toEqual(Direction.UP);
-    expect(locationSelector(newState)).toEqual(locationSelector(initialState));
+    expect(getCrashed(newState)).toEqual(true);
+    expect(getFacing(newState)).toEqual(Direction.UP);
+    expect(getLocation(newState)).toEqual(getLocation(initialState));
   });
 
   it("Should not move or turn after a collision", () => {
@@ -90,5 +102,41 @@ describe("Runner reducers", () => {
     expect(reducer(crashedState, turnLeft())).toEqual(crashedState);
     expect(reducer(crashedState, turnRight())).toEqual(crashedState);
     expect(reducer(crashedState, moveForward())).toEqual(crashedState);
+  });
+
+  it("Should set the displayed state immediately if there are no pending animations", () => {
+    const newState = reducer(initialState, turnRight());
+
+    expect(getDisplayedCrashed(newState)).toEqual(false);
+    expect(getDisplayedFacing(newState)).toEqual(Direction.DOWN);
+    expect(getDisplayedLocation(newState)).toEqual({ x: 0, y: 0 });
+  });
+
+  it("Should not set the displayed state immediately if there are pending animations", () => {
+    const newState = reducer(reducer(initialState, turnRight()), turnRight());
+
+    // Should match the result of the first turnRight(), because the first
+    // 'animation' hasn't completed yet
+    expect(getDisplayedCrashed(newState)).toEqual(false);
+    expect(getDisplayedFacing(newState)).toEqual(Direction.DOWN);
+    expect(getDisplayedLocation(newState)).toEqual({ x: 0, y: 0 });
+  });
+
+  it("Should set the displayed state to the next state when each animation completes", () => {
+    const preAnimationCompleteState = reducer(
+      reducer(initialState, turnRight()),
+      turnRight()
+    );
+    const animationCompleteState = reducer(
+      preAnimationCompleteState,
+      startNextAnimation()
+    );
+
+    expect(getDisplayedCrashed(animationCompleteState)).toEqual(false);
+    expect(getDisplayedFacing(animationCompleteState)).toEqual(Direction.LEFT);
+    expect(getDisplayedLocation(animationCompleteState)).toEqual({
+      x: 0,
+      y: 0
+    });
   });
 });

@@ -1,6 +1,21 @@
-import { RunnerState } from "./reducer";
+import { BaseRunnerState, RunnerState } from "./reducer";
+import { createSelector } from "reselect";
 
-export const crashedSelector = (state: RunnerState) => state.crashed;
-export const locationSelector = (state: RunnerState) => state.location;
-export const facingSelector = (state: RunnerState) => state.facing;
-export const mazeSelector = (state: RunnerState) => state.maze;
+export const getCrashed = (state: BaseRunnerState) => state.crashed;
+export const getLocation = (state: BaseRunnerState) => state.location;
+export const getFacing = (state: BaseRunnerState) => state.facing;
+export const getMaze = (state: RunnerState) => state.maze;
+
+export const getDisplayedState = (state: RunnerState) => state.displayed;
+export const getDisplayedCrashed = createSelector(
+  getDisplayedState,
+  getCrashed
+);
+export const getDisplayedLocation = createSelector(
+  getDisplayedState,
+  getLocation
+);
+export const getDisplayedFacing = createSelector(
+  getDisplayedState,
+  getFacing
+);
