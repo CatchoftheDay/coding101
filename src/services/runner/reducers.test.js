@@ -5,7 +5,7 @@ import {
   turnLeft,
   turnRight
 } from "./actions";
-import reducer, { initialState as reducerInitialState } from "./reducer";
+import { initialState as reducerInitialState } from "./reducers";
 import Maze from "../maze/maze";
 import {
   getCrashed,
