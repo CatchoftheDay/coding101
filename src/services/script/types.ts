@@ -28,4 +28,8 @@ export interface WhileStep extends BaseStep {
   steps: Array<Step>;
 }
 
+/** An individual step in a script */
 export type Step = ActionStep | BranchStep | WhileStep | ConditionStep;
+
+/** A script for the runner to run */
+export type Script = ReadonlyArray<Step>;

@@ -1,24 +1,10 @@
 import { createReducer } from "deox";
-import { ActionStep, ConditionStep, Step, WhileStep } from "./types";
+import { ActionStep, ConditionStep, Script, Step, WhileStep } from "./types";
 import { deleteStep, insertStep, setAction, setCondition } from "./actions";
 import produce from "immer";
+import { getStep, getChildren } from "./selectors";
 
-export const initialState: ReadonlyArray<Step> = [];
-
-/**
- * Returns the children of the step
- */
-const getChildren = (step: Step): Step[] => {
-  switch (step.type) {
-    case "branch":
-      return step.conditions;
-    case "condition":
-    case "while":
-      return step.steps;
-    default:
-      return [];
-  }
-};
+export const initialState: Script = [];
 
 /**
  * Flattens the step and its children into a single array
@@ -33,16 +19,9 @@ const flattenStep = (step: Step): ReadonlyArray<Step> =>
  *
  * @param steps The steps to flatten
  */
-const flattenSteps = (steps: ReadonlyArray<Step>) => {
+export const flattenSteps = (steps: ReadonlyArray<Step>) => {
   return steps.reduce((acc: Step[], step) => acc.concat(flattenStep(step)), []);
 };
-
-/**
- * Recursively searches the step tree and returns the step with the given ID,
- * if it exists
- */
-const findStep = (steps: ReadonlyArray<Step>, id: number) =>
-  flattenSteps(steps).find(step => step.id === id);
 
 export default createReducer(initialState, handle => [
   handle(
@@ -52,7 +31,7 @@ export default createReducer(initialState, handle => [
       const step = { id: Math.random(), ...payload.step };
 
       const children: Step[] = parentId
-        ? getChildren(findStep(draftSteps, parentId)!)
+        ? getChildren(getStep(draftSteps, parentId)!)
         : draftSteps;
       const insertIdx = beforeId
         ? children.findIndex(child => child.id === beforeId)
@@ -72,21 +51,21 @@ export default createReducer(initialState, handle => [
       const deleteIdx = children.findIndex(step => step.id === deleteId);
 
       if (deleteIdx !== -1) {
-        children.splice(deleteIdx, 1);
+        (children as Step[]).splice(deleteIdx, 1);
       }
     })
   ),
   handle(
     setAction,
     produce((draftSteps, { payload: { id, action } }) => {
-      const step = <ActionStep>findStep(draftSteps, id);
+      const step = <ActionStep>getStep(draftSteps, id);
       step.action = action;
     })
   ),
   handle(
     setCondition,
     produce((draftSteps, { payload: { id, condition } }) => {
-      const step = <ConditionStep | WhileStep>findStep(draftSteps, id);
+      const step = <ConditionStep | WhileStep>getStep(draftSteps, id);
       step.condition = condition;
     })
   )

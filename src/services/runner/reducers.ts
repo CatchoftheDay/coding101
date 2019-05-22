@@ -1,29 +1,12 @@
 import { createReducer } from "deox";
-import {
-  moveForward,
-  reset,
-  startNextAnimation,
-  turnLeft,
-  turnRight
-} from "./actions";
+import { moveForward, reset, step, turnLeft, turnRight } from "./actions";
 import Maze, { Direction, leftOf, Location, move, rightOf } from "../maze/maze";
 import { Action } from "redux";
-import produce from "immer";
-
-export interface BaseRunnerState {
-  location: Location;
-  facing: Direction;
-  crashed: boolean;
-}
-
-export interface DisplayedRunnerState extends BaseRunnerState {
-  remainingAnimationSteps: ReadonlyArray<BaseRunnerState>;
-}
-
-export interface RunnerState extends BaseRunnerState {
-  maze: Maze;
-  displayed: DisplayedRunnerState;
-}
+import { Script } from "../script/types";
+import { getFirstStepId } from "../script/selectors";
+import { RunnerState } from "./types";
+import { mazeRunner } from "../script/constants";
+import { getNextStepId } from "./selectors";
 
 export const buildInitialState = (
   modelState: {
@@ -31,8 +14,10 @@ export const buildInitialState = (
     facing?: Direction;
     crashed?: boolean;
     maze?: Maze;
-  } = {}
+    script: Script;
+  } = { script: mazeRunner }
 ): RunnerState => {
+  const { script } = modelState;
   const location = modelState.location || { x: 0, y: 0 };
   const facing = modelState.facing || Direction.RIGHT;
   const crashed = modelState.crashed == null ? false : modelState.crashed;
@@ -43,12 +28,8 @@ export const buildInitialState = (
     location,
     facing,
     crashed,
-    displayed: {
-      remainingAnimationSteps: [],
-      location,
-      facing,
-      crashed
-    }
+    currStepId: getFirstStepId(script),
+    script
   };
 };
 
@@ -62,68 +43,38 @@ const ignoreIfCrashed = <A extends Action>(
 ) => (state: RunnerState, action: A) =>
   state.crashed ? state : reducer(state, action);
 
-const addAnimationStep = <A extends Action>(
-  reducer: (state: RunnerState, action: A) => RunnerState
-) => (state: RunnerState, action: A) => {
-  return produce(reducer(state, action), draftState => {
-    const displayed = draftState.displayed;
-
-    // Add this change to the list of changes to be animated
-    displayed.remainingAnimationSteps = displayed.remainingAnimationSteps.concat(
-      {
-        location: draftState.location,
-        facing: draftState.facing,
-        crashed: draftState.crashed
-      }
-    );
-
-    // If there are no active animations, start one
-    if (displayed.remainingAnimationSteps.length === 1) {
-      Object.assign(displayed, displayed.remainingAnimationSteps[0]);
-    }
-  });
-};
-
 const reducer = createReducer(initialState, handle => [
-  handle(reset, state => ({ ...initialState, maze: state.maze })),
+  handle(reset, state => {
+    const { script, maze } = state;
+
+    return {
+      ...initialState,
+      maze,
+      script,
+      currStepId: getFirstStepId(script)
+    };
+  }),
   handle(
     moveForward,
-    ignoreIfCrashed(
-      addAnimationStep(state => {
-        switch (true) {
-          case state.maze.hasWall(state.location, state.facing):
-            return { ...state, crashed: true };
-          default:
-            return { ...state, location: move(state.location, state.facing) };
-        }
-      })
-    )
+    ignoreIfCrashed(state => {
+      if (state.maze.hasWall(state.location, state.facing)) {
+        return { ...state, crashed: true };
+      } else {
+        return { ...state, location: move(state.location, state.facing) };
+      }
+    })
   ),
   handle(
     turnLeft,
-    ignoreIfCrashed(
-      addAnimationStep(state => ({ ...state, facing: leftOf(state.facing) }))
-    )
+    ignoreIfCrashed(state => ({ ...state, facing: leftOf(state.facing) }))
   ),
   handle(
     turnRight,
-    ignoreIfCrashed(
-      addAnimationStep(state => ({ ...state, facing: rightOf(state.facing) }))
-    )
+    ignoreIfCrashed(state => ({ ...state, facing: rightOf(state.facing) }))
   ),
   handle(
-    startNextAnimation,
-    produce(draftState => {
-      const displayed = draftState.displayed;
-
-      displayed.remainingAnimationSteps = displayed.remainingAnimationSteps.slice(
-        1
-      );
-
-      if (displayed.remainingAnimationSteps.length) {
-        Object.assign(displayed, displayed.remainingAnimationSteps[0]);
-      }
-    })
+    step,
+    ignoreIfCrashed(state => ({ ...state, currStepId: getNextStepId(state) }))
   )
 ]);
 
