@@ -13,8 +13,9 @@ const Action = ({
   return (
     <div
       style={{
-        border: `2px ${placeholder ? "dashed" : "solid"} red`,
-        borderRadius: "20px"
+        border: `1px ${placeholder ? "dashed" : "solid"} #f99`,
+        padding: "5px",
+        borderRadius: "5px"
       }}
     >
       <span style={{ padding: "5px" }}>{(step && step.action) || NBSP}</span>

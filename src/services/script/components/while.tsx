@@ -1,7 +1,6 @@
 import React from "react";
 import { WhileStep } from "../types";
 import Condition from "./condition";
-import Step from "./step";
 
 const While = ({
   step,
@@ -13,8 +12,9 @@ const While = ({
   return (
     <div
       style={{
-        border: `2px ${placeholder ? "dashed" : "solid"} black`,
-        borderRadius: "20px"
+        border: `1px ${placeholder ? "dashed" : "solid"} #9f9`,
+        padding: "5px",
+        borderRadius: "5px"
       }}
     >
       <div>
@@ -26,16 +26,11 @@ const While = ({
               id: 0,
               type: "condition",
               condition: step.condition,
-              steps: []
+              steps: step.steps
             }) ||
             undefined
           }
         />
-      </div>
-      <div>
-        {step.steps.map(childStep => (
-          <Step key={childStep.id} step={childStep} />
-        ))}
       </div>
     </div>
   );

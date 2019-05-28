@@ -17,21 +17,38 @@ const Condition = ({
 }) => {
   return (
     <div>
-      <div>
-        <span>{conditionLabel}</span>
-        <span
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          marginTop: "5px"
+        }}
+      >
+        <div style={{ display: "inline-block", width: "5em" }}>
+          {conditionLabel}
+        </div>
+        <div
           style={{
-            border: `2px ${placeholder ? "dashed" : "solid"} black`,
+            display: "inline-block",
+            border: `1px ${placeholder ? "dashed" : "solid"} black`,
             borderRadius: "20px",
-            padding: "5px"
+            padding: "5px",
+            flex: 1
           }}
         >
           {(step && step.condition) || NBSP}
-        </span>
+        </div>
       </div>
-      <div>
-        <span>{stepsLabel}</span>
-        <div>
+      <div
+        style={{
+          display: "flex",
+          marginTop: "5px"
+        }}
+      >
+        <div style={{ display: "inline-block", width: "5em" }}>
+          {stepsLabel}
+        </div>
+        <div style={{ display: "inline-block", flex: 1 }}>
           {step && step.steps.map(step => <Step key={step.id} step={step} />)}
         </div>
       </div>

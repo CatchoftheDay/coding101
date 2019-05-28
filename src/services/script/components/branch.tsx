@@ -12,8 +12,9 @@ const Branch = ({
   return (
     <div
       style={{
-        border: `2px ${placeholder ? "dashed" : "solid"} black`,
-        borderRadius: "20px"
+        border: `1px ${placeholder ? "dashed" : "solid"} #99f`,
+        padding: "5px",
+        borderRadius: "5px"
       }}
     >
       {step.conditions.map((condition, idx) => (
