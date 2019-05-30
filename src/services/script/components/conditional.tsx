@@ -1,19 +1,16 @@
 import React from "react";
 import { ConditionalStep } from "../types";
 import Step from "./step";
-
-const NBSP = "\u00A0";
+import Condition from "./condition";
 
 const Conditional = ({
   step,
   conditionLabel,
-  stepsLabel,
-  placeholder
+  stepsLabel
 }: {
   step?: ConditionalStep;
   conditionLabel: string;
   stepsLabel: string;
-  placeholder?: boolean;
 }) => {
   return (
     <div>
@@ -27,17 +24,7 @@ const Conditional = ({
         <div style={{ display: "inline-block", width: "5em" }}>
           {conditionLabel}
         </div>
-        <div
-          style={{
-            display: "inline-block",
-            border: `1px ${placeholder ? "dashed" : "solid"} black`,
-            borderRadius: "20px",
-            padding: "5px",
-            flex: 1
-          }}
-        >
-          {(step && step.condition) || NBSP}
-        </div>
+        <Condition condition={step && step.condition} />
       </div>
       <div
         style={{
