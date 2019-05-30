@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React, { CSSProperties, ReactNode } from "react";
 
 import {
   ConnectDragSource,
@@ -11,20 +11,25 @@ import { ItemTypes } from "../constants";
 const Condition = ({
   condition,
   placeholder = <span style={{ fontStyle: "italic" }}>(Always)</span>,
-  connectDragSource
+  connectDragSource,
+  style,
+  className
 }: {
   condition?: string;
   placeholder?: ReactNode;
   connectDragSource: ConnectDragSource;
+  style?: CSSProperties;
+  className?: string;
 }) =>
   connectDragSource(
     <div
+      className={className}
       style={{
         display: "inline-block",
         border: `1px ${condition ? "solid" : "dashed"} black`,
         borderRadius: "20px",
         padding: "5px",
-        flex: 1
+        ...style
       }}
     >
       {condition || placeholder}
