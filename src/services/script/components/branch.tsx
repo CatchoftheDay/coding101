@@ -1,6 +1,6 @@
 import React from "react";
 import { BranchStep } from "../types";
-import Condition from "./condition";
+import Conditional from "./conditional";
 
 const Branch = ({
   step,
@@ -18,7 +18,7 @@ const Branch = ({
       }}
     >
       {step.conditions.map((condition, idx) => (
-        <Condition
+        <Conditional
           key={condition.id}
           conditionLabel={idx == 0 ? "If" : "Else if"}
           stepsLabel="Then"

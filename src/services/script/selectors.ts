@@ -45,7 +45,7 @@ export const getChildren = (step: Step): ReadonlyArray<Step> => {
   switch (step.type) {
     case "branch":
       return step.conditions;
-    case "condition":
+    case "conditional":
     case "while":
       return step.steps;
     default:

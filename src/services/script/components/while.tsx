@@ -1,6 +1,6 @@
 import React from "react";
 import { WhileStep } from "../types";
-import Condition from "./condition";
+import Conditional from "./conditional";
 
 const While = ({
   step,
@@ -18,13 +18,13 @@ const While = ({
       }}
     >
       <div>
-        <Condition
+        <Conditional
           conditionLabel="While"
           stepsLabel="Do"
           step={
             (step && {
               id: 0,
-              type: "condition",
+              type: "conditional",
               condition: step.condition,
               steps: step.steps
             }) ||

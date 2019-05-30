@@ -1,16 +1,16 @@
 import React from "react";
-import { ConditionStep } from "../types";
+import { ConditionalStep } from "../types";
 import Step from "./step";
 
 const NBSP = "\u00A0";
 
-const Condition = ({
+const Conditional = ({
   step,
   conditionLabel,
   stepsLabel,
   placeholder
 }: {
-  step?: ConditionStep;
+  step?: ConditionalStep;
   conditionLabel: string;
   stepsLabel: string;
   placeholder?: boolean;
@@ -56,4 +56,4 @@ const Condition = ({
   );
 };
 
-export default Condition;
+export default Conditional;

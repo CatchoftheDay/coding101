@@ -1,5 +1,5 @@
 import { createReducer } from "deox";
-import { ActionStep, ConditionStep, Script, Step, WhileStep } from "./types";
+import { ActionStep, ConditionalStep, Script, Step, WhileStep } from "./types";
 import { deleteStep, insertStep, setAction, setCondition } from "./actions";
 import produce from "immer";
 import { getStep, getChildren } from "./selectors";
@@ -65,7 +65,7 @@ export default createReducer(initialState, handle => [
   handle(
     setCondition,
     produce((draftSteps, { payload: { id, condition } }) => {
-      const step = <ConditionStep | WhileStep>getStep(draftSteps, id);
+      const step = <ConditionalStep | WhileStep>getStep(draftSteps, id);
       step.condition = condition;
     })
   )

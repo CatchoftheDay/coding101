@@ -5,7 +5,7 @@ import {
   DropTargetConnector,
   DropTargetMonitor
 } from "react-dnd";
-import { NonConditionStep } from "../types";
+import { NonConditionalStep } from "../types";
 import Step from "./step";
 import { ItemTypes } from "../constants";
 
@@ -13,7 +13,7 @@ const StepContainer = ({
   steps,
   connectDropTarget
 }: {
-  steps: ReadonlyArray<NonConditionStep>;
+  steps: ReadonlyArray<NonConditionalStep>;
   connectDropTarget: ConnectDropTarget;
 }) =>
   connectDropTarget(

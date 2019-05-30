@@ -2,7 +2,7 @@ import { getNextSibling, getParentStep, getStep } from "../script/selectors";
 import {
   ActionStep,
   BranchStep,
-  ConditionStep,
+  ConditionalStep,
   Step,
   WhileStep
 } from "../script/types";
@@ -81,7 +81,7 @@ const getNextSiblingOrChildStepFrom = (state: RunnerState, step: Step) => {
       return getNextStep_action(state, step);
     case "branch":
       return getNextStep_branch(state, step);
-    case "condition":
+    case "conditional":
       return getNextStep_condition(state, step);
     case "while":
       return getNextStep_while(state, step);
@@ -111,8 +111,8 @@ const getNextStep_branch = (state: RunnerState, step: BranchStep) => {
   }
 };
 
-/** Gets the next step given the current step is a ConditionStep */
-const getNextStep_condition = (state: RunnerState, step: ConditionStep) => {
+/** Gets the next step given the current step is a ConditionalStep */
+const getNextStep_condition = (state: RunnerState, step: ConditionalStep) => {
   const currentStep = getCurrentStep(state);
 
   switch (true) {

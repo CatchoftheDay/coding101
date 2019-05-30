@@ -12,7 +12,7 @@ export const mazeRunner: Script = [
         conditions: [
           {
             id: 1110,
-            type: "condition",
+            type: "conditional",
             condition: "canMoveLeft",
             steps: [
               { id: 1111, type: "action", action: "turnLeft" },
@@ -21,13 +21,13 @@ export const mazeRunner: Script = [
           },
           {
             id: 1120,
-            type: "condition",
+            type: "conditional",
             condition: "canMoveForward",
             steps: [{ id: 1121, type: "action", action: "moveForward" }]
           },
           {
             id: 1130,
-            type: "condition",
+            type: "conditional",
             condition: null,
             steps: [{ id: 1131, type: "action", action: "turnRight" }]
           }

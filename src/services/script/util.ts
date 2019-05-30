@@ -1,8 +1,8 @@
 import {
   ActionStep,
   BranchStep,
-  ConditionStep,
-  NonConditionStep,
+  ConditionalStep,
+  NonConditionalStep,
   WhileStep
 } from "./types";
 
@@ -14,18 +14,18 @@ export const buildActionStep = (action: string): ActionStep => ({
   action
 });
 
-export const buildConditionStep = (
+export const buildConditionalStep = (
   condition: string,
-  steps: Array<NonConditionStep> = []
-): ConditionStep => ({
+  steps: Array<NonConditionalStep> = []
+): ConditionalStep => ({
   id: nextId++,
-  type: "condition",
+  type: "conditional",
   condition,
   steps
 });
 
 export const buildBranchStep = (
-  conditions: Array<ConditionStep> = []
+  conditions: Array<ConditionalStep> = []
 ): BranchStep => ({
   id: nextId++,
   type: "branch",
@@ -34,7 +34,7 @@ export const buildBranchStep = (
 
 export const buildWhileStep = (
   condition: string | null,
-  steps: Array<NonConditionStep> = []
+  steps: Array<NonConditionalStep> = []
 ): WhileStep => ({
   id: nextId++,
   type: "while",

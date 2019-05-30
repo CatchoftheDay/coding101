@@ -1,5 +1,5 @@
 import React from "react";
-import { NonConditionStep, Step as StepModel } from "../types";
+import { NonConditionalStep, Step as StepModel } from "../types";
 import Action from "./action";
 import Branch from "./branch";
 import While from "./while";
@@ -16,7 +16,7 @@ const Step = ({
   step
 }: {
   connectDragSource: ConnectDragSource;
-  step: NonConditionStep;
+  step: NonConditionalStep;
 }) => {
   let node;
 
