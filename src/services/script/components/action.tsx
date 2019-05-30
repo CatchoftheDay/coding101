@@ -9,18 +9,16 @@ const Action = ({
 }: {
   step?: ActionStep;
   placeholder?: boolean;
-}) => {
-  return (
-    <div
-      style={{
-        border: `1px ${placeholder ? "dashed" : "solid"} #f99`,
-        padding: "5px",
-        borderRadius: "5px"
-      }}
-    >
-      <span style={{ padding: "5px" }}>{(step && step.action) || NBSP}</span>
-    </div>
-  );
-};
+}) => (
+  <div
+    style={{
+      border: `1px ${placeholder ? "dashed" : "solid"} #f99`,
+      padding: "5px",
+      borderRadius: "5px"
+    }}
+  >
+    <span style={{ padding: "5px" }}>{(step && step.action) || NBSP}</span>
+  </div>
+);
 
 export default Action;

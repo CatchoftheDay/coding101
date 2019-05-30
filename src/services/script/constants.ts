@@ -36,3 +36,7 @@ export const mazeRunner: Script = [
     ]
   }
 ];
+
+export const ItemTypes = {
+  STEP: "step"
+};
