@@ -2,9 +2,13 @@ import React, { CSSProperties, ReactNode } from "react";
 
 import {
   ConnectDragSource,
+  ConnectDropTarget,
   DragSource,
   DragSourceConnector,
-  DragSourceMonitor
+  DragSourceMonitor,
+  DropTarget,
+  DropTargetConnector,
+  DropTargetMonitor
 } from "react-dnd";
 import { ItemTypes } from "../constants";
 
@@ -12,28 +16,37 @@ const Condition = ({
   condition,
   placeholder = <span style={{ fontStyle: "italic" }}>(Always)</span>,
   connectDragSource,
+  connectDropTarget,
   style,
-  className
+  className,
+  isOver,
+  canDrop
 }: {
   condition?: string;
   placeholder?: ReactNode;
   connectDragSource: ConnectDragSource;
+  connectDropTarget: ConnectDropTarget;
   style?: CSSProperties;
   className?: string;
+  isOver: boolean;
+  canDrop: boolean;
 }) =>
   connectDragSource(
-    <div
-      className={className}
-      style={{
-        display: "inline-block",
-        border: `1px ${condition ? "solid" : "dashed"} black`,
-        borderRadius: "20px",
-        padding: "5px",
-        ...style
-      }}
-    >
-      {condition || placeholder}
-    </div>
+    connectDropTarget(
+      <div
+        className={className}
+        style={{
+          display: "inline-block",
+          border: `1px ${condition ? "solid" : "dashed"} black`,
+          background: isOver && canDrop ? "green" : "white",
+          borderRadius: "20px",
+          padding: "5px",
+          ...style
+        }}
+      >
+        {condition || placeholder}
+      </div>
+    )
   );
 
 const actionSource = {
@@ -45,11 +58,29 @@ const actionSource = {
   }
 };
 
-const collect = (connect: DragSourceConnector, monitor: DragSourceMonitor) => ({
+const dragCollect = (
+  connect: DragSourceConnector,
+  monitor: DragSourceMonitor
+) => ({
   connectDragSource: connect.dragSource(),
   isDragging: monitor.isDragging()
 });
 
-export default DragSource(ItemTypes.CONDITION, actionSource, collect)(
-  Condition
+const conditionTarget = {
+  drop(props: any) {
+    console.log("dropped condition", props);
+  }
+};
+
+const dropCollect = (
+  connect: DropTargetConnector,
+  monitor: DropTargetMonitor
+) => ({
+  connectDropTarget: connect.dropTarget(),
+  isOver: monitor.isOver({ shallow: true }),
+  canDrop: monitor.canDrop()
+});
+
+export default DropTarget(ItemTypes.CONDITION, conditionTarget, dropCollect)(
+  DragSource(ItemTypes.CONDITION, actionSource, dragCollect)(Condition)
 );
