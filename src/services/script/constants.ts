@@ -38,6 +38,6 @@ export const mazeRunner: Script = [
 ];
 
 export const ItemTypes = {
-  CONDITION: "step",
+  CONDITION: "condition",
   STEP: "step"
 };

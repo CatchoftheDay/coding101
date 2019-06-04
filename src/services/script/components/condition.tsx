@@ -88,6 +88,12 @@ const conditionTarget = {
     monitor: DropTargetMonitor
   ) {
     const { condition, step: sourceStep } = monitor.getItem();
+
+    if (sourceStep === targetStep) {
+      // They dragged it on top of itself, so nothing to do
+      return;
+    }
+
     dispatch(setCondition(targetStep.id, condition));
 
     if (sourceStep) {
@@ -102,7 +108,7 @@ const dropCollect = (
 ) => ({
   connectDropTarget: connect.dropTarget(),
   isOver: monitor.isOver({ shallow: true }),
-  canDrop: monitor.canDrop()
+  canDrop: monitor.canDrop() && monitor.getItemType() === ItemTypes.CONDITION
 });
 
 export default connect()(
