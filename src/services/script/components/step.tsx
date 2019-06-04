@@ -15,7 +15,12 @@ import {
 } from "react-dnd";
 import { ItemTypes } from "../constants";
 import { connect } from "react-redux";
-import { getParentStep, getSiblingIndex, getSiblings } from "../selectors";
+import {
+  getParentStep,
+  getSiblingIndex,
+  getSiblings,
+  isAncestor
+} from "../selectors";
 import { Dispatch } from "redux";
 import { insertStep } from "../actions";
 
@@ -89,7 +94,12 @@ const dropTarget = {
     const dragIndex = getSiblingIndex(script, draggedStep);
     const hoverIndex = getSiblingIndex(script, step);
 
-    if (!node || !monitor.isOver({ shallow: true }) || draggedStep === step) {
+    if (
+      !node ||
+      !monitor.isOver({ shallow: true }) ||
+      draggedStep === step ||
+      isAncestor(step, draggedStep)
+    ) {
       return;
     }
 

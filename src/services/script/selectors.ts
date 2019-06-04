@@ -57,3 +57,7 @@ export const getChildren = (step: Step): ReadonlyArray<Step> => {
       return [];
   }
 };
+
+/** Returns true if potentialAncestor is an ancestor of step */
+export const isAncestor = (step: Step, potentialAncestor: Step) =>
+  flattenSteps([potentialAncestor]).includes(step);
