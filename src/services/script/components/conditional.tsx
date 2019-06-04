@@ -24,7 +24,11 @@ const Conditional = ({
         <div style={{ display: "inline-block", width: "5em" }}>
           {conditionLabel}
         </div>
-        <Condition style={{ flex: 1 }} condition={step && step.condition} />
+        <Condition
+          style={{ flex: 1 }}
+          step={step}
+          condition={(step && step.condition) || undefined}
+        />
       </div>
       <div
         style={{

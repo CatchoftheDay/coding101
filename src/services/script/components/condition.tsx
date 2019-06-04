@@ -1,5 +1,4 @@
 import React, { CSSProperties, ReactNode } from "react";
-
 import {
   ConnectDragSource,
   ConnectDropTarget,
@@ -10,7 +9,11 @@ import {
   DropTargetConnector,
   DropTargetMonitor
 } from "react-dnd";
+import { connect } from "react-redux";
 import { ItemTypes } from "../constants";
+import { ConditionalStep, WhileStep } from "../types";
+import { Dispatch } from "redux";
+import { setCondition } from "../actions";
 
 const Condition = ({
   condition,
@@ -22,6 +25,7 @@ const Condition = ({
   isOver,
   canDrop
 }: {
+  step?: ConditionalStep | WhileStep;
   condition?: string;
   placeholder?: ReactNode;
   connectDragSource: ConnectDragSource;
@@ -50,8 +54,14 @@ const Condition = ({
   );
 
 const actionSource = {
-  beginDrag({ condition }: { condition: string }) {
-    return { condition };
+  beginDrag({
+    condition,
+    step
+  }: {
+    condition: string;
+    step?: ConditionalStep | WhileStep;
+  }) {
+    return { condition, step };
   },
   canDrag({ condition }: { condition?: string }) {
     return !!condition;
@@ -67,8 +77,22 @@ const dragCollect = (
 });
 
 const conditionTarget = {
-  drop(props: any) {
-    console.log("dropped condition", props);
+  drop(
+    {
+      dispatch,
+      step: targetStep
+    }: {
+      dispatch: Dispatch;
+      step: ConditionalStep | WhileStep;
+    },
+    monitor: DropTargetMonitor
+  ) {
+    const { condition, step: sourceStep } = monitor.getItem();
+    dispatch(setCondition(targetStep.id, condition));
+
+    if (sourceStep) {
+      dispatch(setCondition(sourceStep.id, null));
+    }
   }
 };
 
@@ -81,6 +105,8 @@ const dropCollect = (
   canDrop: monitor.canDrop()
 });
 
-export default DropTarget(ItemTypes.CONDITION, conditionTarget, dropCollect)(
-  DragSource(ItemTypes.CONDITION, actionSource, dragCollect)(Condition)
+export default connect()(
+  DropTarget(ItemTypes.CONDITION, conditionTarget, dropCollect)(
+    DragSource(ItemTypes.CONDITION, actionSource, dragCollect)(Condition)
+  )
 );
