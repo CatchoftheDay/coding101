@@ -24,12 +24,19 @@ export const flattenSteps = (steps: ReadonlyArray<Step>) => {
 };
 
 export default createReducer(initialState, handle => [
-  handle(
-    insertStep,
-    produce((draftSteps, { payload }) => {
-      const { beforeId, parentId } = payload;
-      const step = { id: Math.random(), ...payload.step };
+  handle(insertStep, (script, { payload }) => {
+    const { beforeId, parentId } = payload;
+    let { step } = payload;
 
+    console.log(`Insert ${step.id} on ${parentId} before ${beforeId}`);
+
+    if (step.id !== null) {
+      script = deleteById(script, step.id);
+    } else {
+      step = { ...step, id: Math.random() };
+    }
+
+    return produce(draftSteps => {
       const children: Step[] = parentId
         ? getChildren(getStep(draftSteps, parentId)!)
         : draftSteps;
@@ -38,22 +45,10 @@ export default createReducer(initialState, handle => [
         : children.length;
 
       children.splice(insertIdx, 0, step);
-    })
-  ),
-  handle(
-    deleteStep,
-    produce((draftSteps, { payload: deleteId }) => {
-      const allSteps = flattenSteps(draftSteps);
-      const parent = allSteps.find(
-        step => !!getChildren(step).find(step => step.id === deleteId)
-      );
-      const children = parent ? getChildren(parent) : <Step[]>draftSteps;
-      const deleteIdx = children.findIndex(step => step.id === deleteId);
-
-      if (deleteIdx !== -1) {
-        (children as Step[]).splice(deleteIdx, 1);
-      }
-    })
+    })(script);
+  }),
+  handle(deleteStep, (script, { payload: deleteId }) =>
+    deleteById(script, deleteId)
   ),
   handle(
     setAction,
@@ -70,3 +65,16 @@ export default createReducer(initialState, handle => [
     })
   )
 ]);
+
+const deleteById = produce((draftSteps: Script, deleteId: number) => {
+  const allSteps = flattenSteps(draftSteps);
+  const parent = allSteps.find(
+    step => !!getChildren(step).find(step => step.id === deleteId)
+  );
+  const children = parent ? getChildren(parent) : <Step[]>draftSteps;
+  const deleteIdx = children.findIndex(step => step.id === deleteId);
+
+  if (deleteIdx !== -1) {
+    (children as Step[]).splice(deleteIdx, 1);
+  }
+});

@@ -29,6 +29,11 @@ export const getSiblings = (script: Script, step: Step) => {
   }
 };
 
+/** Returns the index of the step amongst its siblings */
+export const getSiblingIndex = (script: Script, step: Step) => {
+  return getSiblings(script, step).findIndex(current => current == step);
+};
+
 /** Returns the next sibling of the given step */
 export const getNextSibling = (script: Script, step: Step) => {
   const siblings = getSiblings(script, step);
