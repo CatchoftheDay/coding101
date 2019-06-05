@@ -17,29 +17,29 @@ import {
 import { ItemTypes } from "../constants";
 import { connect } from "react-redux";
 import {
+  getChildren,
   getParentStep,
   getSiblingIndex,
-  getSiblings,
   isAncestor
 } from "../selectors";
 import { Dispatch } from "redux";
 import { insertStep } from "../actions";
 
+interface StepProps {
+  connectDragSource: ConnectDragSource;
+  connectDropTarget: ConnectDropTarget;
+  step?: NonConditionalStep;
+  parent?: StepModel;
+  script: Script;
+}
+
 const Step = React.forwardRef(
-  (
-    {
-      connectDragSource,
-      connectDropTarget,
-      step
-    }: {
-      connectDragSource: ConnectDragSource;
-      connectDropTarget: ConnectDropTarget;
-      step: NonConditionalStep;
-    },
-    ref
-  ) => {
+  ({ connectDragSource, connectDropTarget, step }: StepProps, ref) => {
     const elementRef = useRef(null);
-    connectDragSource(elementRef);
+
+    if (step) {
+      connectDragSource(elementRef);
+    }
     connectDropTarget(elementRef);
     useImperativeHandle<{}, StepInstance>(ref, () => ({
       getNode: () => elementRef.current
@@ -47,7 +47,9 @@ const Step = React.forwardRef(
 
     let node;
 
-    if (step.type === "action") {
+    if (!step) {
+      node = <div>(Drag step here)</div>;
+    } else if (step.type === "action") {
       node = <Action step={step} />;
     } else if (step.type === "while") {
       node = <While step={step} />;
@@ -64,7 +66,7 @@ interface StepInstance {
 }
 
 const dragSource = {
-  beginDrag({ step, script }: { step: StepModel; script: Script }) {
+  beginDrag({ step, script }: StepProps) {
     return { step, script };
   }
 };
@@ -79,11 +81,7 @@ const dragCollect = (
 
 const dropTarget = {
   hover(
-    {
-      step,
-      script,
-      dispatch
-    }: { step: StepModel; script: Script; dispatch: Dispatch },
+    { step, parent, script, dispatch }: StepProps & { dispatch: Dispatch },
     monitor: DropTargetMonitor,
     component: StepInstance
   ) {
@@ -91,17 +89,16 @@ const dropTarget = {
 
     const draggedStep = monitor.getItem().step;
     const dragParent = getParentStep(script, draggedStep);
-    const parent = getParentStep(script, step);
-    const siblings = getSiblings(script, step);
+    const siblings = parent ? getChildren(parent) : script;
     const node = component && component.getNode();
     const dragIndex = getSiblingIndex(script, draggedStep);
-    const hoverIndex = getSiblingIndex(script, step);
+    const hoverIndex = step ? siblings.indexOf(step) : 0;
 
     if (
       !node ||
       !monitor.isOver({ shallow: true }) ||
       draggedStep === step ||
-      isAncestor(step, draggedStep)
+      (step && isAncestor(step, draggedStep))
     ) {
       return;
     }
@@ -141,7 +138,10 @@ const dropTarget = {
     }
 
     let beforeId;
-    if (step === siblings[siblings.length - 1] && hoverClientY > hoverMiddleY) {
+    if (
+      !step ||
+      (step === siblings[siblings.length - 1] && hoverClientY > hoverMiddleY)
+    ) {
       beforeId = null;
     } else {
       beforeId = step.id;

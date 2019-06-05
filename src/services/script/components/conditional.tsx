@@ -1,7 +1,7 @@
 import React from "react";
 import { ConditionalStep, WhileStep } from "../types";
 import Condition from "./condition";
-import Step from "./step";
+import StepList from "./stepList";
 
 const Conditional = ({
   step,
@@ -40,7 +40,7 @@ const Conditional = ({
           {stepsLabel}
         </div>
         <div style={{ display: "inline-block", flex: 1 }}>
-          {step && step.steps.map(step => <Step key={step.id} step={step} />)}
+          {step && <StepList steps={step.steps} parent={step} />}
         </div>
       </div>
     </div>
