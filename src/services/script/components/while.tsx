@@ -18,19 +18,7 @@ const While = ({
       }}
     >
       <div>
-        <Conditional
-          conditionLabel="While"
-          stepsLabel="Do"
-          step={
-            (step && {
-              id: 0,
-              type: "conditional",
-              condition: step.condition,
-              steps: step.steps
-            }) ||
-            undefined
-          }
-        />
+        <Conditional conditionLabel="While" stepsLabel="Do" step={step} />
       </div>
     </div>
   );

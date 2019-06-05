@@ -1,14 +1,14 @@
 import React from "react";
-import { ConditionalStep } from "../types";
-import Step from "./step";
+import { ConditionalStep, WhileStep } from "../types";
 import Condition from "./condition";
+import Step from "./step";
 
 const Conditional = ({
   step,
   conditionLabel,
   stepsLabel
 }: {
-  step?: ConditionalStep;
+  step?: ConditionalStep | WhileStep;
   conditionLabel: string;
   stepsLabel: string;
 }) => {
