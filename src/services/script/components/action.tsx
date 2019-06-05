@@ -1,23 +1,29 @@
 import React from "react";
-import { ActionStep } from "../types";
+import { ActionStep, Step as StepModel } from "../types";
 
 const NBSP = "\u00A0";
 
 const Action = ({
   step,
-  placeholder
+  placeholder,
+  onDelete
 }: {
   step?: ActionStep;
   placeholder?: boolean;
+  onDelete?: (step: StepModel) => void;
 }) => (
   <div
     style={{
       border: `1px ${placeholder ? "dashed" : "solid"} #f99`,
       padding: "5px",
-      borderRadius: "5px"
+      borderRadius: "5px",
+      display: "flex"
     }}
   >
-    <span style={{ padding: "5px" }}>{(step && step.action) || NBSP}</span>
+    <span style={{ flex: 1, padding: "5px" }}>
+      {(step && step.action) || NBSP}
+    </span>
+    {step && onDelete && <span onClick={() => onDelete(step)}> x</span>}
   </div>
 );
 

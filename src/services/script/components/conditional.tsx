@@ -1,19 +1,23 @@
-import React from "react";
-import { ConditionalStep, WhileStep } from "../types";
+import React, { CSSProperties } from "react";
+import { ConditionalStep, Step as StepModel, WhileStep } from "../types";
 import Condition from "./condition";
 import StepList from "./stepList";
 
 const Conditional = ({
   step,
   conditionLabel,
-  stepsLabel
+  stepsLabel,
+  style,
+  onDelete
 }: {
   step?: ConditionalStep | WhileStep;
   conditionLabel: string;
   stepsLabel: string;
+  onDelete?: (step: StepModel) => void;
+  style?: CSSProperties;
 }) => {
   return (
-    <div>
+    <div style={style}>
       <div
         style={{
           display: "flex",
@@ -40,7 +44,9 @@ const Conditional = ({
           {stepsLabel}
         </div>
         <div style={{ display: "inline-block", flex: 1 }}>
-          {step && <StepList steps={step.steps} parent={step} />}
+          {step && (
+            <StepList steps={step.steps} parent={step} onDelete={onDelete} />
+          )}
         </div>
       </div>
     </div>

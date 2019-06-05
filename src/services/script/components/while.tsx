@@ -1,25 +1,38 @@
 import React from "react";
-import { WhileStep } from "../types";
+import { Step as StepModel, WhileStep } from "../types";
 import Conditional from "./conditional";
 
 const While = ({
   step,
-  placeholder
+  placeholder,
+  onDelete
 }: {
   step: WhileStep;
   placeholder?: boolean;
+  onDelete?: (step: StepModel) => void;
 }) => {
   return (
     <div
       style={{
         border: `1px ${placeholder ? "dashed" : "solid"} #9f9`,
         padding: "5px",
-        borderRadius: "5px"
+        borderRadius: "5px",
+        display: "flex"
       }}
     >
-      <div>
-        <Conditional conditionLabel="While" stepsLabel="Do" step={step} />
-      </div>
+      <Conditional
+        style={{ flex: 1 }}
+        conditionLabel="While"
+        stepsLabel="Do"
+        step={step}
+        onDelete={onDelete}
+      />
+      {onDelete && (
+        <span style={{ flex: 0 }} onClick={() => onDelete(step)}>
+          {" "}
+          x
+        </span>
+      )}
     </div>
   );
 };

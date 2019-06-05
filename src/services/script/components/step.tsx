@@ -31,10 +31,14 @@ interface StepProps {
   step?: NonConditionalStep;
   parent?: StepModel;
   script: Script;
+  onDelete?: (step: StepModel) => void;
 }
 
 const Step = React.forwardRef(
-  ({ connectDragSource, connectDropTarget, step }: StepProps, ref) => {
+  (
+    { connectDragSource, connectDropTarget, step, onDelete }: StepProps,
+    ref
+  ) => {
     const elementRef = useRef(null);
 
     if (step) {
@@ -50,11 +54,11 @@ const Step = React.forwardRef(
     if (!step) {
       node = <div>(Drag step here)</div>;
     } else if (step.type === "action") {
-      node = <Action step={step} />;
+      node = <Action step={step} onDelete={onDelete} />;
     } else if (step.type === "while") {
-      node = <While step={step} />;
+      node = <While step={step} onDelete={onDelete} />;
     } else if (step.type === "branch") {
-      node = <Branch step={step} />;
+      node = <Branch step={step} onDelete={onDelete} />;
     }
 
     return <div ref={elementRef}>{node}</div>;
