@@ -1,4 +1,5 @@
 import React, { useImperativeHandle, useRef } from "react";
+import { fixRegistry } from "../../patches";
 import { NonConditionalStep, Script, Step as StepModel } from "../types";
 import Action from "./action";
 import Branch from "./branch";
@@ -86,6 +87,8 @@ const dropTarget = {
     monitor: DropTargetMonitor,
     component: StepInstance
   ) {
+    fixRegistry(monitor);
+
     const draggedStep = monitor.getItem().step;
     const dragParent = getParentStep(script, draggedStep);
     const parent = getParentStep(script, step);
