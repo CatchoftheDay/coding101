@@ -5,6 +5,7 @@ import HTML5Backend from "react-dnd-html5-backend";
 import { Provider } from "react-redux";
 import { applyMiddleware, compose, createStore } from "redux";
 import "./App.css";
+import Controls from "./containers/controls";
 import MazeAndRunner from "./containers/mazeAndRunner";
 import middleware from "./services/runner/middleware";
 import StepList from "./services/script/containers/stepList";
@@ -24,6 +25,7 @@ class App extends Component {
     return (
       <Provider store={store}>
         <DragDropContextProvider backend={HTML5Backend}>
+          <Controls />
           <div style={{ display: "flex" }}>
             <div style={{ width: "50%" }}>
               <ContainerDimensions>

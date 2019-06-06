@@ -1,5 +1,12 @@
 import { createReducer } from "deox";
-import { moveForward, reset, step, turnLeft, turnRight } from "./actions";
+import {
+  moveForward,
+  newMaze,
+  reset,
+  step,
+  turnLeft,
+  turnRight
+} from "./actions";
 import Maze, { Direction, leftOf, Location, move, rightOf } from "../maze/maze";
 import { Action } from "redux";
 import { Script } from "../script/types";
@@ -45,15 +52,14 @@ const ignoreIfCrashed = <A extends Action>(
 
 const reducer = createReducer(initialState, handle => [
   handle(reset, state => {
-    const { script, maze } = state;
-
-    return {
-      ...initialState,
-      maze,
-      script,
-      currStepId: getFirstStepId(script)
-    };
+    return resetState(state);
   }),
+  handle(newMaze, state =>
+    resetState({
+      ...state,
+      maze: new Maze({ width: 5, randomSeed: Math.random() + "" })
+    })
+  ),
   handle(
     moveForward,
     ignoreIfCrashed(state => {
@@ -77,5 +83,12 @@ const reducer = createReducer(initialState, handle => [
     ignoreIfCrashed(state => ({ ...state, currStepId: getNextStepId(state) }))
   )
 ]);
+
+const resetState = ({ script, maze }: RunnerState) => ({
+  ...initialState,
+  maze,
+  script,
+  currStepId: getFirstStepId(script)
+});
 
 export default reducer;
