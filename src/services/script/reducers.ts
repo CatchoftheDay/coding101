@@ -28,8 +28,6 @@ export default createReducer(initialState, handle => [
     const { beforeId, parentId } = payload;
     let { step } = payload;
 
-    console.log(`Insert ${step.id} on ${parentId} before ${beforeId}`);
-
     if (step.id !== null) {
       script = deleteById(script, step.id);
     } else {

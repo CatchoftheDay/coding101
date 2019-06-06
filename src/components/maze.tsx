@@ -14,11 +14,7 @@ const Maze = ({
   width?: number;
   height?: number;
 }) => {
-  const desiredCellHeight = height / maze.height;
-  const desiredCellWidth = width / maze.width;
-  const cellSize = Math.floor(Math.min(desiredCellHeight, desiredCellWidth));
-  const leftPadding = (width - cellSize * maze.width) / 2;
-  const topPadding = (height - cellSize * maze.height) / 2;
+  const { size, left, top } = getDimensions(maze, width, height);
   const rows: ReactElement[][] = [];
 
   for (let y = 0; y < maze.height; y++) {
@@ -28,7 +24,7 @@ const Maze = ({
     for (let x = 0; x < maze.width; x++) {
       const cellStyle: CSSProperties = {
         display: "inline-block",
-        width: `${cellSize}px`,
+        width: `${size}px`,
         height: "100%",
         boxSizing: "border-box",
         ...getBorderStyle({ x, y }, Direction.UP),
@@ -49,13 +45,13 @@ const Maze = ({
   return (
     <div
       style={{
-        paddingLeft: `${leftPadding}px`,
-        paddingTop: `${topPadding}px`,
+        paddingLeft: `${left}px`,
+        paddingTop: `${top}px`,
         ...style
       }}
     >
       {rows.map((cells, y) => (
-        <div key={y} style={{ position: "relative", height: `${cellSize}px` }}>
+        <div key={y} style={{ position: "relative", height: `${size}px` }}>
           {cells}
         </div>
       ))}
@@ -76,6 +72,21 @@ const Maze = ({
       return { [`padding${propMap[direction]}`]: borderWidth };
     }
   }
+};
+
+/** Gets the cell size and left and top margins */
+export const getDimensions = (
+  maze: MazeModel,
+  width: number,
+  height: number
+) => {
+  const desiredCellHeight = height / maze.height;
+  const desiredCellWidth = width / maze.width;
+  const size = Math.floor(Math.min(desiredCellHeight, desiredCellWidth));
+  const left = (width - size * maze.width) / 2;
+  const top = (height - size * maze.height) / 2;
+
+  return { size, left, top };
 };
 
 export default Maze;

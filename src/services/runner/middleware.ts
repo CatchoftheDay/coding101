@@ -1,13 +1,13 @@
-import { Action, AnyAction, Dispatch, Store } from "redux";
+import { AnyAction, Dispatch, Middleware, MiddlewareAPI } from "redux";
 import { step } from "./actions";
 import { getCurrentAction } from "./selectors";
 import { RunnerState } from "./types";
 
 const stepType = step().type;
 
-export default <A extends Action = AnyAction>(store: Store<RunnerState>) => (
-  next: Dispatch<A>
-) => (action: A) => {
+const middleware: Middleware<{}, RunnerState> = (
+  store: MiddlewareAPI<Dispatch, RunnerState>
+) => (next: Dispatch) => (action: AnyAction) => {
   if (action.type === stepType) {
     const stepAction = getCurrentAction(store.getState());
 
@@ -18,3 +18,5 @@ export default <A extends Action = AnyAction>(store: Store<RunnerState>) => (
 
   return next(action);
 };
+
+export default middleware;
