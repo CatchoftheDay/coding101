@@ -24,8 +24,8 @@ const Runner = ({
   return (
     <div
       style={{
-        paddingLeft: left,
-        paddingTop: top,
+        marginLeft: left,
+        marginTop: top,
         position: "relative",
         fontSize: "300%",
         fontWeight: "bold",
