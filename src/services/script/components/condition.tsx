@@ -16,6 +16,7 @@ import { Dispatch } from "redux";
 import { setCondition } from "../actions";
 
 const Condition = ({
+  step,
   condition,
   placeholder = <span style={{ fontStyle: "italic" }}>(Always)</span>,
   connectDragSource,
@@ -23,7 +24,8 @@ const Condition = ({
   style,
   className,
   isOver,
-  canDrop
+  canDrop,
+  dispatch
 }: {
   step?: ConditionalStep | WhileStep;
   condition?: string;
@@ -34,21 +36,25 @@ const Condition = ({
   className?: string;
   isOver: boolean;
   canDrop: boolean;
+  dispatch: Dispatch;
 }) =>
   connectDragSource(
     connectDropTarget(
       <div
         className={className}
         style={{
-          display: "inline-block",
           border: `1px ${condition ? "solid" : "dashed"} black`,
           background: isOver && canDrop ? "green" : "white",
           borderRadius: "20px",
           padding: "5px",
+          display: "flex",
           ...style
         }}
       >
-        {condition || placeholder}
+        <span style={{ flex: 1 }}>{condition || placeholder}</span>
+        {step && (
+          <span onClick={() => dispatch(setCondition(step.id, null))}> x</span>
+        )}
       </div>
     )
   );
