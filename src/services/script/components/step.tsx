@@ -1,4 +1,4 @@
-import React, { useImperativeHandle, useRef } from "react";
+import React, { CSSProperties, useImperativeHandle, useRef } from "react";
 import { fixRegistry } from "../../patches";
 import { NonConditionalStep, Script, Step as StepModel } from "../types";
 import Action from "./action";
@@ -32,11 +32,12 @@ interface StepProps {
   parent?: StepModel;
   script: Script;
   onDelete?: (step: StepModel) => void;
+  style?: CSSProperties;
 }
 
 const Step = React.forwardRef(
   (
-    { connectDragSource, connectDropTarget, step, onDelete }: StepProps,
+    { connectDragSource, connectDropTarget, step, onDelete, style }: StepProps,
     ref
   ) => {
     const elementRef = useRef(null);
@@ -61,7 +62,11 @@ const Step = React.forwardRef(
       node = <Branch step={step} onDelete={onDelete} />;
     }
 
-    return <div ref={elementRef}>{node}</div>;
+    return (
+      <div style={style} ref={elementRef}>
+        {node}
+      </div>
+    );
   }
 );
 

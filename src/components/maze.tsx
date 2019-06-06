@@ -3,9 +3,22 @@ import MazeModel, { Direction, Location } from "../services/maze/maze";
 
 const borderWidth = "1px";
 
-const Maze = ({ maze }: { maze: MazeModel }) => {
-  const cellHeight = `${100 / maze.height}%`;
-  const cellWidth = `${100 / maze.width}%`;
+const Maze = ({
+  maze,
+  style,
+  width = 0,
+  height = 0
+}: {
+  maze: MazeModel;
+  style?: CSSProperties;
+  width?: number;
+  height?: number;
+}) => {
+  const desiredCellHeight = height / maze.height;
+  const desiredCellWidth = width / maze.width;
+  const cellSize = Math.floor(Math.min(desiredCellHeight, desiredCellWidth));
+  const leftPadding = (width - cellSize * maze.width) / 2;
+  const topPadding = (height - cellSize * maze.height) / 2;
   const rows: ReactElement[][] = [];
 
   for (let y = 0; y < maze.height; y++) {
@@ -13,9 +26,9 @@ const Maze = ({ maze }: { maze: MazeModel }) => {
     rows.push(cells);
 
     for (let x = 0; x < maze.width; x++) {
-      const style: CSSProperties = {
+      const cellStyle: CSSProperties = {
         display: "inline-block",
-        width: cellWidth,
+        width: `${cellSize}px`,
         height: "100%",
         boxSizing: "border-box",
         ...getBorderStyle({ x, y }, Direction.UP),
@@ -23,24 +36,30 @@ const Maze = ({ maze }: { maze: MazeModel }) => {
       };
 
       if (y === maze.height - 1) {
-        Object.assign(style, getBorderStyle({ x, y }, Direction.DOWN));
+        Object.assign(cellStyle, getBorderStyle({ x, y }, Direction.DOWN));
       }
       if (x === maze.width - 1) {
-        Object.assign(style, getBorderStyle({ x, y }, Direction.RIGHT));
+        Object.assign(cellStyle, getBorderStyle({ x, y }, Direction.RIGHT));
       }
 
-      cells.push(<div key={x} style={style} />);
+      cells.push(<div key={x} style={cellStyle} />);
     }
   }
 
   return (
-    <>
+    <div
+      style={{
+        paddingLeft: `${leftPadding}px`,
+        paddingTop: `${topPadding}px`,
+        ...style
+      }}
+    >
       {rows.map((cells, y) => (
-        <div key={y} style={{ position: "relative", height: cellHeight }}>
+        <div key={y} style={{ position: "relative", height: `${cellSize}px` }}>
           {cells}
         </div>
       ))}
-    </>
+    </div>
   );
 
   function getBorderStyle(location: Location, direction: Direction) {

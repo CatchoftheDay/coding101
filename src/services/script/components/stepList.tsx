@@ -1,26 +1,28 @@
-import React from "react";
+import React, { CSSProperties } from "react";
 import { NonConditionalStep, Step as StepModel } from "../types";
 import Step from "./step";
 
 const StepList = ({
   steps,
   parent,
-  onDelete
+  onDelete,
+  style
 }: {
   parent?: StepModel;
   steps: ReadonlyArray<NonConditionalStep>;
   onDelete?: (step: StepModel) => void;
+  style?: CSSProperties;
 }) => {
   if (steps.length) {
     return (
-      <>
+      <div style={style}>
         {steps.map(step => (
           <Step key={step.id} step={step} parent={parent} onDelete={onDelete} />
         ))}
-      </>
+      </div>
     );
   } else {
-    return <Step parent={parent} />;
+    return <Step style={style} parent={parent} />;
   }
 };
 

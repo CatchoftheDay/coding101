@@ -15,6 +15,7 @@
     "immer": "^3.1.1",
     "react": "^16.8.5",
     "react-beautiful-dnd": "^11.0.3",
+    "react-container-dimensions": "^1.4.1",
     "react-dnd": "^7.4.5",
     "react-dnd-html5-backend": "^7.4.4",
     "react-dom": "^16.8.5",
