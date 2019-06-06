@@ -1,6 +1,10 @@
 import React, { CSSProperties } from "react";
 import Maze, { Direction, Location } from "../services/maze/maze";
 import { getDimensions } from "./maze";
+import runnerImg from "./resources/runner.png";
+
+const maxSize = 64;
+const imageSizeMultiplier = 0.66;
 
 const Runner = ({
   maze,
@@ -32,16 +36,18 @@ const Runner = ({
         ...style
       }}
     >
-      <span
+      <img
         style={{
           position: "absolute",
           top: (y + 0.5) * size,
           left: (x + 0.5) * size,
           transform: `translate(-50%, -50%) rotate(${getAngle(facing)}deg)`
         }}
-      >
-        ^
-      </span>
+        alt="Runner position"
+        src={runnerImg}
+        width={`${Math.min(size * imageSizeMultiplier, maxSize)}px`}
+        height={`${Math.min(size * imageSizeMultiplier, maxSize)}px`}
+      />
     </div>
   );
 };
@@ -49,13 +55,13 @@ const Runner = ({
 const getAngle = (facing: Direction) => {
   switch (facing) {
     case Direction.UP:
-      return 0;
+      return -90;
     case Direction.RIGHT:
-      return 90;
+      return 0;
     case Direction.DOWN:
-      return 180;
+      return 90;
     case Direction.LEFT:
-      return 270;
+      return 180;
   }
 };
 
