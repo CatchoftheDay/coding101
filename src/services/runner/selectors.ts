@@ -133,13 +133,19 @@ const getNextStep_condition = (state: RunnerState, step: ConditionalStep) => {
 
 /** Gets the next step given the current step is a WhileStep */
 const getNextStep_while = (state: RunnerState, step: WhileStep) => {
-  if (!step.condition || conditionMet(state, step.condition)) {
-    // If our condition is met(or we don't have one), always go to the first
-    // step
-    return step.steps[0];
-  } else {
-    // Our condition is not met
-    return undefined;
+  const currentStep = getCurrentStep(state);
+
+  switch (true) {
+    case flattenSteps(step.steps).includes(currentStep!):
+      // The current step is one of our descendents; so the next step should be us
+      return step;
+    case !step.condition || conditionMet(state, step.condition):
+      // If our condition is met(or we don't have one), always go to the first
+      // step
+      return step.steps[0];
+    default:
+      // Our condition is not met
+      return undefined;
   }
 };
 
@@ -148,7 +154,7 @@ const conditionMet = (state: RunnerState, condition: string) =>
   conditions[condition](state);
 
 /** Returns true if this step should be skipped (ie not stopped on) */
-const shouldSkip = ({ type }: Step) => type === "branch" || type === "while";
+const shouldSkip = ({ type }: Step) => type === "branch";
 
 const actions: { [actionName: string]: AnyAction } = {
   turnLeft: turnLeft(),
