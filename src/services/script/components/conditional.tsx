@@ -5,12 +5,14 @@ import StepList from "./stepList";
 
 const Conditional = ({
   step,
+  activeStep,
   conditionLabel,
   stepsLabel,
   style,
   onDelete
 }: {
   step?: ConditionalStep | WhileStep;
+  activeStep?: StepModel;
   conditionLabel: string;
   stepsLabel: string;
   onDelete?: (step: StepModel) => void;
@@ -31,6 +33,7 @@ const Conditional = ({
         <Condition
           style={{ flex: 1 }}
           step={step}
+          activeStep={activeStep}
           condition={(step && step.condition) || undefined}
         />
       </div>
@@ -45,7 +48,12 @@ const Conditional = ({
         </div>
         <div style={{ display: "inline-block", flex: 1 }}>
           {step && (
-            <StepList steps={step.steps} parent={step} onDelete={onDelete} />
+            <StepList
+              steps={step.steps}
+              activeStep={activeStep}
+              parent={step}
+              onDelete={onDelete}
+            />
           )}
         </div>
       </div>

@@ -4,10 +4,12 @@ import Conditional from "./conditional";
 
 const Branch = ({
   step,
+  activeStep,
   placeholder,
   onDelete
 }: {
   step: BranchStep;
+  activeStep?: StepModel;
   placeholder?: boolean;
   onDelete?: (step: StepModel) => void;
 }) => (
@@ -27,6 +29,7 @@ const Branch = ({
           conditionLabel={idx == 0 ? "If" : "Else if"}
           stepsLabel="Then"
           step={condition}
+          activeStep={activeStep}
           onDelete={onDelete}
         />
       ))}

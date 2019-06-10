@@ -5,11 +5,13 @@ import Step from "./step";
 const StepList = ({
   steps,
   parent,
+  activeStep,
   onDelete,
   style
 }: {
   parent?: StepModel;
   steps: ReadonlyArray<NonConditionalStep>;
+  activeStep?: StepModel;
   onDelete?: (step: StepModel) => void;
   style?: CSSProperties;
 }) => {
@@ -17,7 +19,13 @@ const StepList = ({
     return (
       <div style={style}>
         {steps.map(step => (
-          <Step key={step.id} step={step} parent={parent} onDelete={onDelete} />
+          <Step
+            key={step.id}
+            step={step}
+            activeStep={activeStep}
+            parent={parent}
+            onDelete={onDelete}
+          />
         ))}
       </div>
     );

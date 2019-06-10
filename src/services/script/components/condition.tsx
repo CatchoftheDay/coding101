@@ -11,12 +11,13 @@ import {
 } from "react-dnd";
 import { connect } from "react-redux";
 import { ItemTypes } from "../constants";
-import { ConditionalStep, WhileStep } from "../types";
+import { ConditionalStep, Step as StepModel, WhileStep } from "../types";
 import { Dispatch } from "redux";
 import { setCondition } from "../actions";
 
 const Condition = ({
   step,
+  activeStep,
   condition,
   placeholder = <span style={{ fontStyle: "italic" }}>(Always)</span>,
   connectDragSource,
@@ -28,6 +29,7 @@ const Condition = ({
   dispatch
 }: {
   step?: ConditionalStep | WhileStep;
+  activeStep?: StepModel;
   condition?: string;
   placeholder?: ReactNode;
   connectDragSource: ConnectDragSource;
@@ -43,10 +45,12 @@ const Condition = ({
       <div
         className={className}
         style={{
-          border: `1px ${condition ? "solid" : "dashed"} black`,
+          border: `${step === activeStep ? 3 : 1}px ${
+            condition ? "solid" : "dashed"
+          } black`,
           background: isOver && canDrop ? "green" : "white",
           borderRadius: "20px",
-          padding: "5px",
+          padding: step === activeStep ? "3px 8px" : "5px 10px",
           display: "flex",
           ...style
         }}

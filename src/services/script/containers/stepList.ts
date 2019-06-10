@@ -4,9 +4,12 @@ import { Step as StepModel } from "../types";
 import { Dispatch } from "redux";
 import { deleteStep } from "../actions";
 import { RunnerState } from "../../runner/types";
-import { getScript } from "../../runner/selectors";
+import { getCurrentStep, getScript } from "../../runner/selectors";
 
-const mapStateToProps = (state: RunnerState) => ({ steps: getScript(state) });
+const mapStateToProps = (state: RunnerState) => ({
+  steps: getScript(state),
+  activeStep: getCurrentStep(state)
+});
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
   onDelete: (step: StepModel) => dispatch(deleteStep(step.id))

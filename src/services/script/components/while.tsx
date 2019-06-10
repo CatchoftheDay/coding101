@@ -4,10 +4,12 @@ import Conditional from "./conditional";
 
 const While = ({
   step,
+  activeStep,
   placeholder,
   onDelete
 }: {
   step: WhileStep;
+  activeStep?: StepModel;
   placeholder?: boolean;
   onDelete?: (step: StepModel) => void;
 }) => {
@@ -25,6 +27,7 @@ const While = ({
         conditionLabel="While"
         stepsLabel="Do"
         step={step}
+        activeStep={activeStep}
         onDelete={onDelete}
       />
       {onDelete && (
