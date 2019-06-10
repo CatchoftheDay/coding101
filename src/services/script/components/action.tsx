@@ -16,10 +16,11 @@ const Action = ({
 }) => (
   <div
     style={{
-      border: `${step === activeStep ? 3 : 1}px ${
+      border: `${step && step === activeStep ? 3 : 1}px ${
         placeholder ? "dashed" : "solid"
       } #f99`,
-      padding: step === activeStep ? "3px 8px" : "5px 10px",
+      background: "white",
+      padding: step && step === activeStep ? "3px 8px" : "5px 10px",
       borderRadius: "5px",
       display: "flex"
     }}

@@ -45,12 +45,12 @@ const Condition = ({
       <div
         className={className}
         style={{
-          border: `${step === activeStep ? 3 : 1}px ${
+          border: `${step && step === activeStep ? 3 : 1}px ${
             condition ? "solid" : "dashed"
           } black`,
           background: isOver && canDrop ? "green" : "white",
           borderRadius: "20px",
-          padding: step === activeStep ? "3px 8px" : "5px 10px",
+          padding: step && step === activeStep ? "3px 8px" : "5px 10px",
           display: "flex",
           ...style
         }}

@@ -10,6 +10,7 @@ import MazeAndRunner from "./containers/mazeAndRunner";
 import middleware from "./services/runner/middleware";
 import StepList from "./services/script/containers/stepList";
 import reducers, { initialState } from "./services/runner/reducers";
+import Palette from "./components/palette";
 
 const composeEnhancers =
   (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
@@ -33,6 +34,16 @@ class App extends Component {
               </ContainerDimensions>
             </div>
             <StepList style={{ width: "33%" }} />
+            <Palette
+              actions={["turnLeft", "turnRight", "moveForward"]}
+              conditions={[
+                "atExit",
+                "notAtExit",
+                "canMoveLeft",
+                "canMoveForward",
+                "canMoveRight"
+              ]}
+            />
           </div>
         </DragDropContextProvider>
       </Provider>
