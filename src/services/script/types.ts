@@ -36,3 +36,10 @@ export type Step = NonConditionalStep | ConditionalStep;
 
 /** A script for the runner to run */
 export type Script = ReadonlyArray<NonConditionalStep>;
+
+/** The function to call when a step is inserted */
+export type OnInsert = (
+  step: Step,
+  parent: Step | undefined,
+  before: Step | undefined
+) => void;

@@ -1,17 +1,21 @@
 import React from "react";
-import { BranchStep, Step as StepModel } from "../types";
+import { BranchStep, OnInsert, Script, Step as StepModel } from "../types";
 import Conditional from "./conditional";
 
 const Branch = ({
   step,
+  script,
   activeStep,
   placeholder,
-  onDelete
+  onDelete,
+  onInsert
 }: {
   step: BranchStep;
+  script?: Script;
   activeStep?: StepModel;
   placeholder?: boolean;
   onDelete?: (step: StepModel) => void;
+  onInsert?: OnInsert;
 }) => (
   <div
     style={{
@@ -29,8 +33,10 @@ const Branch = ({
           conditionLabel={idx == 0 ? "If" : "Else if"}
           stepsLabel="Then"
           step={condition}
+          script={script}
           activeStep={activeStep}
           onDelete={onDelete}
+          onInsert={onInsert}
         />
       ))}
     </div>

@@ -1,21 +1,31 @@
 import React, { CSSProperties } from "react";
-import { ConditionalStep, Step as StepModel, WhileStep } from "../types";
+import {
+  ConditionalStep,
+  OnInsert,
+  Script,
+  Step as StepModel,
+  WhileStep
+} from "../types";
 import Condition from "./condition";
 import StepList from "./stepList";
 
 const Conditional = ({
   step,
+  script,
   activeStep,
   conditionLabel,
   stepsLabel,
   style,
-  onDelete
+  onDelete,
+  onInsert
 }: {
   step?: ConditionalStep | WhileStep;
+  script?: Script;
   activeStep?: StepModel;
   conditionLabel: string;
   stepsLabel: string;
   onDelete?: (step: StepModel) => void;
+  onInsert?: OnInsert;
   style?: CSSProperties;
 }) => {
   return (
@@ -50,9 +60,11 @@ const Conditional = ({
           {step && (
             <StepList
               steps={step.steps}
+              script={script}
               activeStep={activeStep}
               parent={step}
               onDelete={onDelete}
+              onInsert={onInsert}
             />
           )}
         </div>

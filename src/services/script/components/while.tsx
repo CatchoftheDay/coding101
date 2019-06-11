@@ -1,17 +1,21 @@
 import React from "react";
-import { Step as StepModel, WhileStep } from "../types";
+import { OnInsert, Script, Step as StepModel, WhileStep } from "../types";
 import Conditional from "./conditional";
 
 const While = ({
   step,
+  script,
   activeStep,
   placeholder,
-  onDelete
+  onDelete,
+  onInsert
 }: {
   step: WhileStep;
+  script?: Script;
   activeStep?: StepModel;
   placeholder?: boolean;
   onDelete?: (step: StepModel) => void;
+  onInsert?: OnInsert;
 }) => {
   return (
     <div
@@ -27,8 +31,10 @@ const While = ({
         conditionLabel="While"
         stepsLabel="Do"
         step={step}
+        script={script}
         activeStep={activeStep}
         onDelete={onDelete}
+        onInsert={onInsert}
       />
       {onDelete && (
         <span style={{ flex: 0 }} onClick={() => onDelete(step)}>

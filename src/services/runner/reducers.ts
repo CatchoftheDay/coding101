@@ -8,12 +8,14 @@ import {
   turnRight
 } from "./actions";
 import Maze, { Direction, leftOf, Location, move, rightOf } from "../maze/maze";
-import { Action } from "redux";
+import { Action, AnyAction } from "redux";
 import { Script } from "../script/types";
+import scriptReducers from "../script/reducers";
 import { getFirstStepId } from "../script/selectors";
 import { RunnerState } from "./types";
 import { mazeRunner } from "../script/constants";
 import { getNextStepId } from "./selectors";
+import { DeepImmutableObject } from "deox/dist/types";
 
 export const buildInitialState = (
   modelState: {
@@ -50,7 +52,7 @@ const ignoreIfCrashed = <A extends Action>(
 ) => (state: RunnerState, action: A) =>
   state.crashed ? state : reducer(state, action);
 
-const reducer = createReducer(initialState, handle => [
+const runnerReducer = createReducer(initialState, handle => [
   handle(reset, state => {
     return resetState(state);
   }),
@@ -90,5 +92,19 @@ const resetState = ({ script, maze }: RunnerState) => ({
   script,
   currStepId: getFirstStepId(script)
 });
+
+const reducer = (
+  state: RunnerState | DeepImmutableObject<RunnerState> | undefined,
+  action: AnyAction
+) => {
+  state = runnerReducer(state, action);
+  const script = scriptReducers(state.script, action as any);
+
+  if (script !== (state && state.script)) {
+    state = { ...state, script };
+  }
+
+  return state;
+};
 
 export default reducer;

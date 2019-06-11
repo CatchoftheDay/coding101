@@ -1,6 +1,11 @@
 import React, { CSSProperties, useImperativeHandle, useRef } from "react";
 import { fixRegistry } from "../../patches";
-import { NonConditionalStep, Script, Step as StepModel } from "../types";
+import {
+  NonConditionalStep,
+  OnInsert,
+  Script,
+  Step as StepModel
+} from "../types";
 import Action from "./action";
 import Branch from "./branch";
 import While from "./while";
@@ -15,15 +20,12 @@ import {
   DropTargetMonitor
 } from "react-dnd";
 import { ItemTypes } from "../constants";
-import { connect } from "react-redux";
 import {
   getChildren,
   getParentStep,
   getSiblingIndex,
   isAncestor
 } from "../selectors";
-import { Dispatch } from "redux";
-import { insertStep } from "../actions";
 
 interface StepProps {
   connectDragSource: ConnectDragSource;
@@ -31,9 +33,10 @@ interface StepProps {
   step?: NonConditionalStep;
   parent?: StepModel;
   activeStep?: StepModel;
-  script: Script;
+  script?: Script;
   onDelete?: (step: StepModel) => void;
   style?: CSSProperties;
+  onInsert?: OnInsert;
 }
 
 const Step = React.forwardRef(
@@ -42,8 +45,10 @@ const Step = React.forwardRef(
       connectDragSource,
       connectDropTarget,
       step,
+      script,
       activeStep,
       onDelete,
+      onInsert,
       style
     }: StepProps,
     ref
@@ -53,7 +58,9 @@ const Step = React.forwardRef(
     if (step) {
       connectDragSource(elementRef);
     }
-    connectDropTarget(elementRef);
+    if (script && onInsert) {
+      connectDropTarget(elementRef);
+    }
     useImperativeHandle<{}, StepInstance>(ref, () => ({
       getNode: () => elementRef.current
     }));
@@ -65,9 +72,25 @@ const Step = React.forwardRef(
     } else if (step.type === "action") {
       node = <Action step={step} activeStep={activeStep} onDelete={onDelete} />;
     } else if (step.type === "while") {
-      node = <While step={step} activeStep={activeStep} onDelete={onDelete} />;
+      node = (
+        <While
+          step={step}
+          script={script}
+          activeStep={activeStep}
+          onInsert={onInsert}
+          onDelete={onDelete}
+        />
+      );
     } else if (step.type === "branch") {
-      node = <Branch step={step} activeStep={activeStep} onDelete={onDelete} />;
+      node = (
+        <Branch
+          step={step}
+          script={script}
+          activeStep={activeStep}
+          onInsert={onInsert}
+          onDelete={onDelete}
+        />
+      );
     }
 
     return (
@@ -98,7 +121,7 @@ const dragCollect = (
 
 const dropTarget = {
   hover(
-    { step, parent, script, dispatch }: StepProps & { dispatch: Dispatch },
+    { step, parent, script, onInsert }: StepProps & { script: Script },
     monitor: DropTargetMonitor,
     component: StepInstance
   ) {
@@ -154,17 +177,19 @@ const dropTarget = {
       return;
     }
 
-    let beforeId;
+    let before;
     if (
       !step ||
       (step === siblings[siblings.length - 1] && hoverClientY > hoverMiddleY)
     ) {
-      beforeId = null;
+      before = undefined;
     } else {
-      beforeId = step.id;
+      before = step;
     }
 
-    dispatch(insertStep(draggedStep, (parent && parent.id) || null, beforeId));
+    if (onInsert) {
+      onInsert(draggedStep, parent, before);
+    }
   }
 };
 
@@ -177,10 +202,6 @@ const dropCollect = (
   canDrop: monitor.canDrop()
 });
 
-const mapStateToProps = (script: Script) => ({ script });
-
-export default connect(mapStateToProps)(
-  DropTarget(ItemTypes.STEP, dropTarget, dropCollect)(
-    DragSource(ItemTypes.STEP, dragSource, dragCollect)(Step)
-  )
+export default DropTarget(ItemTypes.STEP, dropTarget, dropCollect)(
+  DragSource(ItemTypes.STEP, dragSource, dragCollect)(Step)
 );

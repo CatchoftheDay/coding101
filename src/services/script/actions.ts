@@ -3,7 +3,11 @@ import { Step } from "./types";
 
 export const insertStep = createAction(
   "script/insertStep",
-  resolve => (step: Step, parentId: number | null, beforeId: number | null) =>
+  resolve => (
+    step: Step,
+    parentId: number | undefined,
+    beforeId: number | undefined
+  ) =>
     resolve({
       step,
       beforeId,
