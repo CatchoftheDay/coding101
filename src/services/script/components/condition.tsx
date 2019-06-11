@@ -56,7 +56,7 @@ const Condition = ({
         }}
       >
         <span style={{ flex: 1 }}>{condition || placeholder}</span>
-        {step && (
+        {step && condition && (
           <span onClick={() => dispatch(setCondition(step.id, null))}> x</span>
         )}
       </div>
