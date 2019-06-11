@@ -25,7 +25,13 @@ export const getSiblings = (script: Script, step: Step) => {
   if (script.find(current => current === step)) {
     return script;
   } else {
-    return getChildren(getParentStep(script, step)!);
+    const parent = getParentStep(script, step);
+
+    if (parent) {
+      return getChildren(parent);
+    } else {
+      return [];
+    }
   }
 };
 

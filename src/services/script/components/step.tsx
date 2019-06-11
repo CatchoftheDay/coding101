@@ -107,6 +107,10 @@ interface StepInstance {
 
 const dragSource = {
   beginDrag({ step, script }: StepProps) {
+    if (!script) {
+      step = { ...step, id: Math.random() } as NonConditionalStep;
+    }
+
     return { step, script };
   }
 };
