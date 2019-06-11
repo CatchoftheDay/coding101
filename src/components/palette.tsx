@@ -1,13 +1,15 @@
-import React, { ReactNode } from "react";
+import React, { CSSProperties, ReactNode } from "react";
 import Condition from "../services/script/components/condition";
 import Step from "../services/script/components/step";
 
 const Palette = ({
   actions,
-  conditions
+  conditions,
+  style
 }: {
   actions: ReadonlyArray<string>;
   conditions: ReadonlyArray<string>;
+  style?: CSSProperties;
 }) => {
   const widgets: ReactNode[] = [];
 
@@ -35,7 +37,7 @@ const Palette = ({
     );
   }
 
-  return <div>{widgets}</div>;
+  return <div style={style}>{widgets}</div>;
 };
 
 export default Palette;

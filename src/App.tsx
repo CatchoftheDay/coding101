@@ -27,14 +27,15 @@ class App extends Component {
       <Provider store={store}>
         <DragDropContextProvider backend={HTML5Backend}>
           <Controls />
-          <div style={{ display: "flex" }}>
-            <div style={{ width: "50%" }}>
+          <div style={{ flex: 1, display: "flex" }}>
+            <div style={{ flex: 1 }}>
               <ContainerDimensions>
                 <MazeAndRunner />
               </ContainerDimensions>
             </div>
-            <StepList style={{ width: "33%" }} />
+            <StepList style={{ flex: 0 }} />
             <Palette
+              style={{ flex: 0 }}
               actions={["turnLeft", "turnRight", "moveForward"]}
               conditions={[
                 "atExit",
