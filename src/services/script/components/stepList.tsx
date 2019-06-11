@@ -41,7 +41,9 @@ const StepList = ({
       </div>
     );
   } else {
-    return <Step style={style} parent={parent} />;
+    return (
+      <Step style={style} script={script} onInsert={onInsert} parent={parent} />
+    );
   }
 };
 

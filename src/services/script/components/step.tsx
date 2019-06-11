@@ -94,7 +94,7 @@ const Step = React.forwardRef(
     }
 
     return (
-      <div style={style} ref={elementRef}>
+      <div style={{ whiteSpace: "nowrap", ...style }} ref={elementRef}>
         {node}
       </div>
     );
@@ -166,6 +166,7 @@ const dropTarget = {
     // Dragging downwards
     if (
       dragParent === parent &&
+      dragIndex !== -1 &&
       dragIndex < hoverIndex &&
       hoverClientY < hoverMiddleY
     ) {
