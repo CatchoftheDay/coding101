@@ -42,7 +42,9 @@ const Conditional = ({
         />
       </div>
       <div style={{ display: "flex" }}>
-        <div style={{ display: "inline-block", width: "5em" }}>
+        <div
+          style={{ display: "inline-block", width: "5em", marginTop: "11px" }}
+        >
           {stepsLabel}
         </div>
         <div style={{ display: "inline-block", flex: 1 }}>
