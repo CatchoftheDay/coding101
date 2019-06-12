@@ -34,6 +34,7 @@ interface StepProps {
   step?: NonConditionalStep;
   parent?: StepModel;
   activeStep?: StepModel;
+  crashed?: boolean;
   script?: Script;
   onDelete?: (step: StepModel) => void;
   style?: CSSProperties;
@@ -48,6 +49,7 @@ const Step = React.forwardRef(
       connectDropTarget,
       step,
       script,
+      crashed,
       activeStep,
       onDelete,
       onInsert,
@@ -82,12 +84,20 @@ const Step = React.forwardRef(
         <span>(Drag step here)</span>
       );
     } else if (step.type === "action") {
-      node = <Action step={step} activeStep={activeStep} onDelete={onDelete} />;
+      node = (
+        <Action
+          step={step}
+          crashed={crashed}
+          activeStep={activeStep}
+          onDelete={onDelete}
+        />
+      );
     } else if (step.type === "while") {
       node = (
         <While
           step={step}
           script={script}
+          crashed={crashed}
           activeStep={activeStep}
           onInsert={onInsert}
           onDelete={onDelete}
@@ -99,6 +109,7 @@ const Step = React.forwardRef(
         <Branch
           step={step}
           script={script}
+          crashed={crashed}
           activeStep={activeStep}
           onInsert={onInsert}
           onDelete={onDelete}

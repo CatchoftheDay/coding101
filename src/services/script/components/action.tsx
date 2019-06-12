@@ -8,19 +8,24 @@ const Action = ({
   step,
   activeStep,
   placeholder,
-  onDelete
+  onDelete,
+  crashed
 }: {
   step?: ActionStep;
   activeStep?: StepModel;
   placeholder?: boolean;
   onDelete?: (step: StepModel) => void;
+  crashed?: boolean;
 }) =>
   buildSurround(
     {
       onDelete: onDelete && step && (() => onDelete(step)),
       highlight: step && step === activeStep,
       placeholder: placeholder,
-      style: { borderColor: "#1c5a87", backgroundColor: "#ebf1f7" }
+      style:
+        step && step === activeStep && crashed
+          ? { borderColor: "#de5151", backgroundColor: "#ffd9d9" }
+          : { borderColor: "#1c5a87", backgroundColor: "#ebf1f7" }
     },
     <span style={{ flex: 1 }}>{(step && step.action) || NBSP}</span>
   );

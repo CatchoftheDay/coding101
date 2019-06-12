@@ -6,6 +6,7 @@ import { buildSurround } from "../util";
 const While = ({
   step,
   script,
+  crashed,
   activeStep,
   onDelete,
   onInsert,
@@ -13,6 +14,7 @@ const While = ({
 }: {
   step: WhileStep;
   script?: Script;
+  crashed?: boolean;
   activeStep?: StepModel;
   onDelete?: (step: StepModel) => void;
   onInsert?: OnInsert;
@@ -35,6 +37,7 @@ const While = ({
         stepsLabel="Do"
         step={step}
         script={script}
+        crashed={crashed}
         activeStep={activeStep}
         onDelete={onDelete}
         onInsert={onInsert}

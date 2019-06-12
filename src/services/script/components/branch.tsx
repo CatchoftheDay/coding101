@@ -6,6 +6,7 @@ import { buildSurround } from "../util";
 const Branch = ({
   step,
   script,
+  crashed,
   activeStep,
   onDelete,
   onInsert,
@@ -13,6 +14,7 @@ const Branch = ({
 }: {
   step: BranchStep;
   script?: Script;
+  crashed?: boolean;
   activeStep?: StepModel;
   onDelete?: (step: StepModel) => void;
   onInsert?: OnInsert;
@@ -38,6 +40,7 @@ const Branch = ({
             stepsLabel="Then"
             step={condition}
             script={script}
+            crashed={crashed}
             activeStep={activeStep}
             onDelete={onDelete}
             onInsert={onInsert}

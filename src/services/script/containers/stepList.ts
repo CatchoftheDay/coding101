@@ -4,12 +4,13 @@ import { Step as StepModel } from "../types";
 import { Dispatch } from "redux";
 import { deleteStep, insertStep } from "../actions";
 import { RunnerState } from "../../runner/types";
-import { getCurrentStep, getScript } from "../../runner/selectors";
+import { getCurrentStep, getScript, isCrashed } from "../../runner/selectors";
 
 const mapStateToProps = (state: RunnerState) => ({
   steps: getScript(state),
   script: getScript(state),
-  activeStep: getCurrentStep(state)
+  activeStep: getCurrentStep(state),
+  crashed: isCrashed(state)
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({

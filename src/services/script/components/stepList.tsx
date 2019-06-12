@@ -11,6 +11,7 @@ const StepList = ({
   steps,
   parent,
   script,
+  crashed,
   activeStep,
   onDelete,
   onInsert,
@@ -19,6 +20,7 @@ const StepList = ({
   parent?: StepModel;
   steps: ReadonlyArray<NonConditionalStep>;
   script?: Script;
+  crashed?: boolean;
   activeStep?: StepModel;
   onDelete?: (step: StepModel) => void;
   onInsert?: OnInsert;
@@ -33,6 +35,7 @@ const StepList = ({
             step={step}
             script={script}
             activeStep={activeStep}
+            crashed={crashed}
             parent={parent}
             onDelete={onDelete}
             onInsert={onInsert}

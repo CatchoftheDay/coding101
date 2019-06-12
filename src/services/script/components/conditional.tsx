@@ -12,6 +12,7 @@ import StepList from "./stepList";
 const Conditional = ({
   step,
   script,
+  crashed,
   activeStep,
   conditionLabel,
   stepsLabel,
@@ -21,6 +22,7 @@ const Conditional = ({
 }: {
   step?: ConditionalStep | WhileStep;
   script?: Script;
+  crashed?: boolean;
   activeStep?: StepModel;
   conditionLabel: string;
   stepsLabel: string;
@@ -52,6 +54,7 @@ const Conditional = ({
             <StepList
               steps={step.steps}
               script={script}
+              crashed={crashed}
               activeStep={activeStep}
               parent={step}
               onDelete={onDelete}
