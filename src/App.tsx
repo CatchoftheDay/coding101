@@ -7,7 +7,10 @@ import { applyMiddleware, compose, createStore } from "redux";
 import "./App.css";
 import Controls from "./containers/controls";
 import MazeAndRunner from "./containers/mazeAndRunner";
-import middleware from "./services/runner/middleware";
+import {
+  executeActions,
+  resetOnScriptChange
+} from "./services/runner/middleware";
 import StepList from "./services/script/containers/stepList";
 import reducers, { initialState } from "./services/runner/reducers";
 import Palette from "./components/palette";
@@ -18,7 +21,7 @@ const composeEnhancers =
 const store = createStore(
   reducers,
   initialState,
-  composeEnhancers(applyMiddleware(middleware))
+  composeEnhancers(applyMiddleware(executeActions, resetOnScriptChange))
 );
 
 class App extends Component {
