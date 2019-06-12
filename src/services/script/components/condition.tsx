@@ -14,6 +14,7 @@ import { ItemTypes } from "../constants";
 import { ConditionalStep, Step as StepModel, WhileStep } from "../types";
 import { Dispatch } from "redux";
 import { setCondition } from "../actions";
+import { buildSurround } from "../util";
 
 const Condition = ({
   step,
@@ -22,8 +23,6 @@ const Condition = ({
   placeholder = <span style={{ fontStyle: "italic" }}>(Always)</span>,
   connectDragSource,
   connectDropTarget,
-  style,
-  className,
   isOver,
   canDrop,
   dispatch
@@ -42,24 +41,21 @@ const Condition = ({
 }) =>
   connectDragSource(
     connectDropTarget(
-      <div
-        className={className}
-        style={{
-          border: `${step && step === activeStep ? 3 : 1}px ${
-            condition ? "solid" : "dashed"
-          } black`,
-          background: isOver && canDrop ? "green" : "white",
-          borderRadius: "20px",
-          padding: step && step === activeStep ? "3px 8px" : "5px 10px",
-          display: "flex",
-          ...style
-        }}
-      >
+      buildSurround(
+        {
+          highlight: step && step === activeStep,
+          onDelete:
+            step && condition
+              ? () => dispatch(setCondition(step.id, null))
+              : undefined,
+          style: {
+            borderColor: "#f58928",
+            borderRadius: "20px",
+            backgroundColor: isOver && canDrop ? "green" : "white"
+          }
+        },
         <span style={{ flex: 1 }}>{condition || placeholder}</span>
-        {step && condition && (
-          <span onClick={() => dispatch(setCondition(step.id, null))}> x</span>
-        )}
-      </div>
+      )
     )
   );
 

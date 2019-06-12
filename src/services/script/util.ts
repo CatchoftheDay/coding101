@@ -1,43 +1,51 @@
-import {
-  ActionStep,
-  BranchStep,
-  ConditionalStep,
-  NonConditionalStep,
-  WhileStep
-} from "./types";
+import React, { CSSProperties, ReactNode } from "react";
 
-let nextId = 1;
+/** Builds the surround elements for a step */
+export const buildSurround = (
+  {
+    onDelete,
+    placeholder,
+    highlight,
+    style
+  }: {
+    highlight?: boolean;
+    placeholder?: boolean;
+    onDelete?: () => void;
+    style?: CSSProperties;
+  },
+  children: ReactNode | ReadonlyArray<ReactNode>
+) => {
+  if (onDelete) {
+    if (Array.isArray(children)) {
+      children = children.slice();
+    } else {
+      children = [children];
+    }
+    (children as ReactNode[]).push(
+      React.createElement(
+        "div",
+        { style: { paddingLeft: "0.5em" }, onClick: onDelete },
+        "x"
+      )
+    );
+  }
 
-export const buildActionStep = (action: string): ActionStep => ({
-  id: nextId++,
-  type: "action",
-  action
-});
-
-export const buildConditionalStep = (
-  condition: string,
-  steps: Array<NonConditionalStep> = []
-): ConditionalStep => ({
-  id: nextId++,
-  type: "conditional",
-  condition,
-  steps
-});
-
-export const buildBranchStep = (
-  conditions: Array<ConditionalStep> = []
-): BranchStep => ({
-  id: nextId++,
-  type: "branch",
-  conditions
-});
-
-export const buildWhileStep = (
-  condition: string | null,
-  steps: Array<NonConditionalStep> = []
-): WhileStep => ({
-  id: nextId++,
-  type: "while",
-  condition,
-  steps: steps.slice()
-});
+  return React.createElement(
+    "div",
+    {
+      style: {
+        borderWidth: `${highlight ? 3 : 1}px`,
+        borderStyle: placeholder ? "dashed" : "solid",
+        borderColor: "black",
+        text: "black",
+        background: "white",
+        padding: highlight ? "3px 8px" : "5px 10px",
+        margin: "5px 0",
+        borderRadius: "5px",
+        display: "flex",
+        ...style
+      }
+    },
+    children
+  );
+};

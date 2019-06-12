@@ -30,13 +30,7 @@ const Conditional = ({
 }) => {
   return (
     <div style={style}>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          marginTop: "5px"
-        }}
-      >
+      <div style={{ display: "flex", alignItems: "center" }}>
         <div style={{ display: "inline-block", width: "5em" }}>
           {conditionLabel}
         </div>
@@ -47,12 +41,7 @@ const Conditional = ({
           condition={(step && step.condition) || undefined}
         />
       </div>
-      <div
-        style={{
-          display: "flex",
-          marginTop: "5px"
-        }}
-      >
+      <div style={{ display: "flex" }}>
         <div style={{ display: "inline-block", width: "5em" }}>
           {stepsLabel}
         </div>
