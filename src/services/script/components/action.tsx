@@ -20,7 +20,7 @@ const Action = ({
       onDelete: onDelete && step && (() => onDelete(step)),
       highlight: step && step === activeStep,
       placeholder: placeholder,
-      style: { borderColor: "#1c5a87" }
+      style: { borderColor: "#1c5a87", backgroundColor: "#ebf1f7" }
     },
     <span style={{ flex: 1 }}>{(step && step.action) || NBSP}</span>
   );

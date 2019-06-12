@@ -22,7 +22,8 @@ const While = ({
     {
       onDelete: onDelete && step && (() => onDelete(step)),
       style: {
-        borderColor: "rgb(119, 177, 66)"
+        borderColor: "#77b142",
+        backgroundColor: "#fcfffa"
       }
     },
     paletteItem ? (

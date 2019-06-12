@@ -51,7 +51,7 @@ const Condition = ({
           style: {
             borderColor: "#f58928",
             borderRadius: "20px",
-            backgroundColor: isOver && canDrop ? "green" : "white"
+            backgroundColor: isOver && canDrop ? "#ffe6d0" : "#fff4eb"
           }
         },
         <span style={{ flex: 1 }}>{condition || placeholder}</span>
