@@ -41,7 +41,7 @@ const Palette = ({
 
   if (controls.length) {
     widgets.push(
-      <div key={"conditionsHeader"}>
+      <div key={"controlsHeader"}>
         <strong>Control</strong>
       </div>
     );

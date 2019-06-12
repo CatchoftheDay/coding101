@@ -1,4 +1,4 @@
-import React, { CSSProperties, ReactNode } from "react";
+import React, { CSSProperties, ReactElement, ReactNode } from "react";
 
 /** Builds the surround elements for a step */
 export const buildSurround = (
@@ -18,13 +18,23 @@ export const buildSurround = (
   if (onDelete) {
     if (Array.isArray(children)) {
       children = children.slice();
+    } else if (children == null) {
+      children = [];
     } else {
-      children = [children];
+      if (typeof children !== "object") {
+        children = React.createElement("span", {}, children);
+      }
+
+      children = [{ ...(children as ReactElement), key: "childNode" }];
     }
     (children as ReactNode[]).push(
       React.createElement(
         "div",
-        { style: { paddingLeft: "0.5em" }, onClick: onDelete },
+        {
+          key: "deleteNode",
+          style: { paddingLeft: "0.5em" },
+          onClick: onDelete
+        },
         "x"
       )
     );
