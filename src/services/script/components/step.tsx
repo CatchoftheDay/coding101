@@ -156,7 +156,7 @@ const dropTarget = {
       !node ||
       !monitor.isOver({ shallow: true }) ||
       draggedStep === step ||
-      (step && isAncestor(step, draggedStep))
+      ((step || parent) && isAncestor((step || parent)!, draggedStep))
     ) {
       return;
     }
