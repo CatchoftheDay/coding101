@@ -26,6 +26,7 @@ import {
   getSiblingIndex,
   isAncestor
 } from "../selectors";
+import { buildSurround } from "../util";
 
 interface StepProps {
   connectDragSource: ConnectDragSource;
@@ -70,7 +71,16 @@ const Step = React.forwardRef(
     let node;
 
     if (!step) {
-      node = <div>(Drag step here)</div>;
+      node = buildSurround(
+        {
+          placeholder: true,
+          style: {
+            color: "grey",
+            borderColor: "grey"
+          }
+        },
+        <span>(Drag step here)</span>
+      );
     } else if (step.type === "action") {
       node = <Action step={step} activeStep={activeStep} onDelete={onDelete} />;
     } else if (step.type === "while") {
