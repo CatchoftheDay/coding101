@@ -37,6 +37,7 @@ interface StepProps {
   onDelete?: (step: StepModel) => void;
   style?: CSSProperties;
   onInsert?: OnInsert;
+  paletteItem?: boolean;
 }
 
 const Step = React.forwardRef(
@@ -49,7 +50,8 @@ const Step = React.forwardRef(
       activeStep,
       onDelete,
       onInsert,
-      style
+      style,
+      paletteItem
     }: StepProps,
     ref
   ) => {
@@ -79,6 +81,7 @@ const Step = React.forwardRef(
           activeStep={activeStep}
           onInsert={onInsert}
           onDelete={onDelete}
+          paletteItem={paletteItem}
         />
       );
     } else if (step.type === "branch") {
@@ -89,6 +92,7 @@ const Step = React.forwardRef(
           activeStep={activeStep}
           onInsert={onInsert}
           onDelete={onDelete}
+          paletteItem={paletteItem}
         />
       );
     }

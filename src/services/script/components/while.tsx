@@ -8,7 +8,8 @@ const While = ({
   activeStep,
   placeholder,
   onDelete,
-  onInsert
+  onInsert,
+  paletteItem
 }: {
   step: WhileStep;
   script?: Script;
@@ -16,16 +17,19 @@ const While = ({
   placeholder?: boolean;
   onDelete?: (step: StepModel) => void;
   onInsert?: OnInsert;
-}) => {
-  return (
-    <div
-      style={{
-        border: `1px ${placeholder ? "dashed" : "solid"} #9f9`,
-        padding: "5px",
-        borderRadius: "5px",
-        display: "flex"
-      }}
-    >
+  paletteItem?: boolean;
+}) => (
+  <div
+    style={{
+      border: `1px ${placeholder ? "dashed" : "solid"} #9f9`,
+      padding: "5px 10px",
+      borderRadius: "5px",
+      display: "flex"
+    }}
+  >
+    {paletteItem ? (
+      "While ... do ..."
+    ) : (
       <Conditional
         style={{ flex: 1 }}
         conditionLabel="While"
@@ -36,14 +40,14 @@ const While = ({
         onDelete={onDelete}
         onInsert={onInsert}
       />
-      {onDelete && (
-        <span style={{ flex: 0 }} onClick={() => onDelete(step)}>
-          {" "}
-          x
-        </span>
-      )}
-    </div>
-  );
-};
+    )}
+    {onDelete && (
+      <span style={{ flex: 0 }} onClick={() => onDelete(step)}>
+        {" "}
+        x
+      </span>
+    )}
+  </div>
+);
 
 export default While;

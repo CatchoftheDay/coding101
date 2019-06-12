@@ -47,6 +47,7 @@ class App extends Component {
                 "canMoveForward",
                 "canMoveRight"
               ]}
+              controls={["branch", "while"]}
             />
           </div>
         </DragDropContextProvider>

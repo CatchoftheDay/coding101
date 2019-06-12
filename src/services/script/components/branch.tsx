@@ -8,7 +8,8 @@ const Branch = ({
   activeStep,
   placeholder,
   onDelete,
-  onInsert
+  onInsert,
+  paletteItem
 }: {
   step: BranchStep;
   script?: Script;
@@ -16,30 +17,35 @@ const Branch = ({
   placeholder?: boolean;
   onDelete?: (step: StepModel) => void;
   onInsert?: OnInsert;
+  paletteItem?: boolean;
 }) => (
   <div
     style={{
       border: `1px ${placeholder ? "dashed" : "solid"} #99f`,
-      padding: "5px",
+      padding: "5px 10px",
       borderRadius: "5px",
       display: "flex"
     }}
   >
-    <div style={{ flex: 1 }}>
-      {step.conditions.map((condition, idx) => (
-        <Conditional
-          style={{ flex: 1 }}
-          key={condition.id}
-          conditionLabel={idx == 0 ? "If" : "Else if"}
-          stepsLabel="Then"
-          step={condition}
-          script={script}
-          activeStep={activeStep}
-          onDelete={onDelete}
-          onInsert={onInsert}
-        />
-      ))}
-    </div>
+    {paletteItem ? (
+      "If ... then ..."
+    ) : (
+      <div style={{ flex: 1 }}>
+        {step.conditions.map((condition, idx) => (
+          <Conditional
+            style={{ flex: 1 }}
+            key={condition.id}
+            conditionLabel={idx == 0 ? "If" : "Else if"}
+            stepsLabel="Then"
+            step={condition}
+            script={script}
+            activeStep={activeStep}
+            onDelete={onDelete}
+            onInsert={onInsert}
+          />
+        ))}
+      </div>
+    )}
     {onDelete && <span onClick={() => onDelete(step)}> x</span>}
   </div>
 );
