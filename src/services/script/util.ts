@@ -1,4 +1,5 @@
 import React, { CSSProperties, ReactElement, ReactNode } from "react";
+import DeleteButton from "./components/deleteButton";
 
 /** Builds the surround elements for a step */
 export const buildSurround = (
@@ -28,15 +29,10 @@ export const buildSurround = (
       children = [{ ...(children as ReactElement), key: "childNode" }];
     }
     (children as ReactNode[]).push(
-      React.createElement(
-        "div",
-        {
-          key: "deleteNode",
-          style: { paddingLeft: "0.5em" },
-          onClick: onDelete
-        },
-        "x"
-      )
+      React.createElement(DeleteButton, {
+        key: "deleteNode",
+        onClick: onDelete
+      })
     );
   }
 

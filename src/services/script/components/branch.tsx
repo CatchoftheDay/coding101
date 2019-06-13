@@ -22,7 +22,6 @@ const Branch = ({
 }) =>
   buildSurround(
     {
-      onDelete: onDelete && (() => onDelete(step)),
       style: {
         borderColor: "#77b142",
         backgroundColor: "#fcfffa"
@@ -44,6 +43,7 @@ const Branch = ({
             activeStep={activeStep}
             onDelete={onDelete}
             onInsert={onInsert}
+            showDelete
           />
         ))}
       </div>
