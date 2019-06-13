@@ -25,7 +25,8 @@ const Condition = ({
   connectDropTarget,
   isOver,
   canDrop,
-  dispatch
+  dispatch,
+  style
 }: {
   step?: ConditionalStep | WhileStep;
   activeStep?: StepModel;
@@ -51,7 +52,8 @@ const Condition = ({
           style: {
             borderColor: "#f58928",
             borderRadius: "20px",
-            backgroundColor: isOver && canDrop ? "#ffe6d0" : "#fff4eb"
+            backgroundColor: isOver && canDrop ? "#ffe6d0" : "#fff4eb",
+            ...style
           }
         },
         <span style={{ flex: 1 }}>{condition || placeholder}</span>
