@@ -2,7 +2,7 @@ import { createReducer } from "deox";
 import { ActionStep, ConditionalStep, Script, Step, WhileStep } from "./types";
 import { deleteStep, insertStep, setAction, setCondition } from "./actions";
 import produce from "immer";
-import { getStep, getChildren } from "./selectors";
+import { getStep, getChildren, getParentStep } from "./selectors";
 
 export const initialState: Script = [];
 
@@ -28,25 +28,38 @@ export default createReducer(initialState, handle => [
     const { beforeId, parentId } = payload;
     let { step } = payload;
 
-    if (step.id !== null) {
-      script = deleteById(script, step.id);
-    } else {
-      step = { ...step, id: Math.random() };
-    }
+    script = produce(inPlaceDeleteById)(script, step.id);
 
     return produce(draftSteps => {
-      const children: Step[] = parentId
-        ? getChildren(getStep(draftSteps, parentId)!)
-        : draftSteps;
+      const parent = parentId && getStep(draftSteps, parentId);
+      const siblings: Step[] = parent ? getChildren(parent) : draftSteps;
       const insertIdx = beforeId
-        ? children.findIndex(child => child.id === beforeId)
-        : children.length;
+        ? siblings.findIndex(child => child.id === beforeId)
+        : siblings.length;
 
-      children.splice(insertIdx, 0, step);
+      siblings.splice(insertIdx, 0, step);
+
+      if (parent && parent.type === "branch") {
+        parent.conditions = normalizeBranchConditions(
+          parent.conditions
+        ) as ConditionalStep[];
+      }
     })(script);
   }),
-  handle(deleteStep, (script, { payload: deleteId }) =>
-    deleteById(script, deleteId)
+  handle(
+    deleteStep,
+    produce((draftSteps, { payload: deleteId }) => {
+      const step = getStep(draftSteps, deleteId);
+      const parent = step && getParentStep(draftSteps, step);
+
+      inPlaceDeleteById(draftSteps, deleteId);
+
+      if (parent && parent.type === "branch") {
+        parent.conditions = normalizeBranchConditions(
+          parent.conditions
+        ) as ConditionalStep[];
+      }
+    })
   ),
   handle(
     setAction,
@@ -59,12 +72,24 @@ export default createReducer(initialState, handle => [
     setCondition,
     produce((draftSteps, { payload: { id, condition } }) => {
       const step = <ConditionalStep | WhileStep>getStep(draftSteps, id);
+      const parent = getParentStep(draftSteps, step);
+
       step.condition = condition;
+
+      if (parent && parent.type === "branch") {
+        parent.conditions = normalizeBranchConditions(
+          parent.conditions
+        ) as ConditionalStep[];
+      }
     })
   )
 ]);
 
-const deleteById = produce((draftSteps: Script, deleteId: number) => {
+/**
+ * Does an in-place deletion of the step with the given ID, ie it makes
+ * direct modification to draftSteps
+ */
+const inPlaceDeleteById = (draftSteps: Script, deleteId: number) => {
   const allSteps = flattenSteps(draftSteps);
   const parent = allSteps.find(
     step => !!getChildren(step).find(step => step.id === deleteId)
@@ -75,4 +100,32 @@ const deleteById = produce((draftSteps: Script, deleteId: number) => {
   if (deleteIdx !== -1) {
     (children as Step[]).splice(deleteIdx, 1);
   }
-});
+};
+
+/**
+ * Normalises a branch step so that there are no blank conditions except for
+ * one on the end
+ */
+const normalizeBranchConditions = (
+  conditions: ReadonlyArray<ConditionalStep>
+) => {
+  // const nonEmpty = (conditionalStep: ConditionalStep) =>
+  //   conditionalStep.condition != null || conditionalStep.steps.length > 0;
+  //
+  // if (!conditions.every(nonEmpty) && conditions.length > 1) {
+  //   // Remove any empty conditions
+  //   conditions = conditions.filter(nonEmpty);
+  // }
+
+  if (
+    !conditions.length ||
+    conditions[conditions.length - 1].condition != null
+  ) {
+    // Always have an "else" clause on the end
+    conditions = conditions.concat([
+      { id: Math.random(), type: "conditional", condition: null, steps: [] }
+    ]);
+  }
+
+  return conditions;
+};

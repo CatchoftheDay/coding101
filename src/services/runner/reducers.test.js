@@ -94,7 +94,11 @@ describe("Runner reducers", () => {
   });
 
   it("Should be able to solve the maze", () => {
-    const store = createStore(reducer, undefined, applyMiddleware(executeActions));
+    const store = createStore(
+      reducer,
+      undefined,
+      applyMiddleware(executeActions)
+    );
     const { maze } = initialState;
     const maxSteps = maze.height * maze.width * 10;
 
