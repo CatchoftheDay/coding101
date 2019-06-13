@@ -36,7 +36,7 @@ export const buildSurround = (
     );
   }
 
-  return React.createElement(
+  const inner = React.createElement(
     "div",
     {
       style: {
@@ -46,12 +46,21 @@ export const buildSurround = (
         text: "black",
         background: "white",
         padding: highlight ? "3px 8px" : "5px 10px",
-        margin: "5px 0",
         borderRadius: "5px",
         display: "flex",
         ...style
       }
     },
     children
+  );
+
+  // We don't use margin because that way there are no gaps between adjacent steps, which makes
+  // our DnD code much easier
+  return React.createElement(
+    "div",
+    {
+      style: { padding: "3px 0" }
+    },
+    inner
   );
 };
