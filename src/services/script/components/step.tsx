@@ -189,61 +189,40 @@ const dropTarget = {
 
     if (
       !node ||
+      !onInsert ||
       (step && !acceptHoverByStep[step.id]) ||
       !monitor.isOver({ shallow: true }) ||
-      draggedStep === step ||
       ((step || parent) && isAncestor((step || parent)!, draggedStep))
     ) {
       return;
     }
 
-    // Determine rectangle on screen
     const hoverBoundingRect = node.getBoundingClientRect();
+    const hoverTopThirdY = hoverBoundingRect.top + hoverBoundingRect.height / 3;
+    const hoverHalfY = hoverBoundingRect.top + hoverBoundingRect.height / 2;
+    const hoverBottomThirdY =
+      hoverBoundingRect.bottom - hoverBoundingRect.height / 3;
+    const hoverY = monitor.getClientOffset()!.y;
 
-    // Get vertical middle
-    const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
+    let insertAfter: boolean;
 
-    // Determine mouse position
-    const clientOffset = monitor.getClientOffset()!;
+    if (dragParent === parent) {
+      const draggingDown = dragIndex !== -1 && dragIndex < hoverIndex;
+      const draggingUp = dragParent === parent && dragIndex > hoverIndex;
 
-    // Get pixels to the top
-    const hoverClientY = clientOffset.y - hoverBoundingRect.top;
-
-    // Only perform the move when the mouse has crossed half of the items height
-    // When dragging downwards, only move when the cursor is below 50%
-    // When dragging upwards, only move when the cursor is above 50%
-
-    // Dragging downwards
-    if (
-      dragParent === parent &&
-      dragIndex !== -1 &&
-      dragIndex < hoverIndex &&
-      hoverClientY < hoverMiddleY
-    ) {
-      return;
-    }
-
-    // Dragging upwards
-    if (
-      dragParent === parent &&
-      dragIndex > hoverIndex &&
-      hoverClientY > hoverMiddleY
-    ) {
-      return;
-    }
-
-    let before;
-    if (
-      !step ||
-      (step === siblings[siblings.length - 1] && hoverClientY > hoverMiddleY)
-    ) {
-      before = undefined;
+      insertAfter =
+        (draggingDown && hoverY > hoverTopThirdY) ||
+        (draggingUp && hoverY > hoverBottomThirdY);
     } else {
-      before = step;
+      insertAfter = hoverY > hoverHalfY;
     }
 
-    if (onInsert) {
-      onInsert(draggedStep, parent, before);
+    if (insertAfter) {
+      hoverIndex++;
+    }
+
+    if (siblings[hoverIndex] !== draggedStep) {
+      onInsert(draggedStep, parent, siblings[hoverIndex]);
     }
   }
 };
