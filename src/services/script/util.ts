@@ -59,7 +59,7 @@ export const buildSurround = (
   return React.createElement(
     "div",
     {
-      style: { padding: "3px 0" }
+      style: { padding: "3px 0", flex: 1 }
     },
     inner
   );
