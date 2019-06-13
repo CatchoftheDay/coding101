@@ -51,7 +51,7 @@ describe("Script reducers", () => {
     expect(newState[0].steps[0].conditions[3].id).toEqual(1);
   });
 
-  it("Should ensure there's always an else branch", () => {
+  it("Should ensure there's always an else branch when setting a condition", () => {
     const newState = reducers(mazeRunner, setCondition(1130, "isAtExit"));
 
     const branch = getStep(newState, 1100);
@@ -60,8 +60,25 @@ describe("Script reducers", () => {
     expect(branch.conditions[3].steps.length).toEqual(0);
   });
 
+  it("Should ensure there's always an else branch when inserting a new branch step", () => {
+    const newState = reducers(
+      [],
+      insertStep(
+        { id: 1, type: "branch", conditions: [] },
+        undefined,
+        undefined
+      )
+    );
+
+    expect(newState[0].id).toEqual(1);
+    expect(newState[0].conditions.length).toEqual(1);
+  });
+
   it("Should remove the branch when the last condition is removed", () => {
-    const state = [1110, 1120, 1130].reduce((prevState, id) => reducers(prevState, deleteStep(id)), mazeRunner);
+    const state = [1110, 1120, 1130].reduce(
+      (prevState, id) => reducers(prevState, deleteStep(id)),
+      mazeRunner
+    );
 
     expect(getStep(state, 1100)).toBeUndefined();
   });

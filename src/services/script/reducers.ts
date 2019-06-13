@@ -1,5 +1,12 @@
 import { createReducer } from "deox";
-import { ActionStep, ConditionalStep, Script, Step, WhileStep } from "./types";
+import {
+  ActionStep,
+  BranchStep,
+  ConditionalStep,
+  Script,
+  Step,
+  WhileStep
+} from "./types";
 import { deleteStep, insertStep, setAction, setCondition } from "./actions";
 import produce from "immer";
 import { getStep, getChildren, getParentStep, getSiblings } from "./selectors";
@@ -29,6 +36,13 @@ export default createReducer(initialState, handle => [
     let { step } = payload;
 
     script = produce(inPlaceDeleteById)(script, step.id);
+
+    if (step.type === "branch") {
+      step = {
+        ...step,
+        conditions: ensureBranchHasElseCondition(step.conditions)
+      } as BranchStep;
+    }
 
     return produce(draftSteps => {
       const parent = parentId && getStep(draftSteps, parentId);
