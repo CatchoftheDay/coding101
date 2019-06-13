@@ -40,7 +40,12 @@ interface StepProps {
   style?: CSSProperties;
   onInsert?: OnInsert;
   paletteItem?: boolean;
+  canDrop: boolean;
 }
+
+// Workaround for hover() being called with incorrect monitor.isOver({shallow: true}) values the first time */
+const acceptHoverByStep: { [stepId: string]: boolean } = {};
+const acceptHoverTimeouts: { [stepId: string]: number } = {};
 
 const Step = React.forwardRef(
   (
@@ -54,7 +59,8 @@ const Step = React.forwardRef(
       onDelete,
       onInsert,
       style,
-      paletteItem
+      paletteItem,
+      canDrop
     }: StepProps,
     ref
   ) => {
@@ -65,6 +71,18 @@ const Step = React.forwardRef(
     }
     if (script && onInsert) {
       connectDropTarget(elementRef);
+
+      if (step) {
+        if (canDrop && !acceptHoverTimeouts[step.id]) {
+          acceptHoverTimeouts[step.id] = window.setTimeout(() => {
+            acceptHoverByStep[step.id] = true;
+          }, 200);
+        } else if (!canDrop && acceptHoverTimeouts[step.id]) {
+          clearTimeout(acceptHoverTimeouts[step.id]);
+          delete acceptHoverTimeouts[step.id];
+          delete acceptHoverByStep[step.id];
+        }
+      }
     }
     useImperativeHandle<{}, StepInstance>(ref, () => ({
       getNode: () => elementRef.current
@@ -150,7 +168,13 @@ const dragCollect = (
 
 const dropTarget = {
   hover(
-    { step, parent, script, onInsert }: StepProps & { script: Script },
+    {
+      step,
+      parent,
+      script,
+      onInsert,
+      canDrop
+    }: StepProps & { script: Script; canDrop: boolean },
     monitor: DropTargetMonitor,
     component: StepInstance
   ) {
@@ -161,10 +185,11 @@ const dropTarget = {
     const siblings = parent ? getChildren(parent) : script;
     const node = component && component.getNode();
     const dragIndex = getSiblingIndex(script, draggedStep);
-    const hoverIndex = step ? siblings.indexOf(step) : 0;
+    let hoverIndex = step ? siblings.indexOf(step) : 0;
 
     if (
       !node ||
+      (step && !acceptHoverByStep[step.id]) ||
       !monitor.isOver({ shallow: true }) ||
       draggedStep === step ||
       ((step || parent) && isAncestor((step || parent)!, draggedStep))
