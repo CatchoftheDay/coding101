@@ -197,6 +197,7 @@ const dropTarget = {
       return;
     }
 
+    const sameParent = siblings.indexOf(draggedStep) !== -1;
     const hoverBoundingRect = node.getBoundingClientRect();
     const hoverTopThirdY = hoverBoundingRect.top + hoverBoundingRect.height / 3;
     const hoverHalfY = hoverBoundingRect.top + hoverBoundingRect.height / 2;
@@ -206,7 +207,7 @@ const dropTarget = {
 
     let insertAfter: boolean;
 
-    if (dragParent === parent) {
+    if (sameParent) {
       const draggingDown = dragIndex !== -1 && dragIndex < hoverIndex;
       const draggingUp = dragParent === parent && dragIndex > hoverIndex;
 
