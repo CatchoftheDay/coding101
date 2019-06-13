@@ -60,6 +60,12 @@ describe("Script reducers", () => {
     expect(branch.conditions[3].steps.length).toEqual(0);
   });
 
+  it("Should remove the branch when the last condition is removed", () => {
+    const state = [1110, 1120, 1130].reduce((prevState, id) => reducers(prevState, deleteStep(id)), mazeRunner);
+
+    expect(getStep(state, 1100)).toBeUndefined();
+  });
+
   it("Should delete root node correctly", () => {
     const newState = reducers(mazeRunner, deleteStep(1000));
 

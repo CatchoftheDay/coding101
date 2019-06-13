@@ -2,7 +2,7 @@ import { createReducer } from "deox";
 import { ActionStep, ConditionalStep, Script, Step, WhileStep } from "./types";
 import { deleteStep, insertStep, setAction, setCondition } from "./actions";
 import produce from "immer";
-import { getStep, getChildren, getParentStep } from "./selectors";
+import { getStep, getChildren, getParentStep, getSiblings } from "./selectors";
 
 export const initialState: Script = [];
 
@@ -40,7 +40,7 @@ export default createReducer(initialState, handle => [
       siblings.splice(insertIdx, 0, step);
 
       if (parent && parent.type === "branch") {
-        parent.conditions = normalizeBranchConditions(
+        parent.conditions = ensureBranchHasElseCondition(
           parent.conditions
         ) as ConditionalStep[];
       }
@@ -55,9 +55,15 @@ export default createReducer(initialState, handle => [
       inPlaceDeleteById(draftSteps, deleteId);
 
       if (parent && parent.type === "branch") {
-        parent.conditions = normalizeBranchConditions(
-          parent.conditions
-        ) as ConditionalStep[];
+        if (parent.conditions.length === 0) {
+          // All the conditions have been removedl delete hte branch
+          const parentSiblings = getSiblings(draftSteps, parent) as Step[];
+          parentSiblings.splice(parentSiblings.indexOf(parent), 1);
+        } else {
+          parent.conditions = ensureBranchHasElseCondition(
+            parent.conditions
+          ) as ConditionalStep[];
+        }
       }
     })
   ),
@@ -77,7 +83,7 @@ export default createReducer(initialState, handle => [
       step.condition = condition;
 
       if (parent && parent.type === "branch") {
-        parent.conditions = normalizeBranchConditions(
+        parent.conditions = ensureBranchHasElseCondition(
           parent.conditions
         ) as ConditionalStep[];
       }
@@ -106,17 +112,9 @@ const inPlaceDeleteById = (draftSteps: Script, deleteId: number) => {
  * Normalises a branch step so that there are no blank conditions except for
  * one on the end
  */
-const normalizeBranchConditions = (
+const ensureBranchHasElseCondition = (
   conditions: ReadonlyArray<ConditionalStep>
 ) => {
-  // const nonEmpty = (conditionalStep: ConditionalStep) =>
-  //   conditionalStep.condition != null || conditionalStep.steps.length > 0;
-  //
-  // if (!conditions.every(nonEmpty) && conditions.length > 1) {
-  //   // Remove any empty conditions
-  //   conditions = conditions.filter(nonEmpty);
-  // }
-
   if (
     !conditions.length ||
     conditions[conditions.length - 1].condition != null
