@@ -3,7 +3,7 @@ import Maze, { Direction } from "../maze/maze";
 import { moveForward, step, turnLeft, turnRight } from "./actions";
 import { executeActions } from "./middleware";
 import reducer, { initialState as reducerInitialState } from "./reducers";
-import { isCrashed, getFacing, getLocation, isAtExit } from "./selectors";
+import { isCrashed, getFacing, getLocation, isAtFinish } from "./selectors";
 
 const initialState = {
   ...reducerInitialState,
@@ -107,13 +107,13 @@ describe("Runner reducers", () => {
     while (
       stepNum < maxSteps &&
       !isCrashed(store.getState()) &&
-      !isAtExit(store.getState())
+      !isAtFinish(store.getState())
     ) {
       stepNum++;
       store.dispatch(step());
     }
 
-    expect(isAtExit(store.getState())).toEqual(true);
+    expect(isAtFinish(store.getState())).toEqual(true);
     expect(isCrashed(store.getState())).toEqual(false);
   });
 });

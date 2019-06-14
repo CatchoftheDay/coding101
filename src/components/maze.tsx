@@ -2,6 +2,7 @@ import React, { CSSProperties, ReactElement } from "react";
 import MazeModel, { Direction, Location } from "../services/maze/maze";
 
 const borderWidth = "1px";
+const finishGridSize = 6;
 
 const Maze = ({
   maze,
@@ -38,7 +39,17 @@ const Maze = ({
         Object.assign(cellStyle, getBorderStyle({ x, y }, Direction.RIGHT));
       }
 
-      cells.push(<div key={x} style={cellStyle} />);
+      let inner = null;
+      if (x === maze.width - 1 && y === maze.height - 1) {
+        cellStyle.position = "relative";
+        inner = buildFinishMarker();
+      }
+
+      cells.push(
+        <div key={x} style={cellStyle}>
+          {inner}
+        </div>
+      );
     }
   }
 
@@ -87,6 +98,44 @@ export const getDimensions = (
   const top = (height - size * maze.height) / 2;
 
   return { size, left, top };
+};
+
+const buildFinishMarker = () => {
+  const elements: ReactElement[] = [];
+  const sizePc = 100 / finishGridSize;
+  const size = `${sizePc}%`;
+
+  for (let y = 0; y < finishGridSize; y++) {
+    for (let x = y % 2; x < finishGridSize; x += 2) {
+      elements.push(
+        <div
+          key={`${x}.${y}`}
+          style={{
+            position: "absolute",
+            top: `${y * sizePc}%`,
+            left: `${x * sizePc}%`,
+            width: size,
+            height: size,
+            background: "#ddd"
+          }}
+        />
+      );
+    }
+  }
+
+  return (
+    <div
+      style={{
+        position: "absolute",
+        top: borderWidth,
+        left: borderWidth,
+        right: borderWidth,
+        bottom: borderWidth
+      }}
+    >
+      {elements}
+    </div>
+  );
 };
 
 export default Maze;

@@ -28,7 +28,7 @@ describe("Script reducers", () => {
     const newState = reducers(
       mazeRunner,
       insertStep(
-        { id: 1, type: "conditional", condition: "isAtExit", steps: [] },
+        { id: 1, type: "conditional", condition: "isAtFinish", steps: [] },
         1100,
         1110
       )
@@ -42,7 +42,7 @@ describe("Script reducers", () => {
     const newState = reducers(
       mazeRunner,
       insertStep(
-        { id: 1, type: "conditional", condition: "isAtExit", steps: [] },
+        { id: 1, type: "conditional", condition: "isAtFinish", steps: [] },
         1100,
         null
       )
@@ -52,10 +52,10 @@ describe("Script reducers", () => {
   });
 
   it("Should ensure there's always an else branch when setting a condition", () => {
-    const newState = reducers(mazeRunner, setCondition(1130, "isAtExit"));
+    const newState = reducers(mazeRunner, setCondition(1130, "isAtFinish"));
 
     const branch = getStep(newState, 1100);
-    expect(branch.conditions[2].condition).toEqual("isAtExit");
+    expect(branch.conditions[2].condition).toEqual("isAtFinish");
     expect(branch.conditions[3].condition).toEqual(null);
     expect(branch.conditions[3].steps.length).toEqual(0);
   });
@@ -104,8 +104,8 @@ describe("Script reducers", () => {
   });
 
   it("Should set the condition", () => {
-    const newState = reducers(mazeRunner, setCondition(1110, "isAtExit"));
+    const newState = reducers(mazeRunner, setCondition(1110, "isAtFinish"));
 
-    expect(newState[0].steps[0].conditions[0].condition).toEqual("isAtExit");
+    expect(newState[0].steps[0].conditions[0].condition).toEqual("isAtFinish");
   });
 });

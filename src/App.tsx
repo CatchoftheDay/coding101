@@ -41,8 +41,8 @@ class App extends Component {
               style={{ flex: 0 }}
               actions={["turnLeft", "turnRight", "moveForward"]}
               conditions={[
-                "atExit",
-                "notAtExit",
+                "atFinish",
+                "notAtFinish",
                 "canMoveLeft",
                 "canMoveForward",
                 "canMoveRight"

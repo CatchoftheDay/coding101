@@ -15,7 +15,7 @@ import { moveForward, turnLeft, turnRight } from "./actions";
 /** Returns true if we've crashed */
 export const isCrashed = (state: RunnerState) => state.crashed;
 /** Returns true if we're currently at the maze's exit */
-export const isAtExit = (state: RunnerState) =>
+export const isAtFinish = (state: RunnerState) =>
   state.location.x === state.maze.width - 1 &&
   state.location.y === state.maze.height - 1;
 /** Returns true if we're able to move left from our current location */
@@ -163,8 +163,8 @@ const actions: { [actionName: string]: AnyAction } = {
 };
 
 const conditions: { [condition: string]: (state: RunnerState) => boolean } = {
-  atExit: state => isAtExit(state),
-  notAtExit: state => !isAtExit(state),
+  atFinish: state => isAtFinish(state),
+  notAtFinish: state => !isAtFinish(state),
   canMoveLeft,
   canMoveForward,
   canMoveRight
