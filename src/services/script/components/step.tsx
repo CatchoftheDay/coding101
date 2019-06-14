@@ -21,7 +21,7 @@ import {
 } from "react-dnd";
 import { ItemTypes } from "../constants";
 import { getChildren, getSiblingIndex, isAncestor } from "../selectors";
-import { buildSurround } from "../util";
+import { buildSurround, isAcceptHover, startDrag, stopDrag } from "../util";
 
 interface StepProps {
   connectDragSource: ConnectDragSource;
@@ -37,10 +37,6 @@ interface StepProps {
   paletteItem?: boolean;
   canDrop: boolean;
 }
-
-// Workaround for hover() being called with incorrect monitor.isOver({shallow: true}) values the first time */
-const acceptHoverByStep: { [stepId: string]: boolean } = {};
-const acceptHoverTimeouts: { [stepId: string]: number } = {};
 
 const Step = React.forwardRef(
   (
@@ -68,14 +64,10 @@ const Step = React.forwardRef(
       connectDropTarget(elementRef);
 
       if (step) {
-        if (canDrop && !acceptHoverTimeouts[step.id]) {
-          acceptHoverTimeouts[step.id] = window.setTimeout(() => {
-            acceptHoverByStep[step.id] = true;
-          }, 200);
-        } else if (!canDrop && acceptHoverTimeouts[step.id]) {
-          clearTimeout(acceptHoverTimeouts[step.id]);
-          delete acceptHoverTimeouts[step.id];
-          delete acceptHoverByStep[step.id];
+        if (canDrop) {
+          startDrag(step.id);
+        } else {
+          stopDrag(step.id);
         }
       }
     }
@@ -183,7 +175,7 @@ const dropTarget = {
     if (
       !node ||
       !onInsert ||
-      (step && !acceptHoverByStep[step.id]) ||
+      (step && !isAcceptHover(step.id)) ||
       !monitor.isOver({ shallow: true }) ||
       ((step || parent) && isAncestor((step || parent)!, draggedStep))
     ) {

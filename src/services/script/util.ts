@@ -64,3 +64,27 @@ export const buildSurround = (
     inner
   );
 };
+
+// Workaround for hover() being called with incorrect monitor.isOver({shallow: true}) values the first time */
+let acceptHoverById: { [id: number]: true } = {};
+let acceptHoverTimeoutById: { [id: number]: number } = {};
+
+/** Notification that a drag operation has started */
+export const startDrag = (id: number) => {
+  if (!acceptHoverTimeoutById[id]) {
+    acceptHoverTimeoutById[id] = window.setTimeout(
+      () => (acceptHoverById[id] = true),
+      200
+    );
+  }
+};
+
+/** Notification that the drag operation has stopped */
+export const stopDrag = (id: number) => {
+  delete acceptHoverById[id];
+  clearTimeout(acceptHoverTimeoutById[id]);
+  delete acceptHoverTimeoutById[id];
+};
+
+/** Returns true if hover events should be ignored */
+export const isAcceptHover = (id: number) => acceptHoverById[id];
