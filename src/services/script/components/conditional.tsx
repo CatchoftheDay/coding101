@@ -144,7 +144,8 @@ const dropTarget = {
       !onInsert ||
       (step && !isAcceptHover(step.id)) ||
       !monitor.isOver({ shallow: true }) ||
-      ((step || parent) && isAncestor((step || parent)!, draggedStep))
+      ((step || parent) && isAncestor((step || parent)!, draggedStep)) ||
+      step.steps.find(s => draggedStep.id === s.id)
     ) {
       return;
     }

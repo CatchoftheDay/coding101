@@ -196,7 +196,7 @@ const dropTarget = {
 
     const insertIdx = step ? siblings.indexOf(step) + (insertAfter ? 1 : 0) : 0;
 
-    if (siblings[insertIdx] !== draggedStep) {
+    if (!siblings[insertIdx] || siblings[insertIdx].id !== draggedStep.id) {
       onInsert(draggedStep, parent, siblings[insertIdx]);
     }
   }
