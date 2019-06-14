@@ -20,12 +20,7 @@ import {
   DropTargetMonitor
 } from "react-dnd";
 import { ItemTypes } from "../constants";
-import {
-  getChildren,
-  getParentStep,
-  getSiblingIndex,
-  isAncestor
-} from "../selectors";
+import { getChildren, getSiblingIndex, isAncestor } from "../selectors";
 import { buildSurround } from "../util";
 
 interface StepProps {
@@ -181,11 +176,9 @@ const dropTarget = {
     fixRegistry(monitor);
 
     const draggedStep = monitor.getItem().step;
-    const dragParent = getParentStep(script, draggedStep);
     const siblings = parent ? getChildren(parent) : script;
     const node = component && component.getNode();
     const dragIndex = getSiblingIndex(script, draggedStep);
-    let hoverIndex = step ? siblings.indexOf(step) : 0;
 
     if (
       !node ||
@@ -199,31 +192,20 @@ const dropTarget = {
 
     const sameParent = siblings.indexOf(draggedStep) !== -1;
     const hoverBoundingRect = node.getBoundingClientRect();
-    const hoverTopThirdY = hoverBoundingRect.top + hoverBoundingRect.height / 3;
     const hoverHalfY = hoverBoundingRect.top + hoverBoundingRect.height / 2;
-    const hoverBottomThirdY =
-      hoverBoundingRect.bottom - hoverBoundingRect.height / 3;
     const hoverY = monitor.getClientOffset()!.y;
 
     let insertAfter: boolean;
-
     if (sameParent) {
-      const draggingDown = dragIndex !== -1 && dragIndex < hoverIndex;
-      const draggingUp = dragParent === parent && dragIndex > hoverIndex;
-
-      insertAfter =
-        (draggingDown && hoverY > hoverTopThirdY) ||
-        (draggingUp && hoverY > hoverBottomThirdY);
+      insertAfter = dragIndex !== -1 && dragIndex < siblings.indexOf(step!);
     } else {
       insertAfter = hoverY > hoverHalfY;
     }
 
-    if (insertAfter) {
-      hoverIndex++;
-    }
+    const insertIdx = step ? siblings.indexOf(step) + (insertAfter ? 1 : 0) : 0;
 
-    if (siblings[hoverIndex] !== draggedStep) {
-      onInsert(draggedStep, parent, siblings[hoverIndex]);
+    if (siblings[insertIdx] !== draggedStep) {
+      onInsert(draggedStep, parent, siblings[insertIdx]);
     }
   }
 };
