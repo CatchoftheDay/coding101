@@ -8,4 +8,5 @@ export enum Stage {
 export interface TutorialState {
   stage: Stage;
   runner: RunnerState;
+  keystrokes: string;
 }

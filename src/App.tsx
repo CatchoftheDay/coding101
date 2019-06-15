@@ -15,6 +15,8 @@ import {
 import StepList from "./services/script/containers/stepList";
 import reducers, { initialState } from "./reducers";
 import { Col, Row } from "react-bootstrap";
+import { addKey } from "./actions";
+import { checkCodes } from "./middleware";
 
 const composeEnhancers =
   (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
@@ -22,8 +24,12 @@ const composeEnhancers =
 const store = createStore(
   reducers,
   initialState,
-  composeEnhancers(applyMiddleware(executeActions, resetOnScriptChange))
+  composeEnhancers(
+    applyMiddleware(executeActions, resetOnScriptChange, checkCodes)
+  )
 );
+
+window.addEventListener("keypress", ({ key }) => store.dispatch(addKey(key)));
 
 class App extends Component {
   render() {

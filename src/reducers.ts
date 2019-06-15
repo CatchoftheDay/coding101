@@ -1,8 +1,8 @@
 import { combineReducers } from "redux";
+import { createReducer } from "deox";
 import runnerReducer from "./services/runner/reducers";
 import { Stage } from "./types";
-import { createReducer } from "deox";
-import { advanceTo } from "./actions";
+import { addKey, advanceTo } from "./actions";
 
 const stageReducer = createReducer(Stage.ACTIONS_ONLY, handle => [
   handle(advanceTo, (currStage, { payload: newStage }) =>
@@ -10,9 +10,17 @@ const stageReducer = createReducer(Stage.ACTIONS_ONLY, handle => [
   )
 ]);
 
+const keystrokeReducer = createReducer("", handle => [
+  handle(
+    addKey,
+    (enteredSoFar, { payload: char }) => enteredSoFar.substr(-15) + char
+  )
+]);
+
 const reducers = combineReducers({
   runner: runnerReducer,
-  stage: stageReducer
+  stage: stageReducer,
+  keystrokes: keystrokeReducer
 });
 
 export const initialState = reducers(undefined, { type: null });
