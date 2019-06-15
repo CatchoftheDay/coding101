@@ -5,14 +5,15 @@ import {
   getMaze,
   isCrashed
 } from "../services/runner/selectors";
-import { RunnerState } from "../services/runner/types";
 import { connect } from "react-redux";
+import { getRunner } from "../selectors";
+import { TutorialState } from "../types";
 
-const mapStateToProps = (state: RunnerState) => ({
-  maze: getMaze(state),
-  crashed: isCrashed(state),
-  location: getLocation(state),
-  facing: getFacing(state)
+const mapStateToProps = (state: TutorialState) => ({
+  maze: getMaze(getRunner(state)),
+  crashed: isCrashed(getRunner(state)),
+  location: getLocation(getRunner(state)),
+  facing: getFacing(getRunner(state))
 });
 
 export default connect(mapStateToProps)(_MazeAndRunner);

@@ -2,6 +2,8 @@ import React, { CSSProperties, ReactNode } from "react";
 import Condition from "../services/script/components/condition";
 import Step from "../services/script/components/step";
 
+const spacerStyle = { marginTop: "1em" };
+
 const Palette = ({
   actions,
   conditions,
@@ -17,7 +19,10 @@ const Palette = ({
 
   if (actions.length) {
     widgets.push(
-      <div key={"actionsHeader"}>
+      <div
+        key={"actionsHeader"}
+        style={widgets.length ? spacerStyle : undefined}
+      >
         <strong>Actions</strong>
       </div>
     );
@@ -28,20 +33,12 @@ const Palette = ({
     );
   }
 
-  if (conditions.length) {
-    widgets.push(
-      <div key={"conditionsHeader"}>
-        <strong>Conditions</strong>
-      </div>
-    );
-    conditions.forEach((condition, idx) =>
-      widgets.push(<Condition key={`condition${idx}`} condition={condition} />)
-    );
-  }
-
   if (controls.length) {
     widgets.push(
-      <div key={"controlsHeader"}>
+      <div
+        key={"controlsHeader"}
+        style={widgets.length ? spacerStyle : undefined}
+      >
         <strong>Control</strong>
       </div>
     );
@@ -64,6 +61,20 @@ const Palette = ({
         );
       }
     });
+  }
+
+  if (conditions.length) {
+    widgets.push(
+      <div
+        key={"conditionsHeader"}
+        style={widgets.length ? spacerStyle : undefined}
+      >
+        <strong>Conditions</strong>
+      </div>
+    );
+    conditions.forEach((condition, idx) =>
+      widgets.push(<Condition key={`condition${idx}`} condition={condition} />)
+    );
   }
 
   return <div style={style}>{widgets}</div>;

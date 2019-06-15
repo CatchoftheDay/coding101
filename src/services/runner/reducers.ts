@@ -13,7 +13,6 @@ import { Script } from "../script/types";
 import scriptReducers from "../script/reducers";
 import { getFirstStepId } from "../script/selectors";
 import { RunnerState } from "./types";
-import { mazeRunner } from "../script/constants";
 import { getNextStepId } from "./selectors";
 import { DeepImmutableObject } from "deox/dist/types";
 
@@ -24,7 +23,7 @@ export const buildInitialState = (
     crashed?: boolean;
     maze?: Maze;
     script: Script;
-  } = { script: mazeRunner }
+  } = { script: [] }
 ): RunnerState => {
   const { script } = modelState;
   const location = modelState.location || { x: 0, y: 0 };

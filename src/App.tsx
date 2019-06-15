@@ -6,14 +6,14 @@ import { Provider } from "react-redux";
 import { applyMiddleware, compose, createStore } from "redux";
 import "./App.scss";
 import Controls from "./containers/controls";
+import Palette from "./containers/palette";
 import MazeAndRunner from "./containers/mazeAndRunner";
 import {
   executeActions,
   resetOnScriptChange
 } from "./services/runner/middleware";
 import StepList from "./services/script/containers/stepList";
-import reducers, { initialState } from "./services/runner/reducers";
-import Palette from "./components/palette";
+import reducers, { initialState } from "./reducers";
 import { Col, Row } from "react-bootstrap";
 
 const composeEnhancers =
@@ -43,18 +43,7 @@ class App extends Component {
               <StepList />
             </Col>
             <Col className="col-md=3 col-lg-2 col-xl-2">
-              <Palette
-                style={{ flex: 0 }}
-                actions={["turnLeft", "turnRight", "moveForward"]}
-                conditions={[
-                  "atFinish",
-                  "notAtFinish",
-                  "canMoveLeft",
-                  "canMoveForward",
-                  "canMoveRight"
-                ]}
-                controls={["branch", "while"]}
-              />
+              <Palette style={{ flex: 0 }} />
             </Col>
           </Row>
         </DragDropContextProvider>

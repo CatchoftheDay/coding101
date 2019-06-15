@@ -1,15 +1,16 @@
 import { AnyAction, Dispatch, Middleware, MiddlewareAPI } from "redux";
 import { reset, step } from "./actions";
 import { getCurrentAction } from "./selectors";
-import { RunnerState } from "./types";
+import { TutorialState } from "../../types";
+import { getRunner } from "../../selectors";
 
 const stepType = step().type;
 
-export const executeActions: Middleware<{}, RunnerState> = (
-  store: MiddlewareAPI<Dispatch, RunnerState>
+export const executeActions: Middleware<{}, TutorialState> = (
+  store: MiddlewareAPI<Dispatch, TutorialState>
 ) => (next: Dispatch) => (action: AnyAction) => {
   if (action.type === stepType) {
-    const stepAction = getCurrentAction(store.getState());
+    const stepAction = getCurrentAction(getRunner(store.getState()));
 
     if (stepAction) {
       store.dispatch(stepAction);
@@ -19,14 +20,14 @@ export const executeActions: Middleware<{}, RunnerState> = (
   return next(action);
 };
 
-export const resetOnScriptChange: Middleware<{}, RunnerState> = (
-  store: MiddlewareAPI<Dispatch, RunnerState>
+export const resetOnScriptChange: Middleware<{}, TutorialState> = (
+  store: MiddlewareAPI<Dispatch, TutorialState>
 ) => (next: Dispatch) => (action: AnyAction) => {
-  const origScript = store.getState().script;
+  const origScript = getRunner(store.getState()).script;
 
   const result = next(action);
 
-  if (store.getState().script !== origScript) {
+  if (getRunner(store.getState()).script !== origScript) {
     store.dispatch(reset());
   }
 

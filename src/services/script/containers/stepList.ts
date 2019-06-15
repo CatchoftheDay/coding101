@@ -1,16 +1,17 @@
-import _StepList from "../components/stepList";
 import { connect } from "react-redux";
-import { Step as StepModel } from "../types";
 import { Dispatch } from "redux";
-import { deleteStep, insertStep } from "../actions";
-import { RunnerState } from "../../runner/types";
+import { getRunner } from "../../../selectors";
+import { TutorialState } from "../../../types";
 import { getCurrentStep, getScript, isCrashed } from "../../runner/selectors";
+import { deleteStep, insertStep } from "../actions";
+import _StepList from "../components/stepList";
+import { Step as StepModel } from "../types";
 
-const mapStateToProps = (state: RunnerState) => ({
-  steps: getScript(state),
-  script: getScript(state),
-  activeStep: getCurrentStep(state),
-  crashed: isCrashed(state)
+const mapStateToProps = (state: TutorialState) => ({
+  steps: getScript(getRunner(state)),
+  script: getScript(getRunner(state)),
+  activeStep: getCurrentStep(getRunner(state)),
+  crashed: isCrashed(getRunner(state))
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({

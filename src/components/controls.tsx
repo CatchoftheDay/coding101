@@ -8,7 +8,8 @@ const Controls = ({
   onStep,
   onRun,
   onPause,
-  onNewMaze
+  onNewMaze,
+  showNewMaze
 }: {
   running: boolean;
   crashed: boolean;
@@ -18,6 +19,7 @@ const Controls = ({
   onPause?: () => void;
   onNewMaze?: () => void;
   onSetSize?: (size: number) => void;
+  showNewMaze: boolean;
 }) => {
   return (
     <div
@@ -60,7 +62,7 @@ const Controls = ({
         )}
       </div>
       <div>
-        {onNewMaze && (
+        {showNewMaze && onNewMaze && (
           <Button
             style={{ marginRight: "5px" }}
             variant="outline-secondary"
