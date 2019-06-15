@@ -17,24 +17,43 @@ const MazeAndRunner = ({
   facing: Direction;
   width?: number;
   height?: number;
-}) => (
-  <div style={{ position: "relative" }}>
-    <Maze
-      maze={maze}
-      width={width}
-      height={height}
-      style={{ position: "relative" }}
-    />
-    <Runner
-      maze={maze}
-      crashed={crashed}
-      location={location}
-      facing={facing}
-      width={width}
-      height={height}
-      style={{ position: "absolute", top: 0, left: 0 }}
-    />
-  </div>
-);
+}) => {
+  const { size } = getDimensions(maze, width, height);
+
+  return (
+    <div
+      style={{
+        position: "relative",
+        width: `${size * maze.width}px`,
+        height: `${size * maze.width}px`,
+        border: "2px solid black"
+      }}
+    >
+      <Maze maze={maze} style={{ position: "relative", height: "100%" }} />
+      <Runner
+        maze={maze}
+        crashed={crashed}
+        location={location}
+        facing={facing}
+        style={{ position: "absolute" }}
+      />
+    </div>
+  );
+};
+
+/** Gets the cell size and left and top margins */
+export const getDimensions = (
+  maze: MazeModel,
+  width: number,
+  height: number
+) => {
+  const desiredCellHeight = height / maze.height;
+  const desiredCellWidth = width / maze.width;
+  const size = Math.floor(Math.min(desiredCellHeight, desiredCellWidth));
+  const left = (width - size * maze.width) / 2;
+  const top = (height - size * maze.height) / 2;
+
+  return { size, left, top };
+};
 
 export default MazeAndRunner;

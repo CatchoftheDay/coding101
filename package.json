@@ -6,13 +6,16 @@
     "@types/jest": "24.0.11",
     "@types/node": "11.12.0",
     "@types/react": "16.8.10",
+    "@types/react-bootstrap": "^0.32.17",
     "@types/react-dnd": "^3.0.2",
     "@types/react-dom": "16.8.3",
     "@types/react-redux": "^7.0.9",
     "@types/seedrandom": "^2.4.28",
+    "bootstrap": "^4.3.1",
     "deox": "^1.4.0",
     "immer": "^3.1.1",
     "react": "^16.8.5",
+    "react-bootstrap": "^1.0.0-beta.8",
     "react-container-dimensions": "^1.4.1",
     "react-dnd": "^7.4.5",
     "react-dnd-html5-backend": "^7.4.4",
@@ -41,6 +44,7 @@
     "not op_mini all"
   ],
   "devDependencies": {
+    "node-sass": "^4.12.0",
     "prettier": "^1.16.4",
     "tslint": "^5.14.0",
     "tslint-config-prettier": "^1.18.0"

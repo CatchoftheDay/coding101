@@ -1,56 +1,35 @@
 import React, { CSSProperties } from "react";
 import Maze, { Direction, Location } from "../services/maze/maze";
-import { getDimensions } from "./maze";
 import runnerImg from "./resources/runner.png";
 
-const maxSize = 64;
 const imageSizeMultiplier = 0.66;
 
 const Runner = ({
   maze,
-  location,
+  location: { x, y },
   facing,
-  width = 0,
-  height = 0,
   style
 }: {
   maze: Maze;
   crashed: boolean;
   location: Location;
   facing: Direction;
-  width?: number;
-  height?: number;
   style?: CSSProperties;
-}) => {
-  const { size, left, top } = getDimensions(maze, width, height);
-  const { x, y } = location;
-
-  return (
-    <div
-      style={{
-        marginLeft: left,
-        marginTop: top,
-        position: "relative",
-        fontSize: "300%",
-        fontWeight: "bold",
-        ...style
-      }}
-    >
-      <img
-        style={{
-          position: "absolute",
-          top: (y + 0.5) * size,
-          left: (x + 0.5) * size,
-          transform: `translate(-50%, -50%) rotate(${getAngle(facing)}deg)`
-        }}
-        alt="Runner position"
-        src={runnerImg}
-        width={`${Math.min(size * imageSizeMultiplier, maxSize)}px`}
-        height={`${Math.min(size * imageSizeMultiplier, maxSize)}px`}
-      />
-    </div>
-  );
-};
+}) => (
+  <img
+    style={{
+      position: "absolute",
+      left: `${(100 / maze.width) * (x + (1 - imageSizeMultiplier) / 2)}%`,
+      top: `${(100 / maze.height) * (y + (1 - imageSizeMultiplier) / 2)}%`,
+      transform: `rotate(${getAngle(facing)}deg)`,
+      ...style
+    }}
+    alt="Runner position"
+    src={runnerImg}
+    width={`${(100 / maze.width) * imageSizeMultiplier}%`}
+    height={`${(100 / maze.height) * imageSizeMultiplier}%`}
+  />
+);
 
 const getAngle = (facing: Direction) => {
   switch (facing) {

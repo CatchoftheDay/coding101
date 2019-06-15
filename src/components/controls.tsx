@@ -1,4 +1,5 @@
 import React from "react";
+import { Button } from "react-bootstrap";
 
 const Controls = ({
   running,
@@ -19,20 +20,56 @@ const Controls = ({
   onSetSize?: (size: number) => void;
 }) => {
   return (
-    <div style={{ borderBottom: "1px solid black", padding: "5px" }}>
-      {onStep && (
-        <button disabled={crashed} onClick={onStep}>
-          Step
-        </button>
-      )}
-      {(running ? onPause : onRun) && (
-        <button disabled={crashed} onClick={running ? onPause : onRun}>
-          {running ? "Pause" : "Run"}
-        </button>
-      )}
-      {onReset && <button onClick={onReset}>Reset</button>}
-      {onNewMaze && <button onClick={onNewMaze}>Generate new maze</button>}
-      {/*{onSetSize && <button onClick={onStep}>Step</button>}*/}
+    <div
+      style={{
+        borderBottom: "1px solid #ccc",
+        padding: "5px",
+        display: "flex",
+        justifyContent: "space-between"
+      }}
+    >
+      <div>
+        {onStep && (
+          <Button
+            style={{ marginRight: "5px" }}
+            disabled={crashed}
+            variant="outline-primary"
+            onClick={onStep}
+          >
+            Step
+          </Button>
+        )}
+        {(running ? onPause : onRun) && (
+          <Button
+            style={{ marginRight: "5px" }}
+            disabled={crashed}
+            variant="outline-primary"
+            onClick={running ? onPause : onRun}
+          >
+            {running ? "Pause" : "Run"}
+          </Button>
+        )}
+        {onReset && (
+          <Button
+            style={{ marginRight: "5px" }}
+            variant="outline-secondary"
+            onClick={onReset}
+          >
+            Reset
+          </Button>
+        )}
+      </div>
+      <div>
+        {onNewMaze && (
+          <Button
+            style={{ marginRight: "5px" }}
+            variant="outline-secondary"
+            onClick={onNewMaze}
+          >
+            Generate new maze
+          </Button>
+        )}
+      </div>
     </div>
   );
 };
