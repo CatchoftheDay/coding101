@@ -59,7 +59,10 @@ const runnerReducer = createReducer(initialState, handle => [
   handle(newMaze, state =>
     resetState({
       ...state,
-      maze: new Maze({ width: 5, randomSeed: Math.random() + "" })
+      maze: new Maze({
+        width: state.maze.width,
+        randomSeed: Math.random() + ""
+      })
     })
   ),
   handle(
