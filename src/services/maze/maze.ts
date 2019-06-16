@@ -15,6 +15,8 @@ export enum Direction {
 /** A marker to say that no path runs through this cell. Cells only ever exist
  * in this state during the building process */
 const EMPTY = 16;
+/** Indicates that the cell is not reachable without passing through the door first */
+const AFTER_DOOR = 32;
 
 const directions: ReadonlyArray<Direction> = [
   Direction.UP,
@@ -33,6 +35,12 @@ class Maze {
   /** The cells of the maze */
   public readonly cells: ReadonlyArray<ReadonlyArray<number>>;
 
+  /** Where the door that must be unlocked with the key is */
+  public readonly doorLocation: Location;
+
+  /** Where the key that unlocks the door is */
+  public readonly keyLocation: Location;
+
   // noinspection JSSuspiciousNameCombination
   public constructor({
     randomSeed,
@@ -45,9 +53,21 @@ class Maze {
     pathMaxLength?: number;
     randomSeed?: string;
   }) {
+    if (width < 2 || height < 2) {
+      throw new Error("Width and height must be at least 2");
+    }
+    const random = seedrandom.alea(randomSeed);
     this.width = width;
     this.height = height;
-    this.cells = Maze.build(randomSeed, width, height, pathMaxLength);
+    this.doorLocation = { x: width - 1, y: height - 1 };
+    this.cells = Maze.build(
+      random,
+      width,
+      height,
+      pathMaxLength,
+      this.doorLocation
+    );
+    this.keyLocation = Maze.placeKey(random, this.cells);
   }
 
   /**
@@ -58,6 +78,20 @@ class Maze {
 
     return (
       this.contains(location) && (this.cells[x][y] & direction) === direction
+    );
+  }
+
+  /**
+   * Returns true if there is a door in that direction and location
+   */
+  public hasDoor(location: Location, direction: Direction) {
+    const otherLocation = move(location, direction);
+
+    return (
+      this.contains(location) &&
+      this.contains(otherLocation) &&
+      (this.cells[location.x][location.y] & AFTER_DOOR) !==
+        (this.cells[otherLocation.x][otherLocation.y] & AFTER_DOOR)
     );
   }
 
@@ -73,22 +107,23 @@ class Maze {
   /**
    * Builds a maze
    *
-   * @param randomSeed The seed for the maze
+   * @param random The PRNG
    * @param width The width of the maze
    * @param height The height of the maze
    * @param pathMaxLength The maximum length of any path
+   * @param doorLocation Where the door is
    */
   private static build(
-    randomSeed: string | undefined,
+    random: seedrandom.prng,
     width: number,
     height: number,
-    pathMaxLength: number
+    pathMaxLength: number,
+    doorLocation: Location
   ): number[][] {
     // Mark the location just outside the top left corner as a possible starting
     // point
     const pathStarts: Location[] = [{ x: -1, y: 0 }];
     const cells = new Array(width);
-    const random = seedrandom.alea(randomSeed);
 
     for (let x = 0; x < cells.length; x++) {
       cells[x] = new Array(height).fill(
@@ -97,7 +132,7 @@ class Maze {
     }
 
     while (pathStarts.length) {
-      Maze.addPath(random, cells, pathStarts, pathMaxLength);
+      Maze.addPath(random, cells, pathStarts, pathMaxLength, doorLocation);
     }
 
     // Rebuild the wall in the top left corner that our first path knocked down
@@ -113,10 +148,16 @@ class Maze {
     random: seedrandom.prng,
     cells: number[][],
     pathStarts: Location[],
-    pathMaxLength: number
+    pathMaxLength: number,
+    doorLocation: Location
   ) {
     const pathStartIdx = Math.floor(pathStarts.length * random());
-    let currentLocation = Maze.addStep(random, cells, pathStarts[pathStartIdx]);
+    let currentLocation = Maze.addStep(
+      random,
+      cells,
+      pathStarts[pathStartIdx],
+      doorLocation
+    );
 
     if (currentLocation) {
       // It was possible to extend a path from this location - keep going until
@@ -127,7 +168,12 @@ class Maze {
         pathLength++
       ) {
         pathStarts.push(currentLocation);
-        currentLocation = Maze.addStep(random, cells, currentLocation);
+        currentLocation = Maze.addStep(
+          random,
+          cells,
+          currentLocation,
+          doorLocation
+        );
       }
     } else {
       // This starting location is boxed in; remove it so we don't try it again
@@ -141,13 +187,15 @@ class Maze {
    * @param random The PRNG to use
    * @param cells The cells to add a step to
    * @param location The location of the new step
+   * @param doorLocation Where the door is
    * @return The new location, or null if there aren't any empty cells adjacent
    * to location
    */
   private static addStep(
     random: seedrandom.prng,
     cells: number[][],
-    location: Location
+    location: Location,
+    doorLocation: Location
   ): Location | null {
     for (let direction of Maze.randomize(random, directions)) {
       const newLocation = move(location, direction);
@@ -159,6 +207,14 @@ class Maze {
         const { x, y } = newLocation;
 
         cells[x][y] &= ~EMPTY;
+
+        if (
+          (x === doorLocation.x && y === doorLocation.y) ||
+          (Maze.contains(cells, location) &&
+            (cells[location.x][location.y] & AFTER_DOOR) === AFTER_DOOR)
+        ) {
+          cells[x][y] |= AFTER_DOOR;
+        }
 
         Maze.removeWall(cells, location, direction);
         return newLocation;
@@ -229,6 +285,23 @@ class Maze {
     }
 
     return result;
+  }
+
+  /**
+   * Determines a location in which to place the key
+   */
+  private static placeKey(
+    random: seedrandom.prng,
+    cells: ReadonlyArray<ReadonlyArray<number>>
+  ) {
+    do {
+      const x = Math.floor(random() * cells.length);
+      const y = Math.floor(random() * cells[x].length);
+
+      if ((cells[x][y] & AFTER_DOOR) === 0) {
+        return { x, y };
+      }
+    } while (true);
   }
 }
 

@@ -1,8 +1,13 @@
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faKey } from "@fortawesome/free-solid-svg-icons";
 import React, { CSSProperties, ReactElement } from "react";
 import MazeModel, { Direction, Location } from "../services/maze/maze";
 
-const borderWidth = "1px";
+const borderWidth = 1;
+const borderWidthPx = `${borderWidth}px`;
 const finishGridSize = 6;
+const keySizePc = 40;
+const keyColor = "#cc0000";
 
 const Maze = ({ maze, style }: { maze: MazeModel; style?: CSSProperties }) => {
   const cells: ReactElement[] = [];
@@ -25,12 +30,26 @@ const Maze = ({ maze, style }: { maze: MazeModel; style?: CSSProperties }) => {
         Object.assign(cellStyle, getBorderStyle({ x, y }, Direction.RIGHT));
       }
 
-      let inner = null;
+      let inner: ReactElement[] = [];
       if (x === maze.width - 1 && y === maze.height - 1) {
         cellStyle.position = "relative";
-        inner = buildFinishMarker();
+        inner.push(...buildFinishMarker());
       }
-
+      if (maze.keyLocation.x === x && maze.keyLocation.y === y) {
+        inner.push(
+          <FontAwesomeIcon
+            icon={faKey}
+            color={keyColor}
+            style={{
+              position: "absolute",
+              top: `${(100 - keySizePc) / 2}%`,
+              left: `${(100 - keySizePc) / 2}%`,
+              width: `${keySizePc}%`,
+              height: `${keySizePc}%`
+            }}
+          />
+        );
+      }
       cells.push(
         <div key={`${x}.${y}`} style={cellStyle}>
           {inner}
@@ -50,9 +69,16 @@ const Maze = ({ maze, style }: { maze: MazeModel; style?: CSSProperties }) => {
     };
 
     if (maze.hasWall(location, direction)) {
-      return { [`border${propMap[direction]}`]: `${borderWidth} solid black` };
+      return {
+        [`border${propMap[direction]}`]: `${borderWidthPx} solid black`
+      };
+    } else if (maze.hasDoor(location, direction)) {
+      return {
+        [`border${propMap[direction]}`]: `${borderWidth *
+          2}px dashed ${keyColor}`
+      };
     } else {
-      return { [`padding${propMap[direction]}`]: borderWidth };
+      return { [`padding${propMap[direction]}`]: borderWidthPx };
     }
   }
 };
