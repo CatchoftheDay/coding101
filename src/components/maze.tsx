@@ -38,6 +38,7 @@ const Maze = ({ maze, style }: { maze: MazeModel; style?: CSSProperties }) => {
       if (maze.keyLocation.x === x && maze.keyLocation.y === y) {
         inner.push(
           <FontAwesomeIcon
+            key="key"
             icon={faKey}
             color={keyColor}
             style={{
