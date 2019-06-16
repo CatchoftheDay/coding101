@@ -5,9 +5,9 @@ export const TURN_RIGHT = "turnRight";
 export const MOVE_FORWARD = "moveForward";
 
 export const AT_FINISH = "atFinish";
-export const CAN_MOVE_LEFT = "canMoveLeft";
-export const CAN_MOVE_FORWARD = "canMoveForward";
-export const CAN_MOVE_RIGHT = "canMoveRight";
+export const WALL_ON_LEFT = "wallOnLeft";
+export const WALL_IN_FRONT = "wallInFront";
+export const WALL_ON_RIGHT = "wallOnRight";
 
 export const actions = [
   { id: TURN_LEFT, label: "Turn left", stage: Stage.ACTIONS_ONLY },
@@ -16,9 +16,9 @@ export const actions = [
 ];
 export const conditions = [
   { id: AT_FINISH, label: "At finish", stage: Stage.CONTROL },
-  { id: CAN_MOVE_LEFT, label: "Can move left", stage: Stage.CONTROL },
-  { id: CAN_MOVE_FORWARD, label: "Can move forward", stage: Stage.CONTROL },
-  { id: CAN_MOVE_RIGHT, label: "Can move right", stage: Stage.CONTROL }
+  { id: WALL_ON_LEFT, label: "Wall on left", stage: Stage.CONTROL },
+  { id: WALL_IN_FRONT, label: "Wall in front", stage: Stage.CONTROL },
+  { id: WALL_ON_RIGHT, label: "Wall on right", stage: Stage.CONTROL }
 ];
 export const controls = [
   { id: "branch", label: "If ... then ...", stage: Stage.CONTROL },

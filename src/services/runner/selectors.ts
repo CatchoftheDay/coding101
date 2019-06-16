@@ -11,6 +11,7 @@ import { RunnerState } from "./types";
 import { leftOf, rightOf } from "../maze/maze";
 import { AnyAction } from "redux";
 import { moveForward, turnLeft, turnRight } from "./actions";
+import { WALL_IN_FRONT, WALL_ON_LEFT, WALL_ON_RIGHT } from "../../constants";
 
 /** Returns true if we've crashed */
 export const isCrashed = (state: RunnerState) => state.crashed;
@@ -19,14 +20,14 @@ export const isAtFinish = (state: RunnerState) =>
   state.location.x === state.maze.width - 1 &&
   state.location.y === state.maze.height - 1;
 /** Returns true if we're able to move left from our current location */
-export const canMoveLeft = (state: RunnerState) =>
-  !getMaze(state).hasWall(getLocation(state), leftOf(getFacing(state)));
+export const wallOnLeft = (state: RunnerState) =>
+  getMaze(state).hasWall(getLocation(state), leftOf(getFacing(state)));
 /** Returns true if we're able to move forward from our current location */
-export const canMoveForward = (state: RunnerState) =>
-  !getMaze(state).hasWall(getLocation(state), getFacing(state));
+export const wallInFront = (state: RunnerState) =>
+  getMaze(state).hasWall(getLocation(state), getFacing(state));
 /** Returns true if we're able to move right from our current location */
-export const canMoveRight = (state: RunnerState) =>
-  !getMaze(state).hasWall(getLocation(state), rightOf(getFacing(state)));
+export const wallOnRight = (state: RunnerState) =>
+  getMaze(state).hasWall(getLocation(state), rightOf(getFacing(state)));
 
 export const getLocation = (state: RunnerState) => state.location;
 export const getFacing = (state: RunnerState) => state.facing;
@@ -167,7 +168,7 @@ const actions: { [actionName: string]: AnyAction } = {
 
 const conditions: { [condition: string]: (state: RunnerState) => boolean } = {
   atFinish: state => isAtFinish(state),
-  canMoveLeft,
-  canMoveForward,
-  canMoveRight
+  [WALL_ON_LEFT]: wallOnLeft,
+  [WALL_IN_FRONT]: wallInFront,
+  [WALL_ON_RIGHT]: wallOnRight
 };

@@ -1,8 +1,8 @@
 import { Script } from "./types";
 import {
   AT_FINISH,
-  CAN_MOVE_FORWARD,
-  CAN_MOVE_LEFT,
+  WALL_IN_FRONT,
+  WALL_ON_LEFT,
   MOVE_FORWARD,
   TURN_LEFT,
   TURN_RIGHT
@@ -21,7 +21,7 @@ export const mazeRunner: Script = [
           {
             id: 1110,
             type: "conditional",
-            condition: CAN_MOVE_LEFT,
+            condition: "!" + WALL_ON_LEFT,
             steps: [
               { id: 1111, type: "action", action: TURN_LEFT },
               { id: 1112, type: "action", action: MOVE_FORWARD }
@@ -30,7 +30,7 @@ export const mazeRunner: Script = [
           {
             id: 1120,
             type: "conditional",
-            condition: CAN_MOVE_FORWARD,
+            condition: "!" + WALL_IN_FRONT,
             steps: [{ id: 1121, type: "action", action: MOVE_FORWARD }]
           },
           {
