@@ -1,3 +1,5 @@
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faExclamation } from "@fortawesome/free-solid-svg-icons";
 import React, { CSSProperties, ReactNode } from "react";
 import {
   ConnectDragSource,
@@ -15,6 +17,9 @@ import { ConditionalStep, Step as StepModel, WhileStep } from "../types";
 import { Dispatch } from "redux";
 import { setCondition } from "../actions";
 import { buildSurround } from "../util";
+
+const notFadedColor = "rgba(0, 0, 0, 0.25)";
+const notEnabledColor = "rgba(0, 0, 0, 0.66)";
 
 const Condition = ({
   step,
@@ -56,7 +61,41 @@ const Condition = ({
             ...style
           }
         },
-        <span style={{ flex: 1 }}>{condition || placeholder}</span>
+        <span style={{ flex: 1 }}>
+          {step && condition && (
+            <span
+              style={{
+                display: "inline-block",
+                fontSize: "80%",
+                width: "1.6em",
+                textAlign: "center",
+                border: `1px solid ${
+                  condition[0] === "!" ? notEnabledColor : notFadedColor
+                }`,
+                borderRadius: "2rem",
+                marginRight: "0.5rem",
+                cursor: "pointer"
+              }}
+              onClick={() =>
+                dispatch(
+                  setCondition(
+                    step.id,
+                    condition[0] === "!" ? condition.substr(1) : `!${condition}`
+                  )
+                )
+              }
+              title={
+                "When active, negates the condition. For example, 'At finish' would become 'Not at finish'"
+              }
+            >
+              <FontAwesomeIcon
+                icon={faExclamation}
+                color={condition[0] === "!" ? notEnabledColor : notFadedColor}
+              />
+            </span>
+          )}
+          {condition ? condition.replace(/^!/, "") : placeholder}
+        </span>
       )
     )
   );

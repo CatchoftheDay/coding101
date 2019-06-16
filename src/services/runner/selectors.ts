@@ -150,8 +150,11 @@ const getNextStep_while = (state: RunnerState, step: WhileStep) => {
 };
 
 /** Returns true if the condition is currently met */
-const conditionMet = (state: RunnerState, condition: string) =>
-  conditions[condition](state);
+const conditionMet = (state: RunnerState, condition: string) => {
+  const result = conditions[condition.replace(/^!/, "")](state);
+
+  return condition[0] === "!" ? !result : result;
+};
 
 /** Returns true if this step should be skipped (ie not stopped on) */
 const shouldSkip = ({ type }: Step) => type === "branch";
@@ -164,7 +167,6 @@ const actions: { [actionName: string]: AnyAction } = {
 
 const conditions: { [condition: string]: (state: RunnerState) => boolean } = {
   atFinish: state => isAtFinish(state),
-  notAtFinish: state => !isAtFinish(state),
   canMoveLeft,
   canMoveForward,
   canMoveRight

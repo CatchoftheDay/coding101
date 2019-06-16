@@ -7,7 +7,6 @@ export const actions = [
 ];
 export const conditions = [
   { step: "atFinish", stage: Stage.CONTROL },
-  { step: "notAtFinish", stage: Stage.CONTROL },
   { step: "canMoveLeft", stage: Stage.CONTROL },
   { step: "canMoveForward", stage: Stage.CONTROL },
   { step: "canMoveRight", stage: Stage.CONTROL }

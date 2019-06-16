@@ -4,7 +4,7 @@ export const mazeRunner: Script = [
   {
     id: 1000,
     type: "while",
-    condition: "notAtFinish",
+    condition: "!atFinish",
     steps: [
       {
         id: 1100,
