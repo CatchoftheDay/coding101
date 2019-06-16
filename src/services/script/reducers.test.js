@@ -1,14 +1,14 @@
-import { turnLeft } from "../runner/actions";
 import reducers from "./reducers";
 import { deleteStep, insertStep, setAction, setCondition } from "./actions";
 import { mazeRunner } from "./constants";
 import { getStep } from "./selectors";
+import { TURN_LEFT, TURN_RIGHT } from "../../constants";
 
 describe("Script reducers", () => {
   it("Should insert before root node correctly", () => {
     const newState = reducers(
       mazeRunner,
-      insertStep({ id: 1, type: "action", action: "turnLeft" }, null, 1000)
+      insertStep({ id: 1, type: "action", action: TURN_LEFT }, null, 1000)
     );
 
     expect(newState[0].id).toEqual(1);
@@ -17,7 +17,7 @@ describe("Script reducers", () => {
   it("Should insert after root node correctly", () => {
     const newState = reducers(
       mazeRunner,
-      insertStep({ id: 1, type: "action", action: "turnLeft" }, null, null)
+      insertStep({ id: 1, type: "action", action: TURN_LEFT }, null, null)
     );
 
     expect(newState[0].id).toEqual(1000);
@@ -96,10 +96,10 @@ describe("Script reducers", () => {
   });
 
   it("Should set the action", () => {
-    const newState = reducers(mazeRunner, setAction(1111, "turnRight"));
+    const newState = reducers(mazeRunner, setAction(1111, TURN_RIGHT));
 
     expect(newState[0].steps[0].conditions[0].steps[0].action).toEqual(
-      "turnRight"
+      TURN_RIGHT
     );
   });
 
