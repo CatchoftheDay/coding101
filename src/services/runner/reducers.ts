@@ -88,7 +88,7 @@ const runnerReducer = createReducer(initialState, handle => [
   )
 ]);
 
-const resetState = ({ script, maze }: RunnerState) => ({
+export const resetState = ({ script, maze }: RunnerState) => ({
   ...initialState,
   maze,
   script,
@@ -103,7 +103,7 @@ const reducer = (
   const script = scriptReducers(state.script, action as any);
 
   if (script !== (state && state.script)) {
-    state = { ...state, script };
+    state = resetState({ ...state, script });
   }
 
   return state;

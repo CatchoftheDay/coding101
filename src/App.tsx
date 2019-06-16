@@ -19,6 +19,7 @@ import reducers, { initialState } from "./reducers";
 import { Col, Row } from "react-bootstrap";
 import { addKey } from "./actions";
 import { checkCodes } from "./middleware";
+import { getRunner } from "./selectors";
 
 const composeEnhancers =
   (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
@@ -27,7 +28,11 @@ const store = createStore(
   reducers,
   initialState,
   composeEnhancers(
-    applyMiddleware(executeActions, resetOnScriptChange, checkCodes)
+    applyMiddleware(
+      executeActions(getRunner),
+      resetOnScriptChange(getRunner),
+      checkCodes
+    )
   )
 );
 

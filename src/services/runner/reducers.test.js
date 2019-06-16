@@ -1,8 +1,12 @@
 import { applyMiddleware, createStore } from "redux";
 import Maze, { Direction } from "../maze/maze";
+import { mazeRunner } from "../script/constants";
 import { moveForward, step, turnLeft, turnRight } from "./actions";
 import { executeActions } from "./middleware";
-import reducer, { initialState as reducerInitialState } from "./reducers";
+import reducer, {
+  initialState as reducerInitialState,
+  resetState
+} from "./reducers";
 import { isCrashed, getFacing, getLocation, isAtFinish } from "./selectors";
 
 const initialState = {
@@ -96,10 +100,10 @@ describe("Runner reducers", () => {
   it("Should be able to solve the maze", () => {
     const store = createStore(
       reducer,
-      undefined,
-      applyMiddleware(executeActions)
+      resetState({ ...initialState, script: mazeRunner }, { type: undefined }),
+      applyMiddleware(executeActions())
     );
-    const { maze } = initialState;
+    const { maze } = store.getState();
     const maxSteps = maze.height * maze.width * 10;
 
     let stepNum = 0;
