@@ -17,6 +17,7 @@ import { ConditionalStep, Step as StepModel, WhileStep } from "../types";
 import { Dispatch } from "redux";
 import { setCondition } from "../actions";
 import { buildSurround } from "../util";
+import { conditions } from "../../../constants";
 
 const notFadedColor = "rgba(0, 0, 0, 0.25)";
 const notEnabledColor = "rgba(0, 0, 0, 0.66)";
@@ -94,7 +95,7 @@ const Condition = ({
               />
             </span>
           )}
-          {condition ? condition.replace(/^!/, "") : placeholder}
+          {condition ? getLabel(condition.replace(/^!/, "")) : placeholder}
         </span>
       )
     )
@@ -159,6 +160,14 @@ const dropCollect = (
   canDrop:
     !!step && monitor.canDrop() && monitor.getItemType() === ItemTypes.CONDITION
 });
+
+/** Returns the label for the given condition */
+const getLabel = (conditionId: string) =>
+  conditions.reduce(
+    (label: string | undefined, condition) =>
+      condition.id === conditionId ? condition.label : label,
+    undefined
+  );
 
 export default connect()(
   DropTarget(ItemTypes.CONDITION, conditionTarget, dropCollect)(

@@ -10,9 +10,9 @@ const Palette = ({
   controls,
   style
 }: {
-  actions: ReadonlyArray<string>;
-  conditions: ReadonlyArray<string>;
-  controls: ReadonlyArray<string>;
+  actions: ReadonlyArray<{ id: string; label: string }>;
+  conditions: ReadonlyArray<{ id: string; label: string }>;
+  controls: ReadonlyArray<{ id: string; label: string }>;
   style?: CSSProperties;
 }) => {
   const widgets: ReactNode[] = [];
@@ -28,7 +28,10 @@ const Palette = ({
     );
     actions.forEach((action, idx) =>
       widgets.push(
-        <Step key={`action${idx}`} step={{ id: -1, type: "action", action }} />
+        <Step
+          key={`action${idx}`}
+          step={{ id: -1, type: "action", action: action.id }}
+        />
       )
     );
   }
@@ -43,7 +46,7 @@ const Palette = ({
       </div>
     );
     controls.forEach((control, idx) => {
-      if (control === "branch") {
+      if (control.id === "branch") {
         widgets.push(
           <Step
             key={`control${idx}`}
@@ -51,7 +54,7 @@ const Palette = ({
             paletteItem
           />
         );
-      } else if (control === "while") {
+      } else if (control.id === "while") {
         widgets.push(
           <Step
             key={`control${idx}`}
@@ -73,7 +76,9 @@ const Palette = ({
       </div>
     );
     conditions.forEach((condition, idx) =>
-      widgets.push(<Condition key={`condition${idx}`} condition={condition} />)
+      widgets.push(
+        <Condition key={`condition${idx}`} condition={condition.id} />
+      )
     );
   }
 
