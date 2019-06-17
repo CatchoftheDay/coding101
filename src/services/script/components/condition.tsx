@@ -60,7 +60,7 @@ const Condition = React.forwardRef(
       step,
       activeStep,
       condition,
-      placeholder = <span style={{ fontStyle: "italic" }}>(Always)</span>,
+      placeholder = "(Always)",
       connectDragSource,
       connectDropTarget,
       dispatch,
@@ -123,7 +123,11 @@ const Condition = React.forwardRef(
                 />
               </span>
             )}
-            {condition ? getLabel(condition.condition) : placeholder}
+            {condition ? (
+              getLabel(condition.condition)
+            ) : (
+              <span style={{ fontStyle: "italic" }}>{placeholder}</span>
+            )}
           </span>
         )}
       </div>

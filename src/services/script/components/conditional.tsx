@@ -34,6 +34,7 @@ interface ConditionalProps {
   onInsert?: OnInsert;
   style?: CSSProperties;
   connectDropTarget: ConnectDropTarget;
+  placeholder?: string;
 }
 
 const Conditional = React.forwardRef(
@@ -51,7 +52,8 @@ const Conditional = React.forwardRef(
       showDelete,
       onInsert,
       connectDropTarget,
-      isOver
+      isOver,
+      placeholder
     }: ConditionalProps & { isOver: boolean },
     ref
   ) => {
@@ -84,6 +86,7 @@ const Conditional = React.forwardRef(
           script={script}
           activeStep={activeStep}
           condition={condition}
+          placeholder={placeholder}
         />
         <div
           style={{

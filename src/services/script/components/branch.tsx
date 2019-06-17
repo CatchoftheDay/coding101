@@ -35,7 +35,13 @@ const Branch = ({
           <Conditional
             style={{ flex: 1 }}
             key={condition.id}
-            conditionLabel={idx == 0 ? "If" : "Else if"}
+            conditionLabel={
+              idx == 0
+                ? "If"
+                : idx < step.conditions.length - 1
+                ? "Else if"
+                : "Else"
+            }
             stepsLabel="Then"
             step={condition}
             script={script}
@@ -44,6 +50,9 @@ const Branch = ({
             onDelete={onDelete}
             onInsert={onInsert}
             showDelete
+            placeholder={
+              idx < step.conditions.length - 1 ? "(Always)" : "(Otherwise)"
+            }
           />
         ))}
       </div>
