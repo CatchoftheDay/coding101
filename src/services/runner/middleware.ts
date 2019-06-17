@@ -50,7 +50,7 @@ export const run = (
     store.dispatch(stop());
   } else if (running && !runHandle) {
     store.dispatch(
-      setRunHandle(window.setInterval(() => store.dispatch(step()), 250))
+      setRunHandle(window.setInterval(() => store.dispatch(step()), 100))
     );
   } else if (runHandle !== undefined && !running) {
     window.clearTimeout(runHandle);
