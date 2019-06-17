@@ -78,9 +78,11 @@ const Conditional = React.forwardRef(
     const effectiveConditions: Array<ConditionModel | undefined> =
       step && step.conditions.length ? step.conditions : [undefined];
     const conditionElements = effectiveConditions.map((condition, idx) => (
-      <div style={{ display: "flex", width: "100%", alignItems: "center" }}>
+      <div
+        key={idx}
+        style={{ display: "flex", width: "100%", alignItems: "center" }}
+      >
         <Condition
-          key={idx}
           style={{ flex: 1 }}
           step={step}
           script={script}

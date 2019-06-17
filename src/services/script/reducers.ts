@@ -77,7 +77,7 @@ export default createReducer(initialState, handle => [
 
       if (parent && parent.type === "branch") {
         if (parent.conditions.length === 0) {
-          // All the conditions have been removedl delete hte branch
+          // All the conditions have been removed; delete the branch
           const parentSiblings = getSiblings(draftSteps, parent) as Step[];
           parentSiblings.splice(parentSiblings.indexOf(parent), 1);
         } else {
@@ -101,6 +101,7 @@ export default createReducer(initialState, handle => [
       inPlaceDeleteCondition(draftSteps, condition.id);
 
       const step = getStep(draftSteps, id) as ConditionalStep | WhileStep;
+      const parent = getParentStep(draftSteps, step);
       const conditions = step!.conditions;
       const beforeIdx = conditions.findIndex(
         condition => condition.id === beforeId
@@ -111,6 +112,10 @@ export default createReducer(initialState, handle => [
         0,
         condition
       );
+
+      if (parent && parent.type === "branch") {
+        parent.conditions = ensureBranchHasElseCondition(parent.conditions);
+      }
     })
   ),
   handle(
@@ -165,9 +170,7 @@ const inPlaceDeleteCondition = (draftSteps: Script, deleteId: number) => {
  * Normalises a branch step so that there are no blank conditions except for
  * one on the end
  */
-const ensureBranchHasElseCondition = (
-  conditions: ReadonlyArray<ConditionalStep>
-) => {
+const ensureBranchHasElseCondition = (conditions: ConditionalStep[]) => {
   if (
     !conditions.length ||
     conditions[conditions.length - 1].conditions.length
