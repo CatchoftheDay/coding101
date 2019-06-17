@@ -11,13 +11,28 @@ import { flattenSteps } from "../script/reducers";
 import { RunnerState } from "./types";
 import { leftOf, rightOf } from "../maze/maze";
 import { AnyAction } from "redux";
-import { moveForward, turnLeft, turnRight } from "./actions";
 import {
+  clearHasKey,
+  grabKey,
+  moveForward,
+  openDoor,
+  setHasKey,
+  turnLeft,
+  turnRight
+} from "./actions";
+import {
+  CLEAR_HAS_KEY,
   DOOR_IN_FRONT,
   DOOR_ON_LEFT,
   DOOR_ON_RIGHT,
+  GRAB_KEY,
   HAS_KEY_SET,
+  MOVE_FORWARD,
   ON_KEY,
+  OPEN_DOOR,
+  SET_HAS_KEY,
+  TURN_LEFT,
+  TURN_RIGHT,
   WALL_IN_FRONT,
   WALL_ON_LEFT,
   WALL_ON_RIGHT
@@ -68,10 +83,12 @@ export const doorOnRight = (state: RunnerState) =>
   getMaze(state).hasDoor(getLocation(state), rightOf(getFacing(state)));
 /** Returns true if we're on top of the key */
 export const onKey = (state: RunnerState) => {
-  const { location } = state;
+  const { location, hasKey } = state;
   const { keyLocation } = getMaze(state);
 
-  return keyLocation.x === location.x && keyLocation.y === location.y;
+  return (
+    !hasKey && keyLocation.x === location.x && keyLocation.y === location.y
+  );
 };
 /** Returns true if the key has been picked up */
 export const hasKey = (state: RunnerState) => state.hasKey;
@@ -219,9 +236,13 @@ const conditionMet = (
 const shouldSkip = ({ type }: Step) => type === "branch";
 
 const actions: { [actionName: string]: AnyAction } = {
-  turnLeft: turnLeft(),
-  turnRight: turnRight(),
-  moveForward: moveForward()
+  [TURN_LEFT]: turnLeft(),
+  [TURN_RIGHT]: turnRight(),
+  [MOVE_FORWARD]: moveForward(),
+  [GRAB_KEY]: grabKey(),
+  [OPEN_DOOR]: openDoor(),
+  [SET_HAS_KEY]: setHasKey(),
+  [CLEAR_HAS_KEY]: clearHasKey()
 };
 
 const conditions: { [condition: string]: (state: RunnerState) => boolean } = {

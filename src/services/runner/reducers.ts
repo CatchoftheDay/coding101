@@ -87,7 +87,10 @@ const runnerReducer = createReducer(initialState, handle => [
     ignoreIfCrashed(state => {
       if (state.maze.hasWall(state.location, state.facing)) {
         return { ...state, error: "Crashed into a wall" };
-      } else if (state.maze.hasDoor(state.location, state.facing)) {
+      } else if (
+        state.maze.hasDoor(state.location, state.facing) &&
+        !state.doorOpen
+      ) {
         return { ...state, error: "Attempted to go through a closed door" };
       } else {
         return { ...state, location: move(state.location, state.facing) };

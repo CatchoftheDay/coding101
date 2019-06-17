@@ -90,6 +90,7 @@ class Maze {
     return (
       this.contains(location) &&
       this.contains(otherLocation) &&
+      !this.hasWall(location, direction) &&
       (this.cells[location.x][location.y] & AFTER_DOOR) !==
         (this.cells[otherLocation.x][otherLocation.y] & AFTER_DOOR)
     );
