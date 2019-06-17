@@ -8,6 +8,8 @@ const MazeAndRunner = ({
   crashed,
   location,
   facing,
+  showKey,
+  showDoor,
   width = 0,
   height = 0
 }: {
@@ -15,6 +17,8 @@ const MazeAndRunner = ({
   crashed: boolean;
   location: Location;
   facing: Direction;
+  showKey?: boolean;
+  showDoor?: boolean;
   width?: number;
   height?: number;
 }) => {
@@ -29,7 +33,12 @@ const MazeAndRunner = ({
         border: "2px solid black"
       }}
     >
-      <Maze maze={maze} style={{ position: "relative", height: "100%" }} />
+      <Maze
+        maze={maze}
+        style={{ position: "relative", height: "100%" }}
+        showKey={showKey}
+        showDoor={showDoor}
+      />
       <Runner
         maze={maze}
         crashed={crashed}

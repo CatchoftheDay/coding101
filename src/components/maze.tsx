@@ -9,7 +9,17 @@ const finishGridSize = 6;
 const keySizePc = 40;
 const keyColor = "#cc0000";
 
-const Maze = ({ maze, style }: { maze: MazeModel; style?: CSSProperties }) => {
+const Maze = ({
+  maze,
+  showKey = false,
+  showDoor = false,
+  style
+}: {
+  maze: MazeModel;
+  style?: CSSProperties;
+  showKey?: boolean;
+  showDoor?: boolean;
+}) => {
   const cells: ReactElement[] = [];
 
   for (let y = 0; y < maze.height; y++) {
@@ -24,10 +34,16 @@ const Maze = ({ maze, style }: { maze: MazeModel; style?: CSSProperties }) => {
       };
 
       if (y < maze.height - 1) {
-        Object.assign(cellStyle, getBorderStyle({ x, y }, Direction.DOWN));
+        Object.assign(
+          cellStyle,
+          getBorderStyle({ x, y }, Direction.DOWN, showDoor)
+        );
       }
       if (x < maze.width - 1) {
-        Object.assign(cellStyle, getBorderStyle({ x, y }, Direction.RIGHT));
+        Object.assign(
+          cellStyle,
+          getBorderStyle({ x, y }, Direction.RIGHT, showDoor)
+        );
       }
 
       let inner: ReactElement[] = [];
@@ -35,7 +51,7 @@ const Maze = ({ maze, style }: { maze: MazeModel; style?: CSSProperties }) => {
         cellStyle.position = "relative";
         inner.push(...buildFinishMarker());
       }
-      if (maze.keyLocation.x === x && maze.keyLocation.y === y) {
+      if (showKey && maze.keyLocation.x === x && maze.keyLocation.y === y) {
         inner.push(
           <FontAwesomeIcon
             key="key"
@@ -61,7 +77,11 @@ const Maze = ({ maze, style }: { maze: MazeModel; style?: CSSProperties }) => {
 
   return <div style={style}>{cells}</div>;
 
-  function getBorderStyle(location: Location, direction: Direction) {
+  function getBorderStyle(
+    location: Location,
+    direction: Direction,
+    showDoor: boolean
+  ) {
     const propMap = {
       [Direction.UP]: "Top",
       [Direction.DOWN]: "Bottom",
@@ -73,7 +93,7 @@ const Maze = ({ maze, style }: { maze: MazeModel; style?: CSSProperties }) => {
       return {
         [`border${propMap[direction]}`]: `${borderWidthPx} solid black`
       };
-    } else if (maze.hasDoor(location, direction)) {
+    } else if (showDoor && maze.hasDoor(location, direction)) {
       return {
         [`border${propMap[direction]}`]: `${borderWidth *
           2}px dashed ${keyColor}`

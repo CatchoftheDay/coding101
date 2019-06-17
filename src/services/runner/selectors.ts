@@ -54,8 +54,12 @@ export const onKey = (state: RunnerState) => {
 
   return keyLocation.x === location.x && keyLocation.y === location.y;
 };
+/** Returns true if the key has been picked up */
+export const hasKey = (state: RunnerState) => state.hasKey;
 /** Returns true if the hasKey variable is set */
 export const hasKeySet = (state: RunnerState) => state.variables.hasKey;
+/** Returns true if the door has been opened */
+export const doorOpen = (state: RunnerState) => state.doorOpen;
 
 export const getLocation = (state: RunnerState) => state.location;
 export const getFacing = (state: RunnerState) => state.facing;
