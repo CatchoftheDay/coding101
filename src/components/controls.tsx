@@ -4,6 +4,7 @@ import { Button } from "react-bootstrap";
 const Controls = ({
   running,
   crashed,
+  done,
   onReset,
   onStep,
   onRun,
@@ -13,6 +14,7 @@ const Controls = ({
 }: {
   running: boolean;
   crashed: boolean;
+  done: boolean;
   onReset?: () => void;
   onStep?: () => void;
   onRun?: () => void;
@@ -34,7 +36,7 @@ const Controls = ({
         {onStep && (
           <Button
             style={{ marginRight: "5px" }}
-            disabled={crashed}
+            disabled={crashed || done}
             variant="outline-primary"
             onClick={onStep}
           >
@@ -44,7 +46,7 @@ const Controls = ({
         {(running ? onPause : onRun) && (
           <Button
             style={{ marginRight: "5px" }}
-            disabled={crashed}
+            disabled={crashed || done}
             variant="outline-primary"
             onClick={running ? onPause : onRun}
           >

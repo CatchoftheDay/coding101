@@ -1,5 +1,5 @@
 import _Controls from "../components/controls";
-import { isCrashed } from "../services/runner/selectors";
+import { isCrashed, isDone } from "../services/runner/selectors";
 import { Dispatch } from "redux";
 import { newMaze, reset, step } from "../services/runner/actions";
 import { connect } from "react-redux";
@@ -8,6 +8,7 @@ import { getRunner, getStage } from "../selectors";
 
 const mapStateToProps = (state: TutorialState) => ({
   crashed: isCrashed(getRunner(state)),
+  done: isDone(getRunner(state)),
   running: false,
   showNewMaze: getStage(state) >= Stage.CONTROL
 });

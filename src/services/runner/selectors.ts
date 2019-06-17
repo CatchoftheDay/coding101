@@ -25,6 +25,8 @@ import {
 
 /** Returns true if we've crashed */
 export const isCrashed = (state: RunnerState) => state.crashed;
+/** True if the program has completed */
+export const isDone = (state: RunnerState) => state.currStepId === undefined;
 /** Returns true if we're currently at the maze's exit */
 export const isAtFinish = (state: RunnerState) =>
   state.location.x === state.maze.width - 1 &&
