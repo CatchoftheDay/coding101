@@ -8,16 +8,16 @@ import {
   isCrashed
 } from "../services/runner/selectors";
 import { connect } from "react-redux";
-import { getRunner, getStage } from "../selectors";
-import { Stage, TutorialState } from "../types";
+import { getRunner } from "../selectors";
+import { TutorialState } from "../types";
 
 const mapStateToProps = (state: TutorialState) => ({
   maze: getMaze(getRunner(state)),
   crashed: isCrashed(getRunner(state)),
   location: getLocation(getRunner(state)),
   facing: getFacing(getRunner(state)),
-  showKey: getStage(state) >= Stage.VARIABLES && !hasKey(getRunner(state)),
-  showDoor: getStage(state) >= Stage.VARIABLES && !doorOpen(getRunner(state))
+  showKey: !hasKey(getRunner(state)),
+  showDoor: !doorOpen(getRunner(state))
 });
 
 export default connect(mapStateToProps)(_MazeAndRunner);
