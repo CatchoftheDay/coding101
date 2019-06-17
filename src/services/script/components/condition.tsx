@@ -1,6 +1,12 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExclamation } from "@fortawesome/free-solid-svg-icons";
-import React, { CSSProperties, ReactElement, ReactNode } from "react";
+import React, {
+  CSSProperties,
+  ReactElement,
+  ReactNode,
+  useImperativeHandle,
+  useRef
+} from "react";
 import {
   ConnectDragSource,
   ConnectDropTarget,
@@ -13,20 +19,27 @@ import {
 } from "react-dnd";
 import { connect } from "react-redux";
 import { ItemTypes } from "../constants";
-import { ConditionalStep, Step as StepModel, WhileStep } from "../types";
+import {
+  Condition as ConditionModel,
+  ConditionalStep,
+  Script,
+  Step as StepModel,
+  WhileStep
+} from "../types";
 import { Dispatch } from "redux";
-import { setConditions } from "../actions";
+import { deleteCondition, insertCondition, negateCondition } from "../actions";
 import { buildSurround } from "../util";
 import { conditions } from "../../../constants";
+import { getConditionParentStep } from "../selectors";
 
-const notFadedColor = "rgba(0, 0, 0, 0.25)";
-const notEnabledColor = "rgba(0, 0, 0, 0.66)";
+const notNegatedColor = "rgba(0, 0, 0, 0.25)";
+const negatedColor = "rgba(0, 0, 0, 0.66)";
 
 interface ConditionProps {
   step?: ConditionalStep | WhileStep;
   activeStep?: StepModel;
-  conditions: string[];
-  conditionIdx: number;
+  condition?: ConditionModel;
+  script?: Script;
   placeholder?: ReactNode;
   connectDragSource: ConnectDragSource;
   connectDropTarget: ConnectDropTarget;
@@ -37,95 +50,95 @@ interface ConditionProps {
   dispatch: Dispatch;
 }
 
-const Condition = ({
-  step,
-  activeStep,
-  conditions,
-  conditionIdx,
-  placeholder = <span style={{ fontStyle: "italic" }}>(Always)</span>,
-  connectDragSource,
-  connectDropTarget,
-  isOver,
-  canDrop,
-  dispatch,
-  style
-}: ConditionProps) => {
-  const condition = conditions[conditionIdx];
+interface ConditionInstance {
+  getNode(): HTMLSpanElement | null;
+}
 
-  return connectDragSource(
-    connectDropTarget(
-      buildSurround(
-        {
-          highlight: step && step === activeStep,
-          onDelete:
-            step && condition
-              ? () => dispatch(setConditions(step.id, []))
-              : undefined,
-          style: {
-            borderColor: "#f58928",
-            borderRadius: "20px",
-            backgroundColor: isOver && canDrop ? "#ffe6d0" : "#fff4eb",
-            ...style
-          }
-        },
-        <span style={{ flex: 1 }}>
-          {step && condition && (
-            <span
-              style={{
-                display: "inline-block",
-                fontSize: "80%",
-                width: "1.6em",
-                textAlign: "center",
-                border: `1px solid ${
-                  condition[0] === "!" ? notEnabledColor : notFadedColor
-                }`,
-                borderRadius: "2rem",
-                marginRight: "0.5rem",
-                cursor: "pointer"
-              }}
-              onClick={() => {
-                const newConditions = conditions.slice();
-                newConditions[conditionIdx] =
-                  condition[0] === "!" ? condition.substr(1) : `!${condition}`;
+const Condition = React.forwardRef(
+  (
+    {
+      step,
+      activeStep,
+      condition,
+      placeholder = <span style={{ fontStyle: "italic" }}>(Always)</span>,
+      connectDragSource,
+      connectDropTarget,
+      dispatch,
+      style
+    }: ConditionProps,
+    ref
+  ) => {
+    const elementRef = useRef(null);
 
-                dispatch(setConditions(step.id, newConditions));
-              }}
-              title={
-                "When active, negates the condition. For example, 'At finish' would become 'Not at finish'"
-              }
-            >
-              <FontAwesomeIcon
-                icon={faExclamation}
-                color={condition[0] === "!" ? notEnabledColor : notFadedColor}
-              />
-            </span>
-          )}
-          {condition ? getLabel(condition.replace(/^!/, "")) : placeholder}
-        </span>
-      )
-    )
-  );
-};
+    connectDragSource(elementRef);
+    if (step) {
+      connectDropTarget(elementRef);
+    }
+
+    useImperativeHandle<{}, ConditionInstance>(ref, () => ({
+      getNode: () => elementRef.current
+    }));
+
+    return (
+      <div ref={elementRef} style={style}>
+        {buildSurround(
+          {
+            highlight: step && step === activeStep,
+            onDelete:
+              step && condition
+                ? () => dispatch(deleteCondition(condition.id))
+                : undefined,
+            style: {
+              borderColor: "#f58928",
+              borderRadius: "20px",
+              borderStyle: condition ? "solid" : "dashed",
+              backgroundColor: "#fff4eb"
+            }
+          },
+          <span style={{ flex: 1 }}>
+            {step && condition && (
+              <span
+                style={{
+                  display: "inline-block",
+                  fontSize: "80%",
+                  width: "1.6em",
+                  textAlign: "center",
+                  border: `1px solid ${
+                    condition.negated ? negatedColor : notNegatedColor
+                  }`,
+                  borderRadius: "2rem",
+                  marginRight: "0.5rem",
+                  cursor: "pointer"
+                }}
+                onClick={() => {
+                  dispatch(negateCondition(step.id, condition.id));
+                }}
+                title={
+                  "When active, negates the condition. For example, 'At finish' would become 'Not at finish'"
+                }
+              >
+                <FontAwesomeIcon
+                  icon={faExclamation}
+                  color={condition.negated ? negatedColor : notNegatedColor}
+                />
+              </span>
+            )}
+            {condition ? getLabel(condition.condition) : placeholder}
+          </span>
+        )}
+      </div>
+    );
+  }
+);
 
 const actionSource = {
-  beginDrag({
-    conditions,
-    conditionIdx,
-    step
-  }: {
-    conditions: string[];
-    conditionIdx: number;
-    step?: ConditionalStep | WhileStep;
-  }) {
-    return {
-      condition: conditions[conditionIdx],
-      conditions,
-      conditionIdx,
-      step
-    };
+  beginDrag({ condition, script }: ConditionProps) {
+    return script
+      ? condition
+      : ({ ...condition, id: Math.random() } as ConditionModel);
   },
-  canDrag({ conditions }: ConditionProps) {
-    return conditions.length > 0;
+  canDrag({ condition }: ConditionProps) {
+    return !!condition;
   }
 };
 
@@ -138,38 +151,62 @@ const dragCollect = (
 });
 
 const conditionTarget = {
-  drop(
-    { dispatch, step: targetStep }: ConditionProps,
-    monitor: DropTargetMonitor
+  hover(
+    {
+      dispatch,
+      step,
+      condition: targetCondition,
+      script
+    }: ConditionProps & { step: ConditionalStep; condition: ConditionModel },
+    monitor: DropTargetMonitor,
+    component: ConditionInstance
   ) {
-    const {
-      condition,
-      conditionIdx,
-      conditions,
-      step: sourceStep
-    } = monitor.getItem() as {
-      condition: string;
-      conditionIdx: number;
-      conditions: string[];
-      step: ConditionalStep;
-    };
+    const node = component && component.getNode();
+    const draggedCondition = monitor.getItem() as ConditionModel;
 
-    if (!targetStep || sourceStep === targetStep) {
-      // They dragged it on top of itself, so nothing to do
+    if (
+      !node ||
+      !monitor.isOver({ shallow: true }) ||
+      targetCondition === draggedCondition
+    ) {
       return;
     }
 
-    targetStep.conditions.concat(condition);
+    const draggedParentStep = getConditionParentStep(script!, draggedCondition);
+    const siblings = step.conditions;
+    const sameParent = draggedParentStep === step;
+    const hoverBoundingRect = node.getBoundingClientRect();
+    const hoverHalfY = hoverBoundingRect.top + hoverBoundingRect.height / 2;
+    const hoverY = monitor.getClientOffset()!.y;
 
-    dispatch(
-      setConditions(targetStep.id, targetStep.conditions.concat(condition))
-    );
+    let insertAfter: boolean;
+    if (sameParent) {
+      const dragIndex = draggedParentStep!.conditions.indexOf(draggedCondition);
 
-    if (sourceStep) {
+      insertAfter =
+        dragIndex !== -1 && dragIndex < siblings.indexOf(targetCondition);
+    } else {
+      insertAfter = hoverY > hoverHalfY;
+    }
+
+    const insertIdx = step
+      ? siblings.indexOf(targetCondition) + (insertAfter ? 1 : 0)
+      : 0;
+
+    if (
+      !siblings[insertIdx] ||
+      siblings[insertIdx].id !== draggedCondition.id
+    ) {
+      console.log(
+        insertIdx,
+        siblings[insertIdx] && siblings[insertIdx].id,
+        draggedCondition.id
+      );
       dispatch(
-        setConditions(
-          sourceStep.id,
-          conditions.filter((_, idx) => idx !== conditionIdx)
+        insertCondition(
+          step.id,
+          draggedCondition,
+          siblings[insertIdx] && siblings[insertIdx].id
         )
       );
     }

@@ -79,8 +79,7 @@ const Palette = ({
       widgets.push(
         <Condition
           key={`condition${idx}`}
-          conditionIdx={0}
-          conditions={[condition.id]}
+          condition={{ id: -1, condition: condition.id }}
         />
       )
     );

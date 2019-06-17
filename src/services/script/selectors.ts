@@ -1,4 +1,4 @@
-import { Script, Step } from "./types";
+import { Condition, ConditionalStep, Script, Step } from "./types";
 import { flattenSteps } from "./reducers";
 
 /** Returns the ID of the first step */
@@ -19,6 +19,14 @@ export const getParentStep = (script: Script, from: Step) => {
     step => !!getChildren(step).find(step => step.id === from.id)
   );
 };
+
+/** Gets the parent step of a condition */
+export const getConditionParentStep = (script: Script, from: Condition) =>
+  flattenSteps(script).find(
+    step =>
+      step.type === "conditional" &&
+      step.conditions.some(({ id }) => id === from.id)
+  ) as ConditionalStep | undefined;
 
 /** Returns the siblings of the given step */
 export const getSiblings = (script: Script, step: Step) => {

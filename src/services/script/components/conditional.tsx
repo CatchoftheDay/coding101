@@ -8,6 +8,7 @@ import {
 import { ItemTypes } from "../constants";
 import { isAncestor } from "../selectors";
 import {
+  Condition as ConditionModel,
   ConditionalStep,
   OnInsert,
   Script,
@@ -72,40 +73,44 @@ const Conditional = React.forwardRef(
       getNode: () => elementRef.current
     }));
 
-    let conditionElements;
-
-    if (step && step.conditions.length) {
-      conditionElements = step.conditions.map((condition, idx) => (
+    const effectiveConditions: Array<ConditionModel | undefined> =
+      step && step.conditions.length ? step.conditions : [undefined];
+    const conditionElements = effectiveConditions.map((condition, idx) => (
+      <div style={{ display: "flex", width: "100%", alignItems: "center" }}>
         <Condition
           key={idx}
           style={{ flex: 1 }}
           step={step}
+          script={script}
           activeStep={activeStep}
-          conditions={step.conditions}
-          conditionIdx={idx}
+          condition={condition}
         />
-      ));
-    } else {
-      conditionElements = [
-        <Condition
-          key={0}
-          style={{ flex: 1 }}
-          step={step}
-          activeStep={activeStep}
-          conditions={[]}
-          conditionIdx={0}
-        />
-      ];
-    }
+        <div
+          style={{
+            margin: "0 0.5em",
+            visibility:
+              idx === effectiveConditions.length - 1 ? "hidden" : "visible"
+          }}
+        >
+          and
+        </div>
+      </div>
+    ));
 
     return (
       <div ref={elementRef} style={{ display: "flex", ...style }}>
         <div style={{ flex: 1 }}>
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <div style={{ display: "inline-block", width: "5em" }}>
+          <div style={{ display: "flex", alignItems: "top" }}>
+            <div
+              style={{
+                display: "inline-block",
+                width: "5em",
+                marginTop: "11px"
+              }}
+            >
               {conditionLabel}
             </div>
-            {conditionElements}
+            <div style={{ flex: 1 }}>{conditionElements}</div>
           </div>
           <div style={{ display: "flex" }}>
             <div

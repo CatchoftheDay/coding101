@@ -2,6 +2,7 @@ import { getNextSibling, getParentStep, getStep } from "../script/selectors";
 import {
   ActionStep,
   BranchStep,
+  Condition,
   ConditionalStep,
   Step,
   WhileStep
@@ -178,10 +179,13 @@ const getNextStep_while = (state: RunnerState, step: WhileStep) => {
 };
 
 /** Returns true if the condition is currently met */
-const conditionMet = (state: RunnerState, condition: string) => {
-  const result = conditions[condition.replace(/^!/, "")](state);
+const conditionMet = (
+  state: RunnerState,
+  { condition, negated }: Condition
+) => {
+  const result = conditions[condition](state);
 
-  return condition[0] === "!" ? !result : result;
+  return negated ? !result : result;
 };
 
 /** Returns true if this step should be skipped (ie not stopped on) */

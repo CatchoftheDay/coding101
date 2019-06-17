@@ -1,5 +1,5 @@
 import { createAction } from "deox";
-import { Step } from "./types";
+import { Condition, Step } from "./types";
 
 export const insertStep = createAction(
   "script/insertStep",
@@ -25,7 +25,18 @@ export const setAction = createAction(
   resolve => (id: number, action: string | null) => resolve({ id, action })
 );
 
-export const setConditions = createAction(
-  "script/setConditions",
-  resolve => (id: number, conditions: string[]) => resolve({ id, conditions })
+export const insertCondition = createAction(
+  "script/insertCondition",
+  resolve => (id: number, condition: Condition, beforeId?: number) =>
+    resolve({ id, condition, beforeId })
+);
+
+export const deleteCondition = createAction(
+  "script/deleteCondition",
+  resolve => (id: number) => resolve(id)
+);
+
+export const negateCondition = createAction(
+  "script/negateCondition",
+  resolve => (id: number, conditionId) => resolve({ id, conditionId })
 );

@@ -7,7 +7,14 @@ import {
   Step,
   WhileStep
 } from "./types";
-import { deleteStep, insertStep, setAction, setConditions } from "./actions";
+import {
+  deleteCondition,
+  deleteStep,
+  insertCondition,
+  insertStep,
+  negateCondition,
+  setAction
+} from "./actions";
 import produce from "immer";
 import { getStep, getChildren, getParentStep, getSiblings } from "./selectors";
 
@@ -89,18 +96,37 @@ export default createReducer(initialState, handle => [
     })
   ),
   handle(
-    setConditions,
-    produce((draftSteps, { payload: { id, conditions } }) => {
-      const step = <ConditionalStep | WhileStep>getStep(draftSteps, id);
-      const parent = getParentStep(draftSteps, step);
+    insertCondition,
+    produce((draftSteps, { payload: { id, condition, beforeId } }) => {
+      inPlaceDeleteCondition(draftSteps, condition.id);
 
-      step.conditions = conditions;
+      const step = getStep(draftSteps, id) as ConditionalStep | WhileStep;
+      const conditions = step!.conditions;
+      const beforeIdx = conditions.findIndex(
+        condition => condition.id === beforeId
+      );
 
-      if (parent && parent.type === "branch") {
-        parent.conditions = ensureBranchHasElseCondition(
-          parent.conditions
-        ) as ConditionalStep[];
-      }
+      conditions.splice(
+        beforeIdx !== -1 ? beforeIdx : conditions.length,
+        0,
+        condition
+      );
+    })
+  ),
+  handle(
+    deleteCondition,
+    produce((draftSteps, { payload: conditionId }) =>
+      inPlaceDeleteCondition(draftSteps, conditionId)
+    )
+  ),
+  handle(
+    negateCondition,
+    produce((draftSteps, { payload: { id, conditionId } }) => {
+      const step = getStep(draftSteps, id) as ConditionalStep | WhileStep;
+      const condition = step.conditions.find(
+        condition => condition.id === conditionId
+      )!;
+      condition.negated = !condition.negated;
     })
   )
 ]);
@@ -120,6 +146,19 @@ const inPlaceDeleteById = (draftSteps: Script, deleteId: number) => {
   if (deleteIdx !== -1) {
     (children as Step[]).splice(deleteIdx, 1);
   }
+};
+
+/** Deletes the condition with the given ID from all steps in the script */
+const inPlaceDeleteCondition = (draftSteps: Script, deleteId: number) => {
+  const conditionalSteps = flattenSteps(draftSteps).filter(
+    ({ type }) => type === "while" || type === "conditional"
+  ) as Array<ConditionalStep | WhileStep>;
+
+  conditionalSteps
+    .filter(step => step.conditions.some(({ id }) => id === deleteId))
+    .forEach(step => {
+      step.conditions = step.conditions.filter(({ id }) => id !== deleteId);
+    });
 };
 
 /**

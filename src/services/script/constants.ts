@@ -18,7 +18,7 @@ export const mazeRunner: Script = [
   {
     id: 1000,
     type: "while",
-    conditions: ["!" + AT_FINISH],
+    conditions: [{ id: 9001, condition: "!" + AT_FINISH }],
     steps: [
       {
         id: 1100,
@@ -27,7 +27,7 @@ export const mazeRunner: Script = [
           {
             id: 1110,
             type: "conditional",
-            conditions: [ON_KEY],
+            conditions: [{ id: 9002, condition: ON_KEY }],
             steps: [
               {
                 id: 1111,
@@ -50,7 +50,7 @@ export const mazeRunner: Script = [
           {
             id: 1210,
             type: "conditional",
-            conditions: ["!" + WALL_ON_LEFT],
+            conditions: [{ id: 9003, condition: "!" + WALL_ON_LEFT }],
             steps: [
               { id: 1211, type: "action", action: TURN_LEFT },
               {
@@ -60,7 +60,10 @@ export const mazeRunner: Script = [
                   {
                     id: 12121,
                     type: "conditional",
-                    conditions: [HAS_KEY_SET, DOOR_IN_FRONT],
+                    conditions: [
+                      { id: 9004, condition: HAS_KEY_SET },
+                      { id: 9005, condition: DOOR_IN_FRONT }
+                    ],
                     steps: [{ id: 121211, type: "action", action: OPEN_DOOR }]
                   }
                 ]
@@ -71,7 +74,7 @@ export const mazeRunner: Script = [
           {
             id: 1220,
             type: "conditional",
-            conditions: ["!" + WALL_IN_FRONT],
+            conditions: [{ id: 9006, condition: "!" + WALL_IN_FRONT }],
             steps: [
               {
                 id: 1221,
@@ -80,7 +83,10 @@ export const mazeRunner: Script = [
                   {
                     id: 12211,
                     type: "conditional",
-                    conditions: [HAS_KEY_SET, DOOR_IN_FRONT],
+                    conditions: [
+                      { id: 9007, condition: HAS_KEY_SET },
+                      { id: 9008, condition: DOOR_IN_FRONT }
+                    ],
                     steps: [{ id: 122111, type: "action", action: OPEN_DOOR }]
                   }
                 ]

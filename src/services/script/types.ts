@@ -2,9 +2,15 @@ export interface BaseStep {
   id: number;
 }
 
+export interface Condition {
+  id: number;
+  condition: string;
+  negated?: boolean;
+}
+
 export interface ConditionalStep extends BaseStep {
   type: "conditional";
-  conditions: string[];
+  conditions: Condition[];
   steps: Array<NonConditionalStep>;
 }
 
@@ -22,7 +28,7 @@ export interface BranchStep extends BaseStep {
 
 export interface WhileStep extends BaseStep {
   type: "while";
-  conditions: string[];
+  conditions: Condition[];
   steps: Array<NonConditionalStep>;
 }
 
