@@ -25,8 +25,7 @@ export const setAction = createAction(
   resolve => (id: number, action: string | null) => resolve({ id, action })
 );
 
-export const setCondition = createAction(
-  "script/setCondition",
-  resolve => (id: number, condition: string | null) =>
-    resolve({ id, condition })
+export const setConditions = createAction(
+  "script/setConditions",
+  resolve => (id: number, conditions: string[]) => resolve({ id, conditions })
 );

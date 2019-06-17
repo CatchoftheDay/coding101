@@ -58,7 +58,7 @@ const Palette = ({
         widgets.push(
           <Step
             key={`control${idx}`}
-            step={{ id: -1, type: "while", condition: null, steps: [] }}
+            step={{ id: -1, type: "while", conditions: [], steps: [] }}
             paletteItem
           />
         );
@@ -77,7 +77,11 @@ const Palette = ({
     );
     conditions.forEach((condition, idx) =>
       widgets.push(
-        <Condition key={`condition${idx}`} condition={condition.id} />
+        <Condition
+          key={`condition${idx}`}
+          conditionIdx={0}
+          conditions={[condition.id]}
+        />
       )
     );
   }

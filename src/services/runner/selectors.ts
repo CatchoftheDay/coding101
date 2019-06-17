@@ -148,7 +148,7 @@ const getNextStep_condition = (state: RunnerState, step: ConditionalStep) => {
       // If we're being asked and the current step is a child of ours, we should
       // return undefined to indicate that we have finished all our steps
       return undefined;
-    case !step.condition || conditionMet(state, step.condition):
+    case step.conditions.every(condition => conditionMet(state, condition)):
       // The current step is not one of our children and we either don't have
       // a condition or our condition is met
       return step.steps[0];
@@ -167,7 +167,7 @@ const getNextStep_while = (state: RunnerState, step: WhileStep) => {
     case flattenSteps(step.steps).includes(currentStep!):
       // The current step is one of our descendents; so the next step should be us
       return step;
-    case !step.condition || conditionMet(state, step.condition):
+    case step.conditions.every(condition => conditionMet(state, condition)):
       // If our condition is met(or we don't have one), always go to the first
       // step
       return step.steps[0];

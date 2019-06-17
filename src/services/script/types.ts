@@ -4,8 +4,7 @@ export interface BaseStep {
 
 export interface ConditionalStep extends BaseStep {
   type: "conditional";
-  // A null condition means always execute the steps
-  condition: string | null;
+  conditions: string[];
   steps: Array<NonConditionalStep>;
 }
 
@@ -23,8 +22,7 @@ export interface BranchStep extends BaseStep {
 
 export interface WhileStep extends BaseStep {
   type: "while";
-  // A null condition means execute the steps forever
-  condition: string | null;
+  conditions: string[];
   steps: Array<NonConditionalStep>;
 }
 

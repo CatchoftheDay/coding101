@@ -72,6 +72,32 @@ const Conditional = React.forwardRef(
       getNode: () => elementRef.current
     }));
 
+    let conditionElements;
+
+    if (step && step.conditions.length) {
+      conditionElements = step.conditions.map((condition, idx) => (
+        <Condition
+          key={idx}
+          style={{ flex: 1 }}
+          step={step}
+          activeStep={activeStep}
+          conditions={step.conditions}
+          conditionIdx={idx}
+        />
+      ));
+    } else {
+      conditionElements = [
+        <Condition
+          key={0}
+          style={{ flex: 1 }}
+          step={step}
+          activeStep={activeStep}
+          conditions={[]}
+          conditionIdx={0}
+        />
+      ];
+    }
+
     return (
       <div ref={elementRef} style={{ display: "flex", ...style }}>
         <div style={{ flex: 1 }}>
@@ -79,12 +105,7 @@ const Conditional = React.forwardRef(
             <div style={{ display: "inline-block", width: "5em" }}>
               {conditionLabel}
             </div>
-            <Condition
-              style={{ flex: 1 }}
-              step={step}
-              activeStep={activeStep}
-              condition={(step && step.condition) || undefined}
-            />
+            {conditionElements}
           </div>
           <div style={{ display: "flex" }}>
             <div

@@ -15,28 +15,18 @@ import { connect } from "react-redux";
 import { ItemTypes } from "../constants";
 import { ConditionalStep, Step as StepModel, WhileStep } from "../types";
 import { Dispatch } from "redux";
-import { setCondition } from "../actions";
+import { setConditions } from "../actions";
 import { buildSurround } from "../util";
 import { conditions } from "../../../constants";
 
 const notFadedColor = "rgba(0, 0, 0, 0.25)";
 const notEnabledColor = "rgba(0, 0, 0, 0.66)";
 
-const Condition = ({
-  step,
-  activeStep,
-  condition,
-  placeholder = <span style={{ fontStyle: "italic" }}>(Always)</span>,
-  connectDragSource,
-  connectDropTarget,
-  isOver,
-  canDrop,
-  dispatch,
-  style
-}: {
+interface ConditionProps {
   step?: ConditionalStep | WhileStep;
   activeStep?: StepModel;
-  condition?: string;
+  conditions: string[];
+  conditionIdx: number;
   placeholder?: ReactNode;
   connectDragSource: ConnectDragSource;
   connectDropTarget: ConnectDropTarget;
@@ -45,15 +35,31 @@ const Condition = ({
   isOver: boolean;
   canDrop: boolean;
   dispatch: Dispatch;
-}) =>
-  connectDragSource(
+}
+
+const Condition = ({
+  step,
+  activeStep,
+  conditions,
+  conditionIdx,
+  placeholder = <span style={{ fontStyle: "italic" }}>(Always)</span>,
+  connectDragSource,
+  connectDropTarget,
+  isOver,
+  canDrop,
+  dispatch,
+  style
+}: ConditionProps) => {
+  const condition = conditions[conditionIdx];
+
+  return connectDragSource(
     connectDropTarget(
       buildSurround(
         {
           highlight: step && step === activeStep,
           onDelete:
             step && condition
-              ? () => dispatch(setCondition(step.id, null))
+              ? () => dispatch(setConditions(step.id, []))
               : undefined,
           style: {
             borderColor: "#f58928",
@@ -77,14 +83,13 @@ const Condition = ({
                 marginRight: "0.5rem",
                 cursor: "pointer"
               }}
-              onClick={() =>
-                dispatch(
-                  setCondition(
-                    step.id,
-                    condition[0] === "!" ? condition.substr(1) : `!${condition}`
-                  )
-                )
-              }
+              onClick={() => {
+                const newConditions = conditions.slice();
+                newConditions[conditionIdx] =
+                  condition[0] === "!" ? condition.substr(1) : `!${condition}`;
+
+                dispatch(setConditions(step.id, newConditions));
+              }}
               title={
                 "When active, negates the condition. For example, 'At finish' would become 'Not at finish'"
               }
@@ -100,19 +105,27 @@ const Condition = ({
       )
     )
   );
+};
 
 const actionSource = {
   beginDrag({
-    condition,
+    conditions,
+    conditionIdx,
     step
   }: {
-    condition: string;
+    conditions: string[];
+    conditionIdx: number;
     step?: ConditionalStep | WhileStep;
   }) {
-    return { condition, step };
+    return {
+      condition: conditions[conditionIdx],
+      conditions,
+      conditionIdx,
+      step
+    };
   },
-  canDrag({ condition }: { condition?: string }) {
-    return !!condition;
+  canDrag({ conditions }: ConditionProps) {
+    return conditions.length > 0;
   }
 };
 
@@ -126,26 +139,39 @@ const dragCollect = (
 
 const conditionTarget = {
   drop(
-    {
-      dispatch,
-      step: targetStep
-    }: {
-      dispatch: Dispatch;
-      step: ConditionalStep | WhileStep;
-    },
+    { dispatch, step: targetStep }: ConditionProps,
     monitor: DropTargetMonitor
   ) {
-    const { condition, step: sourceStep } = monitor.getItem();
+    const {
+      condition,
+      conditionIdx,
+      conditions,
+      step: sourceStep
+    } = monitor.getItem() as {
+      condition: string;
+      conditionIdx: number;
+      conditions: string[];
+      step: ConditionalStep;
+    };
 
     if (!targetStep || sourceStep === targetStep) {
       // They dragged it on top of itself, so nothing to do
       return;
     }
 
-    dispatch(setCondition(targetStep.id, condition));
+    targetStep.conditions.concat(condition);
+
+    dispatch(
+      setConditions(targetStep.id, targetStep.conditions.concat(condition))
+    );
 
     if (sourceStep) {
-      dispatch(setCondition(sourceStep.id, null));
+      dispatch(
+        setConditions(
+          sourceStep.id,
+          conditions.filter((_, idx) => idx !== conditionIdx)
+        )
+      );
     }
   }
 };
@@ -153,7 +179,7 @@ const conditionTarget = {
 const dropCollect = (
   connect: DropTargetConnector,
   monitor: DropTargetMonitor,
-  { step }: { step?: StepModel }
+  { step }: ConditionProps
 ) => ({
   connectDropTarget: connect.dropTarget(),
   isOver: monitor.isOver({ shallow: true }),

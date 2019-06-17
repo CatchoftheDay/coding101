@@ -7,7 +7,7 @@ import {
   Step,
   WhileStep
 } from "./types";
-import { deleteStep, insertStep, setAction, setCondition } from "./actions";
+import { deleteStep, insertStep, setAction, setConditions } from "./actions";
 import produce from "immer";
 import { getStep, getChildren, getParentStep, getSiblings } from "./selectors";
 
@@ -89,12 +89,12 @@ export default createReducer(initialState, handle => [
     })
   ),
   handle(
-    setCondition,
-    produce((draftSteps, { payload: { id, condition } }) => {
+    setConditions,
+    produce((draftSteps, { payload: { id, conditions } }) => {
       const step = <ConditionalStep | WhileStep>getStep(draftSteps, id);
       const parent = getParentStep(draftSteps, step);
 
-      step.condition = condition;
+      step.conditions = conditions;
 
       if (parent && parent.type === "branch") {
         parent.conditions = ensureBranchHasElseCondition(
@@ -131,11 +131,11 @@ const ensureBranchHasElseCondition = (
 ) => {
   if (
     !conditions.length ||
-    conditions[conditions.length - 1].condition != null
+    conditions[conditions.length - 1].conditions.length
   ) {
     // Always have an "else" clause on the end
     conditions = conditions.concat([
-      { id: Math.random(), type: "conditional", condition: null, steps: [] }
+      { id: Math.random(), type: "conditional", conditions: [], steps: [] }
     ]);
   }
 

@@ -1,5 +1,5 @@
 import reducers from "./reducers";
-import { deleteStep, insertStep, setAction, setCondition } from "./actions";
+import { deleteStep, insertStep, setAction, setConditions } from "./actions";
 import { mazeRunner } from "./constants";
 import { getStep } from "./selectors";
 import { TURN_LEFT, TURN_RIGHT } from "../../constants";
@@ -42,7 +42,7 @@ describe("Script reducers", () => {
     const newState = reducers(
       mazeRunner,
       insertStep(
-        { id: 1, type: "conditional", condition: "isAtFinish", steps: [] },
+        { id: 1, type: "conditional", conditions: ["isAtFinish"], steps: [] },
         1100,
         null
       )
@@ -52,11 +52,11 @@ describe("Script reducers", () => {
   });
 
   it("Should ensure there's always an else branch when setting a condition", () => {
-    const newState = reducers(mazeRunner, setCondition(1130, "isAtFinish"));
+    const newState = reducers(mazeRunner, setConditions(1130, ["isAtFinish"]));
 
     const branch = getStep(newState, 1100);
-    expect(branch.conditions[2].condition).toEqual("isAtFinish");
-    expect(branch.conditions[3].condition).toEqual(null);
+    expect(branch.conditions[2].conditions[0]).toEqual("isAtFinish");
+    expect(branch.conditions[3].conditions.length).toEqual(0);
     expect(branch.conditions[3].steps.length).toEqual(0);
   });
 
@@ -104,8 +104,10 @@ describe("Script reducers", () => {
   });
 
   it("Should set the condition", () => {
-    const newState = reducers(mazeRunner, setCondition(1110, "isAtFinish"));
+    const newState = reducers(mazeRunner, setConditions(1110, ["isAtFinish"]));
 
-    expect(newState[0].steps[0].conditions[0].condition).toEqual("isAtFinish");
+    expect(newState[0].steps[0].conditions[0].conditions[0]).toEqual(
+      "isAtFinish"
+    );
   });
 });
