@@ -104,7 +104,7 @@ describe("Runner reducers", () => {
       applyMiddleware(executeActions())
     );
     const { maze } = store.getState();
-    const maxSteps = maze.height * maze.width * 10;
+    const maxSteps = maze.height * maze.width * 20;
 
     let stepNum = 0;
 

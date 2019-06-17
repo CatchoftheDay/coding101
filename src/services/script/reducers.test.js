@@ -43,18 +43,18 @@ describe("Script reducers", () => {
       mazeRunner,
       insertStep(
         { id: 1, type: "conditional", conditions: ["isAtFinish"], steps: [] },
-        1100,
+        1200,
         null
       )
     );
 
-    expect(newState[0].steps[0].conditions[3].id).toEqual(1);
+    expect(getStep(newState, 1200).conditions[3].id).toEqual(1);
   });
 
   it("Should ensure there's always an else branch when setting a condition", () => {
-    const newState = reducers(mazeRunner, setConditions(1130, ["isAtFinish"]));
+    const newState = reducers(mazeRunner, setConditions(1230, ["isAtFinish"]));
 
-    const branch = getStep(newState, 1100);
+    const branch = getStep(newState, 1200);
     expect(branch.conditions[2].conditions[0]).toEqual("isAtFinish");
     expect(branch.conditions[3].conditions.length).toEqual(0);
     expect(branch.conditions[3].steps.length).toEqual(0);
@@ -75,12 +75,12 @@ describe("Script reducers", () => {
   });
 
   it("Should remove the branch when the last condition is removed", () => {
-    const state = [1110, 1120, 1130].reduce(
+    const state = [1210, 1220, 1230].reduce(
       (prevState, id) => reducers(prevState, deleteStep(id)),
       mazeRunner
     );
 
-    expect(getStep(state, 1100)).toBeUndefined();
+    expect(getStep(state, 1200)).toBeUndefined();
   });
 
   it("Should delete root node correctly", () => {
@@ -90,9 +90,9 @@ describe("Script reducers", () => {
   });
 
   it("Should delete branch node correctly", () => {
-    const newState = reducers(mazeRunner, deleteStep(1110));
+    const newState = reducers(mazeRunner, deleteStep(1210));
 
-    expect(newState[0].steps[0].conditions[0].id).toEqual(1120);
+    expect(getStep(newState, 1200).conditions[0].id).toEqual(1220);
   });
 
   it("Should set the action", () => {
