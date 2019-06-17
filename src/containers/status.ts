@@ -2,7 +2,7 @@ import { connect } from "react-redux";
 import { TutorialState } from "../types";
 import {
   getStatus,
-  hasKey,
+  hasKeySet,
   isAtFinish,
   isCrashed,
   isDone
@@ -11,7 +11,7 @@ import { getRunner } from "../selectors";
 import Status from "../components/status";
 
 const mapStateToProps = (state: TutorialState) => ({
-  variables: hasKey(getRunner(state)) ? ["hasKey"] : [],
+  variables: hasKeySet(getRunner(state)) ? ["hasKey"] : [],
   status: getStatus(getRunner(state)),
   statusColor: isCrashed(getRunner(state))
     ? "red"
