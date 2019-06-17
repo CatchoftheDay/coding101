@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ReactElement } from "react";
 import { ActionStep, Step as StepModel } from "../types";
 import { buildSurround } from "../util";
 import { actions } from "../../../constants";
@@ -35,7 +35,7 @@ const Action = ({
 
 const getLabel = (actionId: string) =>
   actions.reduce(
-    (label: string | undefined, action) =>
+    (label: ReactElement | string | undefined, action) =>
       action.id === actionId ? action.label : label,
     undefined
   );

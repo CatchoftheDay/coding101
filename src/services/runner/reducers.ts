@@ -1,8 +1,12 @@
 import { createReducer } from "deox";
 import {
+  clearHasKey,
+  grabKey,
   moveForward,
   newMaze,
+  openDoor,
   reset,
+  setHasKey,
   step,
   turnLeft,
   turnRight
@@ -13,7 +17,7 @@ import { Script } from "../script/types";
 import scriptReducers from "../script/reducers";
 import { getFirstStepId } from "../script/selectors";
 import { RunnerState } from "./types";
-import { getNextStepId } from "./selectors";
+import { getMaze, getNextStepId, onKey } from "./selectors";
 import { DeepImmutableObject } from "deox/dist/types";
 
 export const buildInitialState = (
@@ -37,7 +41,10 @@ export const buildInitialState = (
     facing,
     crashed,
     currStepId: getFirstStepId(script),
-    script
+    script,
+    hasKey: false,
+    doorOpen: false,
+    variables: { hasKey: false }
   };
 };
 
@@ -85,6 +92,44 @@ const runnerReducer = createReducer(initialState, handle => [
   handle(
     step,
     ignoreIfCrashed(state => ({ ...state, currStepId: getNextStepId(state) }))
+  ),
+  handle(
+    grabKey,
+    ignoreIfCrashed(state => {
+      if (onKey(state) && !state.hasKey) {
+        return { ...state, hasKey: true };
+      } else {
+        return { ...state, crashed: true };
+      }
+    })
+  ),
+  handle(
+    openDoor,
+    ignoreIfCrashed(state => {
+      if (
+        state.hasKey &&
+        !state.doorOpen &&
+        getMaze(state).hasDoor(state.location, state.facing)
+      ) {
+        return { ...state, doorOpen: true };
+      } else {
+        return { ...state, crashed: true };
+      }
+    })
+  ),
+  handle(
+    setHasKey,
+    ignoreIfCrashed(state => ({
+      ...state,
+      variables: { ...state.variables, hasKey: true }
+    }))
+  ),
+  handle(
+    clearHasKey,
+    ignoreIfCrashed(state => ({
+      ...state,
+      variables: { ...state.variables, hasKey: false }
+    }))
   )
 ]);
 

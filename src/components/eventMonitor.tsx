@@ -13,7 +13,11 @@ const EventMonitor = ({
   const lastStage = useRef<Stage>(stage);
 
   if (stage !== lastStage.current) {
-    toast.show({ text: "Welcome aboard, Captain!" });
+    if (stage === Stage.CONTROL) {
+      toast.show({ text: "Welcome aboard, Captain!" });
+    } else if (stage === Stage.VARIABLES) {
+      toast.show({ text: "Access granted" });
+    }
     lastStage.current = stage;
   }
 

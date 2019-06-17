@@ -4,7 +4,7 @@ import runnerReducer from "./services/runner/reducers";
 import { Stage } from "./types";
 import { addKey, advanceTo } from "./actions";
 
-const stageReducer = createReducer(Stage.ACTIONS_ONLY, handle => [
+const stageReducer = createReducer(Stage.ACTIONS, handle => [
   handle(advanceTo, (currStage, { payload: newStage }) =>
     Math.max(currStage, newStage)
   )

@@ -1,4 +1,4 @@
-import React, { CSSProperties, ReactNode } from "react";
+import React, { CSSProperties, ReactElement, ReactNode } from "react";
 import Condition from "../services/script/components/condition";
 import Step from "../services/script/components/step";
 
@@ -10,9 +10,9 @@ const Palette = ({
   controls,
   style
 }: {
-  actions: ReadonlyArray<{ id: string; label: string }>;
-  conditions: ReadonlyArray<{ id: string; label: string }>;
-  controls: ReadonlyArray<{ id: string; label: string }>;
+  actions: ReadonlyArray<{ id: string; label: string | ReactElement }>;
+  conditions: ReadonlyArray<{ id: string; label: string | ReactElement }>;
+  controls: ReadonlyArray<{ id: string; label: string | ReactElement }>;
   style?: CSSProperties;
 }) => {
   const widgets: ReactNode[] = [];

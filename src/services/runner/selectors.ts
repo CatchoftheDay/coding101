@@ -11,7 +11,16 @@ import { RunnerState } from "./types";
 import { leftOf, rightOf } from "../maze/maze";
 import { AnyAction } from "redux";
 import { moveForward, turnLeft, turnRight } from "./actions";
-import { WALL_IN_FRONT, WALL_ON_LEFT, WALL_ON_RIGHT } from "../../constants";
+import {
+  DOOR_IN_FRONT,
+  DOOR_ON_LEFT,
+  DOOR_ON_RIGHT,
+  HAS_KEY_SET,
+  ON_KEY,
+  WALL_IN_FRONT,
+  WALL_ON_LEFT,
+  WALL_ON_RIGHT
+} from "../../constants";
 
 /** Returns true if we've crashed */
 export const isCrashed = (state: RunnerState) => state.crashed;
@@ -19,15 +28,33 @@ export const isCrashed = (state: RunnerState) => state.crashed;
 export const isAtFinish = (state: RunnerState) =>
   state.location.x === state.maze.width - 1 &&
   state.location.y === state.maze.height - 1;
-/** Returns true if we're able to move left from our current location */
+/** Returns true if there's a wall on the left of our current location */
 export const wallOnLeft = (state: RunnerState) =>
   getMaze(state).hasWall(getLocation(state), leftOf(getFacing(state)));
-/** Returns true if we're able to move forward from our current location */
+/** Returns true if there's a wall in front of our current location */
 export const wallInFront = (state: RunnerState) =>
   getMaze(state).hasWall(getLocation(state), getFacing(state));
-/** Returns true if we're able to move right from our current location */
+/** Returns true if there's a wall on the right of our current location */
 export const wallOnRight = (state: RunnerState) =>
   getMaze(state).hasWall(getLocation(state), rightOf(getFacing(state)));
+/** Returns true if there's a door on the left of our current location */
+export const doorOnLeft = (state: RunnerState) =>
+  getMaze(state).hasDoor(getLocation(state), leftOf(getFacing(state)));
+/** Returns true if there's a door in front of our current location */
+export const doorInFront = (state: RunnerState) =>
+  getMaze(state).hasDoor(getLocation(state), getFacing(state));
+/** Returns true if there's a door on the right of our current location */
+export const doorOnRight = (state: RunnerState) =>
+  getMaze(state).hasDoor(getLocation(state), rightOf(getFacing(state)));
+/** Returns true if we're on top of the key */
+export const onKey = (state: RunnerState) => {
+  const { location } = state;
+  const { keyLocation } = getMaze(state);
+
+  return keyLocation.x === location.x && keyLocation.y === location.y;
+};
+/** Returns true if the hasKey variable is set */
+export const hasKeySet = (state: RunnerState) => state.variables.hasKey;
 
 export const getLocation = (state: RunnerState) => state.location;
 export const getFacing = (state: RunnerState) => state.facing;
@@ -170,5 +197,10 @@ const conditions: { [condition: string]: (state: RunnerState) => boolean } = {
   atFinish: state => isAtFinish(state),
   [WALL_ON_LEFT]: wallOnLeft,
   [WALL_IN_FRONT]: wallInFront,
-  [WALL_ON_RIGHT]: wallOnRight
+  [WALL_ON_RIGHT]: wallOnRight,
+  [DOOR_ON_LEFT]: doorOnLeft,
+  [DOOR_IN_FRONT]: doorInFront,
+  [DOOR_ON_RIGHT]: doorOnRight,
+  [ON_KEY]: onKey,
+  [HAS_KEY_SET]: hasKeySet
 };

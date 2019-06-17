@@ -8,4 +8,9 @@ export interface RunnerState {
   maze: Maze;
   script: Script;
   currStepId: number | undefined;
+  hasKey: boolean;
+  doorOpen: boolean;
+  variables: {
+    hasKey: boolean;
+  };
 }

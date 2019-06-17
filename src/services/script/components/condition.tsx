@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExclamation } from "@fortawesome/free-solid-svg-icons";
-import React, { CSSProperties, ReactNode } from "react";
+import React, { CSSProperties, ReactElement, ReactNode } from "react";
 import {
   ConnectDragSource,
   ConnectDropTarget,
@@ -164,7 +164,7 @@ const dropCollect = (
 /** Returns the label for the given condition */
 const getLabel = (conditionId: string) =>
   conditions.reduce(
-    (label: string | undefined, condition) =>
+    (label: ReactElement | string | undefined, condition) =>
       condition.id === conditionId ? condition.label : label,
     undefined
   );

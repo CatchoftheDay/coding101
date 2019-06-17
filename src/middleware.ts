@@ -12,6 +12,8 @@ export const checkCodes: Middleware<{}, TutorialState> = (
     const keystrokes = getKeystrokes(store.getState());
     if (/catch$/i.test(keystrokes)) {
       store.dispatch(advanceTo(Stage.CONTROL));
+    } else if (/coding101$/i.test(keystrokes)) {
+      store.dispatch(advanceTo(Stage.VARIABLES));
     }
   }
 
