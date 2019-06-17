@@ -189,8 +189,12 @@ const getNextStep_while = (state: RunnerState, step: WhileStep) => {
 
   switch (true) {
     case flattenSteps(step.steps).includes(currentStep!):
-      // The current step is one of our descendents; so the next step should be us
-      return step;
+      // The current step is one of our descendents; so the next step should be its sibling, or us
+      const childStep = step.steps.find(child =>
+        flattenSteps([child]).includes(currentStep!)
+      );
+
+      return getNextSibling(state.script, childStep!) || step;
     case step.conditions.every(condition => conditionMet(state, condition)):
       // If our condition is met(or we don't have one), always go to the first
       // step

@@ -103,7 +103,7 @@ describe("Runner reducers", () => {
   it("Should be able to solve the maze", () => {
     const store = createStore(
       reducer,
-      resetState({ ...initialState, script: mazeRunner }, { type: undefined }),
+      resetState({ ...initialState, script: mazeRunner }),
       applyMiddleware(executeActions())
     );
     const { maze } = store.getState();
