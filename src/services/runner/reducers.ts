@@ -20,7 +20,7 @@ import { Script } from "../script/types";
 import scriptReducers from "../script/reducers";
 import { getFirstStepId } from "../script/selectors";
 import { RunnerState } from "./types";
-import { getMaze, getNextStepId, onKey } from "./selectors";
+import { getMaze, getNextStepId, isCrashed, onKey } from "./selectors";
 import { DeepImmutableObject } from "deox/dist/types";
 import { mazeRunner } from "../script/constants";
 
@@ -28,7 +28,7 @@ export const buildInitialState = (
   modelState: {
     location?: Location;
     facing?: Direction;
-    crashed?: boolean;
+    error?: string;
     maze?: Maze;
     script: Script;
   } = { script: mazeRunner }
@@ -36,14 +36,14 @@ export const buildInitialState = (
   const { script } = modelState;
   const location = modelState.location || { x: 0, y: 0 };
   const facing = modelState.facing || Direction.RIGHT;
-  const crashed = modelState.crashed == null ? false : modelState.crashed;
+  const error = modelState.error;
   const maze = modelState.maze || new Maze({ width: 5 });
 
   return {
     maze,
     location,
     facing,
-    crashed,
+    error,
     currStepId: getFirstStepId(script),
     script,
     hasKey: false,
@@ -61,7 +61,7 @@ export const initialState = buildInitialState();
 const ignoreIfCrashed = <A extends Action>(
   reducer: (state: RunnerState, action: A) => RunnerState
 ) => (state: RunnerState, action: A) =>
-  state.crashed ? state : reducer(state, action);
+  isCrashed(state) ? state : reducer(state, action);
 
 const runnerReducer = createReducer(initialState, handle => [
   handle(reset, state => {
@@ -89,7 +89,7 @@ const runnerReducer = createReducer(initialState, handle => [
         state.maze.hasWall(state.location, state.facing) ||
         state.maze.hasDoor(state.location, state.facing)
       ) {
-        return { ...state, crashed: true };
+        return { ...state, error: "Crashed into a wall" };
       } else {
         return { ...state, location: move(state.location, state.facing) };
       }
@@ -113,21 +113,21 @@ const runnerReducer = createReducer(initialState, handle => [
       if (onKey(state) && !state.hasKey) {
         return { ...state, hasKey: true };
       } else {
-        return { ...state, crashed: true };
+        return { ...state, error: "There is no key here" };
       }
     })
   ),
   handle(
     openDoor,
     ignoreIfCrashed(state => {
-      if (
-        state.hasKey &&
-        !state.doorOpen &&
-        getMaze(state).hasDoor(state.location, state.facing)
-      ) {
-        return { ...state, doorOpen: true };
+      if (!getMaze(state).hasDoor(state.location, state.facing)) {
+        return { ...state, error: "There is no door here" };
+      } else if (!state.hasKey) {
+        return { ...state, error: "You don't have the key" };
+      } else if (state.doorOpen) {
+        return { ...state, error: "The door is already open" };
       } else {
-        return { ...state, crashed: true };
+        return { ...state, doorOpen: true };
       }
     })
   ),

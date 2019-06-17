@@ -44,11 +44,9 @@ export const run = (
   store: MiddlewareAPI<Dispatch, TutorialState>
 ) => (next: Dispatch) => (action: AnyAction) => {
   const result = next(action);
-  const { crashed, currStepId, running, runHandle } = selector(
-    store.getState()
-  );
+  const { error, currStepId, running, runHandle } = selector(store.getState());
 
-  if (running && (crashed || currStepId === undefined)) {
+  if (running && (error !== undefined || currStepId === undefined)) {
     store.dispatch(stop());
   } else if (running && !runHandle) {
     store.dispatch(

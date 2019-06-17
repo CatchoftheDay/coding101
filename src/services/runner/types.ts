@@ -4,7 +4,7 @@ import { Script } from "../script/types";
 export interface RunnerState {
   location: Location;
   facing: Direction;
-  crashed: boolean;
+  error?: string;
   maze: Maze;
   script: Script;
   currStepId: number | undefined;

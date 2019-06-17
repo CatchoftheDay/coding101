@@ -90,7 +90,10 @@ describe("Runner reducers", () => {
   });
 
   it("Should not move or turn after a collision", () => {
-    const crashedState = { ...initialState, crashed: true };
+    const crashedState = {
+      ...initialState,
+      error: "There's a wall in the way"
+    };
 
     expect(reducer(crashedState, turnLeft())).toEqual(crashedState);
     expect(reducer(crashedState, turnRight())).toEqual(crashedState);

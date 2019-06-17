@@ -24,7 +24,22 @@ import {
 } from "../../constants";
 
 /** Returns true if we've crashed */
-export const isCrashed = (state: RunnerState) => state.crashed;
+export const isCrashed = (state: RunnerState) => state.error !== undefined;
+/** Returns the reason we've crashed */
+export const getStatus = (state: RunnerState) => {
+  switch (true) {
+    case isCrashed(state):
+      return state.error;
+    case isAtFinish(state) && isDone(state):
+      return "Success!";
+    case isAtFinish(state):
+      return "At finish but program is not at end";
+    case state.script.length && isDone(state):
+      return "At end of program";
+    default:
+      return undefined;
+  }
+};
 /** True if the program has completed */
 export const isDone = (state: RunnerState) => state.currStepId === undefined;
 /** True if the program is running */

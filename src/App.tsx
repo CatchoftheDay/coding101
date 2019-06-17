@@ -21,6 +21,7 @@ import { Col, Row } from "react-bootstrap";
 import { addKey } from "./actions";
 import { checkCodes } from "./middleware";
 import { getRunner } from "./selectors";
+import Status from "./containers/status";
 
 const composeEnhancers =
   (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
@@ -58,6 +59,7 @@ class App extends Component {
                   <ContainerDimensions>
                     <MazeAndRunner />
                   </ContainerDimensions>
+                  <Status />
                 </div>
               </Col>
               <Col className="col-md-5 col-lg-7 col-xl-5">
