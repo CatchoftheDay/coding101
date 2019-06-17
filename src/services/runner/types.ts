@@ -13,4 +13,6 @@ export interface RunnerState {
   variables: {
     hasKey: boolean;
   };
+  running: boolean;
+  runHandle?: number;
 }

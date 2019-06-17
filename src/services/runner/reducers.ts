@@ -6,8 +6,11 @@ import {
   newMaze,
   openDoor,
   reset,
+  run,
   setHasKey,
+  setRunHandle,
   step,
+  stop,
   turnLeft,
   turnRight
 } from "./actions";
@@ -45,7 +48,8 @@ export const buildInitialState = (
     script,
     hasKey: false,
     doorOpen: false,
-    variables: { hasKey: false }
+    variables: { hasKey: false },
+    running: false
   };
 };
 
@@ -63,6 +67,12 @@ const runnerReducer = createReducer(initialState, handle => [
   handle(reset, state => {
     return resetState(state);
   }),
+  handle(run, state => ({ ...state, running: true })),
+  handle(stop, state => ({ ...state, running: false })),
+  handle(setRunHandle, (state, { payload: runHandle }) => ({
+    ...state,
+    runHandle
+  })),
   handle(newMaze, state =>
     resetState({
       ...state,

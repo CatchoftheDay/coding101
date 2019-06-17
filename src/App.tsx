@@ -12,7 +12,8 @@ import Palette from "./containers/palette";
 import MazeAndRunner from "./containers/mazeAndRunner";
 import {
   executeActions,
-  resetOnScriptChange
+  resetOnScriptChange,
+  run
 } from "./services/runner/middleware";
 import StepList from "./services/script/containers/stepList";
 import reducers, { initialState } from "./reducers";
@@ -31,6 +32,7 @@ const store = createStore(
     applyMiddleware(
       executeActions(getRunner),
       resetOnScriptChange(getRunner),
+      run(getRunner),
       checkCodes
     )
   )

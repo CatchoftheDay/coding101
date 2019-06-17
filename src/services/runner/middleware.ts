@@ -1,5 +1,5 @@
 import { AnyAction, Dispatch, Middleware, MiddlewareAPI } from "redux";
-import { reset, step } from "./actions";
+import { reset, step, stop, setRunHandle } from "./actions";
 import { getCurrentAction } from "./selectors";
 import { TutorialState } from "../../types";
 import { RunnerState } from "./types";
@@ -33,6 +33,30 @@ export const resetOnScriptChange = (
 
   if (selector(store.getState()).script !== origScript) {
     store.dispatch(reset());
+  }
+
+  return result;
+};
+
+export const run = (
+  selector: (state: any) => RunnerState
+): Middleware<{}, TutorialState> => (
+  store: MiddlewareAPI<Dispatch, TutorialState>
+) => (next: Dispatch) => (action: AnyAction) => {
+  const result = next(action);
+  const { crashed, currStepId, running, runHandle } = selector(
+    store.getState()
+  );
+
+  if (running && (crashed || currStepId === undefined)) {
+    store.dispatch(stop());
+  } else if (running && !runHandle) {
+    store.dispatch(
+      setRunHandle(window.setInterval(() => store.dispatch(step()), 250))
+    );
+  } else if (runHandle !== undefined && !running) {
+    window.clearTimeout(runHandle);
+    store.dispatch(setRunHandle(undefined));
   }
 
   return result;

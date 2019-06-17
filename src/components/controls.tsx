@@ -8,7 +8,7 @@ const Controls = ({
   onReset,
   onStep,
   onRun,
-  onPause,
+  onStop,
   onNewMaze,
   showNewMaze
 }: {
@@ -18,7 +18,7 @@ const Controls = ({
   onReset?: () => void;
   onStep?: () => void;
   onRun?: () => void;
-  onPause?: () => void;
+  onStop?: () => void;
   onNewMaze?: () => void;
   onSetSize?: (size: number) => void;
   showNewMaze: boolean;
@@ -43,12 +43,12 @@ const Controls = ({
             Step
           </Button>
         )}
-        {(running ? onPause : onRun) && (
+        {(running ? onStop : onRun) && (
           <Button
             style={{ marginRight: "5px" }}
             disabled={crashed || done}
             variant="outline-primary"
-            onClick={running ? onPause : onRun}
+            onClick={running ? onStop : onRun}
           >
             {running ? "Pause" : "Run"}
           </Button>
