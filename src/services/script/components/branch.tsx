@@ -51,7 +51,9 @@ const Branch = ({
             onInsert={onInsert}
             showDelete
             placeholder={
-              idx < step.conditions.length - 1 ? "(Always)" : "(Otherwise)"
+              idx === 0 || idx < step.conditions.length - 1
+                ? "(Always)"
+                : "(Otherwise)"
             }
           />
         ))}
