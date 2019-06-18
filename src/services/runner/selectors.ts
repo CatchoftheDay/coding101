@@ -21,6 +21,7 @@ import {
   turnRight
 } from "./actions";
 import {
+  AT_FINISH,
   CLEAR_HAS_KEY,
   DOOR_IN_FRONT,
   DOOR_ON_LEFT,
@@ -249,7 +250,7 @@ const actions: { [actionName: string]: AnyAction } = {
 };
 
 const conditions: { [condition: string]: (state: RunnerState) => boolean } = {
-  atFinish: state => isAtFinish(state),
+  [AT_FINISH]: isAtFinish,
   [WALL_ON_LEFT]: wallOnLeft,
   [WALL_IN_FRONT]: wallInFront,
   [WALL_ON_RIGHT]: wallOnRight,
