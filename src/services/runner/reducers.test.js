@@ -19,7 +19,9 @@ import {
   getFacing,
   getLocation,
   isAtFinish,
-  onKey
+  onKey,
+  isDone,
+  getCurrentStepId
 } from "./selectors";
 
 const initialState = {
@@ -184,5 +186,40 @@ describe("Runner reducers", () => {
     );
     store.dispatch(moveForward());
     expect(isCrashed(store.getState())).toBeTruthy();
+  });
+
+  it("Should proceed from if statements correctly", function() {
+    const script = [
+      {
+        id: 1,
+        type: "branch",
+        conditions: [{ id: 10, type: "conditional", conditions: [], steps: [] }]
+      },
+      {
+        id: 2,
+        type: "branch",
+        conditions: [
+          {
+            id: 20,
+            type: "conditional",
+            conditions: [],
+            steps: [{ id: 21, type: "action", action: "moveForward" }]
+          }
+        ]
+      }
+    ];
+    const store = createStore(
+      reducer,
+      resetState({ ...initialState, script }),
+      applyMiddleware(executeActions())
+    );
+    const visited = [];
+
+    while (!isDone(store.getState())) {
+      visited.push(getCurrentStepId(store.getState()));
+      store.dispatch(step());
+    }
+
+    expect(visited).toEqual([10, 20, 21]);
   });
 });

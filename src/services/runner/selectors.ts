@@ -121,6 +121,20 @@ export const getCurrentAction = (state: RunnerState) => {
   }
 };
 
+/** Returns the ID of the first step */
+export const getFirstStepId = (state: RunnerState) => {
+  const firstStep = state.script[0];
+
+  switch (true) {
+    case firstStep === undefined:
+      return undefined;
+    case shouldSkip(firstStep):
+      return getNextStepId({ ...state, currStepId: firstStep.id });
+    default:
+      return firstStep.id;
+  }
+};
+
 /** Gets the step that should proceed the current step */
 export const getNextStepId = (state: RunnerState) => {
   const currState = { ...state };
@@ -170,19 +184,20 @@ const getNextStep_action = (state: RunnerState, step: ActionStep) =>
 /** Gets the next step given the current step is a BranchStep */
 const getNextStep_branch = (state: RunnerState, step: BranchStep) => {
   const currentStep = getCurrentStep(state);
+  const stepNextSibling = getNextSibling(getScript(state), step);
 
   switch (true) {
-    case !!step.conditions.find(condition => condition === currentStep):
+    case step.conditions.includes(currentStep as ConditionalStep):
       // If the current step is one of our conditions, that condition was *not*
       // satisfied, so move on to the next condition
-      return getNextSibling(getScript(state), currentStep!);
+      return getNextSibling(getScript(state), currentStep!) || stepNextSibling;
     case flattenSteps(step.conditions).includes(currentStep!):
       // If the current step is a child of one of our conditions, then that
       // condition was executed so we should return undefined
-      return undefined;
+      return stepNextSibling;
     default:
       // Otherwise we're entering this step, so move to our first condition
-      return step.conditions[0];
+      return step.conditions[0] || stepNextSibling;
   }
 };
 

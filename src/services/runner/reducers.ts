@@ -19,9 +19,14 @@ import Maze, { Direction, leftOf, Location, move, rightOf } from "../maze/maze";
 import { Action, AnyAction } from "redux";
 import { Script } from "../script/types";
 import scriptReducers from "../script/reducers";
-import { getFirstStepId } from "../script/selectors";
 import { RunnerState } from "./types";
-import { getMaze, getNextStepId, isCrashed, onKey } from "./selectors";
+import {
+  getFirstStepId,
+  getMaze,
+  getNextStepId,
+  isCrashed,
+  onKey
+} from "./selectors";
 import { DeepImmutableObject } from "deox/dist/types";
 import { Omit } from "react-redux";
 
@@ -60,23 +65,27 @@ export const buildInitialState = (
   const facing = modelState.facing || Direction.RIGHT;
   const error = modelState.error;
 
-  return addMaze({
+  const state = addMaze({
     location,
     facing,
     error,
-    currStepId: getFirstStepId(script),
     script,
     hasKey: false,
     doorOpen: false,
     variables: { hasKey: false },
     running: false,
     movements: 0,
+    currStepId: undefined,
     smallMaze,
     smallMazeSize,
     mazeSize,
     addDoor,
     randomSeed
   });
+
+  state.currStepId = getFirstStepId(state);
+
+  return state;
 };
 
 export const initialState = buildInitialState();
@@ -177,7 +186,7 @@ const runnerReducer = createReducer(initialState, handle => [
 export const resetState = (state: RunnerState & { maze?: Maze }) =>
   addMaze({
     ...state,
-    currStepId: getFirstStepId(state.script),
+    currStepId: getFirstStepId(state),
     location: initialState.location,
     facing: initialState.facing,
     hasKey: initialState.hasKey,
