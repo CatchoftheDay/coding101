@@ -63,10 +63,16 @@ class App extends Component {
                   <Status />
                 </div>
               </Col>
-              <Col className="col-md-5 col-lg-7 col-xl-5">
+              <Col
+                className="col-md-5 col-lg-7 col-xl-5"
+                style={{ maxHeight: "100%", overflow: "auto" }}
+              >
                 <StepList />
               </Col>
-              <Col className="col-md=3 col-lg-2 col-xl-2">
+              <Col
+                className="col-md=3 col-lg-2 col-xl-2"
+                style={{ maxHeight: "100%", overflow: "auto" }}
+              >
                 <Palette style={{ flex: 0 }} />
               </Col>
             </Row>
