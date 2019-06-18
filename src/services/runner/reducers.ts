@@ -22,7 +22,6 @@ import { getFirstStepId } from "../script/selectors";
 import { RunnerState } from "./types";
 import { getMaze, getNextStepId, isCrashed, onKey } from "./selectors";
 import { DeepImmutableObject } from "deox/dist/types";
-import { mazeRunner } from "../script/constants";
 
 export const buildInitialState = (
   modelState: {
@@ -31,7 +30,7 @@ export const buildInitialState = (
     error?: string;
     maze?: Maze;
     script: Script;
-  } = { script: mazeRunner }
+  } = { script: [] }
 ): RunnerState => {
   const { script } = modelState;
   const location = modelState.location || { x: 0, y: 0 };
