@@ -1,6 +1,6 @@
 import { AnyAction, combineReducers } from "redux";
 import { createReducer } from "deox";
-import runnerReducer from "./services/runner/reducers";
+import runnerReducer, { resetState } from "./services/runner/reducers";
 import { Stage, TutorialState } from "./types";
 import { addAchievement, addKey, advanceTo } from "./actions";
 import Maze from "./services/maze/maze";
@@ -48,7 +48,10 @@ const reducers = (state: TutorialState | undefined, action: AnyAction) => {
   if (state.stage !== oldStage) {
     state = {
       ...state,
-      runner: { ...state.runner, maze: new Maze(mazePropsByState[state.stage]) }
+      runner: resetState({
+        ...state.runner,
+        maze: new Maze(mazePropsByState[state.stage])
+      })
     };
   }
 
