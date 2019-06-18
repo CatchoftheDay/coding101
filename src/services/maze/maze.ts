@@ -25,6 +25,14 @@ const directions: ReadonlyArray<Direction> = [
   Direction.RIGHT
 ];
 
+export interface MazeProps {
+  width: number;
+  height?: number;
+  pathMaxLength?: number;
+  randomSeed?: string;
+  addDoor?: boolean;
+}
+
 class Maze {
   /** The width of the maze */
   public readonly width: number;
@@ -48,13 +56,7 @@ class Maze {
     height = width,
     pathMaxLength = width * 2,
     addDoor = false
-  }: {
-    width: number;
-    height?: number;
-    pathMaxLength?: number;
-    randomSeed?: string;
-    addDoor?: boolean;
-  }) {
+  }: MazeProps) {
     if (width < 2 || height < 2) {
       throw new Error("Width and height must be at least 2");
     }
