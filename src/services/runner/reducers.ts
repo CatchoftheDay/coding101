@@ -48,7 +48,8 @@ export const buildInitialState = (
     hasKey: false,
     doorOpen: false,
     variables: { hasKey: false },
-    running: false
+    running: false,
+    movements: 0
   };
 };
 
@@ -92,7 +93,11 @@ const runnerReducer = createReducer(initialState, handle => [
       ) {
         return { ...state, error: "Attempted to go through a closed door" };
       } else {
-        return { ...state, location: move(state.location, state.facing) };
+        return {
+          ...state,
+          location: move(state.location, state.facing),
+          movements: state.movements + 1
+        };
       }
     })
   ),

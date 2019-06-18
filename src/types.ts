@@ -10,4 +10,5 @@ export interface TutorialState {
   stage: Stage;
   runner: RunnerState;
   keystrokes: string;
+  achievements: string[];
 }

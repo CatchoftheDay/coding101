@@ -11,3 +11,8 @@ export const advanceTo = createAction(
 export const addKey = createAction(addKeyType, resolve => (key: string) =>
   resolve(key)
 );
+
+export const addAchievement = createAction(
+  "tutorial/addAchievement",
+  resolve => (achievement: string) => resolve(achievement)
+);

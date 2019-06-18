@@ -15,4 +15,5 @@ export interface RunnerState {
   };
   running: boolean;
   runHandle?: number;
+  movements: number;
 }

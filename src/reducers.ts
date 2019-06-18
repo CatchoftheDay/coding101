@@ -2,7 +2,7 @@ import { AnyAction, combineReducers } from "redux";
 import { createReducer } from "deox";
 import runnerReducer from "./services/runner/reducers";
 import { Stage, TutorialState } from "./types";
-import { addKey, advanceTo } from "./actions";
+import { addAchievement, addKey, advanceTo } from "./actions";
 import Maze from "./services/maze/maze";
 
 const mazePropsByState = {
@@ -24,15 +24,26 @@ const keystrokeReducer = createReducer("", handle => [
   )
 ]);
 
+const achievementReducer = createReducer([] as string[], handle => [
+  handle(addAchievement, (achievements, { payload: achievement }) => {
+    if (achievements.indexOf(achievement) === -1) {
+      return [...achievements, achievement];
+    } else {
+      return achievements;
+    }
+  })
+]);
+
 const baseReducers = combineReducers({
   runner: runnerReducer,
   stage: stageReducer,
-  keystrokes: keystrokeReducer
+  keystrokes: keystrokeReducer,
+  achievements: achievementReducer
 });
 
 const reducers = (state: TutorialState | undefined, action: AnyAction) => {
   const oldStage = state && state.stage;
-  state = baseReducers(state, action);
+  state = baseReducers(state, action) as TutorialState;
 
   if (state.stage !== oldStage) {
     state = {
