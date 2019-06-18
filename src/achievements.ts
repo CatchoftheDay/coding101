@@ -7,7 +7,8 @@ import {
   hasKeySet,
   isAtFinish,
   isCrashed,
-  isDone
+  isDone,
+  isSmallMaze
 } from "./services/runner/selectors";
 import { getRunner, getStage } from "./selectors";
 import { flattenSteps } from "./services/script/reducers";
@@ -43,7 +44,11 @@ const achievements: {
     text: "A fully working program",
     check: state => {
       const runnerState = getRunner(state);
-      if (isAtFinish(runnerState) && isDone(runnerState)) {
+      if (
+        isAtFinish(runnerState) &&
+        isDone(runnerState) &&
+        !isSmallMaze(runnerState)
+      ) {
         const steps = flattenSteps(getScript(runnerState));
 
         return (
@@ -77,7 +82,10 @@ const achievements: {
       const runnerState = getRunner(state);
 
       return (
-        doorOpen(runnerState) && isAtFinish(runnerState) && isDone(runnerState)
+        doorOpen(runnerState) &&
+        isAtFinish(runnerState) &&
+        isDone(runnerState) &&
+        !isSmallMaze(runnerState)
       );
     }
   }

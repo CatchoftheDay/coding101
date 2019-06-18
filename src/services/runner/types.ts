@@ -16,4 +16,8 @@ export interface RunnerState {
   running: boolean;
   runHandle?: number;
   movements: number;
+  addDoor: boolean;
+  mazeSize: number;
+  smallMazeSize: number;
+  smallMaze: boolean;
 }

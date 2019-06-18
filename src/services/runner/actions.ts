@@ -16,3 +16,7 @@ export const openDoor = createAction("runner/openDoor");
 export const grabKey = createAction("runner/grabKey");
 export const setHasKey = createAction("runner/setHasKey");
 export const clearHasKey = createAction("runner/clearHasKey");
+export const setSmallMaze = createAction(
+  "runner/setSmallMaze",
+  resolve => (smallMaze: boolean) => resolve(smallMaze)
+);

@@ -6,9 +6,24 @@ import { addAchievement, addKey, advanceTo } from "./actions";
 import Maze from "./services/maze/maze";
 
 const mazePropsByState = {
-  [Stage.ACTIONS]: { width: 4, addDoor: false, randomSeed: "hello" },
-  [Stage.CONTROL]: { width: 6, addDoor: false },
-  [Stage.VARIABLES]: { width: 6, addDoor: true, randomSeed: "catch" }
+  [Stage.ACTIONS]: {
+    addDoor: false,
+    mazeSize: 4,
+    smallMaze: false,
+    maze: { addDoor: false, randomSeed: "hello" }
+  },
+  [Stage.CONTROL]: {
+    addDoor: false,
+    mazeSize: 6,
+    smallMaze: false,
+    maze: { addDoor: false }
+  },
+  [Stage.VARIABLES]: {
+    addDoor: true,
+    mazeSize: 6,
+    smallMaze: false,
+    maze: { addDoor: true, randomSeed: "catch" }
+  }
 };
 
 const stageReducer = createReducer(Stage.ACTIONS, handle => [
@@ -50,7 +65,11 @@ const reducers = (state: TutorialState | undefined, action: AnyAction) => {
       ...state,
       runner: resetState({
         ...state.runner,
-        maze: new Maze(mazePropsByState[state.stage])
+        ...mazePropsByState[state.stage],
+        maze: new Maze({
+          ...mazePropsByState[state.stage].maze,
+          width: mazePropsByState[state.stage].mazeSize
+        })
       })
     };
   }

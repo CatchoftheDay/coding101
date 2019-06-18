@@ -10,7 +10,10 @@ const Controls = ({
   onRun,
   onStop,
   onNewMaze,
-  showNewMaze
+  showNewMaze,
+  smallMaze,
+  showSmallMaze,
+  onSetSmallMaze
 }: {
   running: boolean;
   crashed: boolean;
@@ -22,6 +25,9 @@ const Controls = ({
   onNewMaze?: () => void;
   onSetSize?: (size: number) => void;
   showNewMaze: boolean;
+  showSmallMaze: boolean;
+  smallMaze: boolean;
+  onSetSmallMaze: (smallMaze: boolean) => void;
 }) => {
   return (
     <div
@@ -64,6 +70,15 @@ const Controls = ({
         )}
       </div>
       <div>
+        {showSmallMaze && onSetSmallMaze && (
+          <Button
+            style={{ marginRight: "5px" }}
+            variant={smallMaze ? "secondary" : "outline-secondary"}
+            onClick={() => onSetSmallMaze(!smallMaze)}
+          >
+            Small maze
+          </Button>
+        )}
         {showNewMaze && onNewMaze && (
           <Button
             style={{ marginRight: "5px" }}

@@ -60,6 +60,7 @@ export const getStatus = (state: RunnerState) => {
 export const isDone = (state: RunnerState) => state.currStepId === undefined;
 /** True if the program is running */
 export const isRunning = (state: RunnerState) => state.running;
+export const isSmallMaze = (state: RunnerState) => state.smallMaze;
 /** Returns true if we're currently at the maze's exit */
 export const isAtFinish = (state: RunnerState) =>
   state.location.x === state.maze.width - 1 &&
