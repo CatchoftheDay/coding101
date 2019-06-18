@@ -1,4 +1,4 @@
-import { TutorialState } from "./types";
+import { Stage, TutorialState } from "./types";
 import {
   doorOpen,
   getMovements,
@@ -6,9 +6,10 @@ import {
   hasKey,
   hasKeySet,
   isAtFinish,
+  isCrashed,
   isDone
 } from "./services/runner/selectors";
-import { getRunner } from "./selectors";
+import { getRunner, getStage } from "./selectors";
 import { flattenSteps } from "./services/script/reducers";
 
 const achievements: {
@@ -30,6 +31,12 @@ const achievements: {
     id: "reachedFinish",
     text: "Reaching the finish",
     check: state => isAtFinish(getRunner(state))
+  },
+  {
+    id: "timeToDebug",
+    text: "Time to debug",
+    check: state =>
+      getStage(state) >= Stage.CONTROL && isCrashed(getRunner(state))
   },
   {
     id: "firstProgram",

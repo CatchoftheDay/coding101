@@ -49,9 +49,9 @@ describe("Tutorial reducers", () => {
     expect(isAtFinish(getRunner(store.getState()))).toEqual(true);
     expect(isCrashed(getRunner(store.getState()))).toEqual(false);
 
-    const missedAchievements = achievements.filter(
-      achievement => !hasAchievement(store.getState(), achievement.id)
-    );
-    expect(missedAchievements).toEqual([]);
+    const missedAchievements = achievements
+      .filter(achievement => !hasAchievement(store.getState(), achievement.id))
+      .map(({ id }) => id);
+    expect(missedAchievements).toEqual(["timeToDebug"]);
   });
 });
