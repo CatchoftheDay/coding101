@@ -22,7 +22,6 @@ import { getFirstStepId } from "../script/selectors";
 import { RunnerState } from "./types";
 import { getMaze, getNextStepId, isCrashed, onKey } from "./selectors";
 import { DeepImmutableObject } from "deox/dist/types";
-import { mazeRunner } from "../script/constants";
 
 export const buildInitialState = (
   modelState: {
@@ -31,7 +30,7 @@ export const buildInitialState = (
     error?: string;
     maze?: Maze;
     script: Script;
-  } = { script: mazeRunner }
+  } = { script: [] }
 ): RunnerState => {
   const { script } = modelState;
   const location = modelState.location || { x: 0, y: 0 };
@@ -49,7 +48,8 @@ export const buildInitialState = (
     hasKey: false,
     doorOpen: false,
     variables: { hasKey: false },
-    running: false
+    running: false,
+    movements: 0
   };
 };
 
@@ -93,7 +93,11 @@ const runnerReducer = createReducer(initialState, handle => [
       ) {
         return { ...state, error: "Attempted to go through a closed door" };
       } else {
-        return { ...state, location: move(state.location, state.facing) };
+        return {
+          ...state,
+          location: move(state.location, state.facing),
+          movements: state.movements + 1
+        };
       }
     })
   ),
@@ -149,11 +153,12 @@ const runnerReducer = createReducer(initialState, handle => [
   )
 ]);
 
-export const resetState = ({ script, maze }: RunnerState) => ({
+export const resetState = ({ script, maze, runHandle }: RunnerState) => ({
   ...initialState,
   maze,
   script,
-  currStepId: getFirstStepId(script)
+  currStepId: getFirstStepId(script),
+  runHandle
 });
 
 const reducer = (

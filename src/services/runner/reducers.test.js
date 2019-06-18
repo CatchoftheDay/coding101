@@ -1,13 +1,26 @@
 import { applyMiddleware, createStore } from "redux";
 import Maze, { Direction } from "../maze/maze";
 import { mazeRunner } from "../script/constants";
-import { moveForward, step, turnLeft, turnRight } from "./actions";
+import {
+  grabKey,
+  moveForward,
+  openDoor,
+  step,
+  turnLeft,
+  turnRight
+} from "./actions";
 import { executeActions } from "./middleware";
 import reducer, {
   initialState as reducerInitialState,
   resetState
 } from "./reducers";
-import { isCrashed, getFacing, getLocation, isAtFinish } from "./selectors";
+import {
+  isCrashed,
+  getFacing,
+  getLocation,
+  isAtFinish,
+  onKey
+} from "./selectors";
 
 const initialState = {
   ...reducerInitialState,
@@ -122,5 +135,53 @@ describe("Runner reducers", () => {
 
     expect(isAtFinish(store.getState())).toEqual(true);
     expect(isCrashed(store.getState())).toEqual(false);
+  });
+
+  it("Should not be able to pick up key if not there", () => {
+    const maze = new Maze({ width: 2, addDoor: true });
+    const store = createStore(
+      reducer,
+      resetState({ ...initialState, maze, location: maze.doorLocation }),
+      applyMiddleware(executeActions())
+    );
+
+    expect(onKey(store.getState())).toBeFalsy();
+    store.dispatch(grabKey());
+    expect(isCrashed(store.getState())).toBeTruthy();
+  });
+
+  it("Should not be able to open door if not there", () => {
+    const maze = new Maze({ width: 2, addDoor: true });
+    const store = createStore(
+      reducer,
+      resetState({ ...initialState, maze, location: maze.doorLocation }),
+      applyMiddleware(executeActions())
+    );
+
+    store.dispatch(openDoor());
+    expect(isCrashed(store.getState())).toBeTruthy();
+  });
+
+  it("Should not be able to walk through closed doors", () => {
+    const maze = new Maze({ width: 2, addDoor: true });
+    let facing;
+    if (maze.hasDoor(maze.doorLocation, Direction.LEFT)) {
+      facing = Direction.LEFT;
+    } else {
+      facing = Direction.UP;
+    }
+
+    const store = createStore(
+      reducer,
+      resetState({
+        ...initialState,
+        maze,
+        location: maze.doorLocation,
+        facing
+      }),
+      applyMiddleware(executeActions())
+    );
+    store.dispatch(moveForward());
+    expect(isCrashed(store.getState())).toBeTruthy();
   });
 });

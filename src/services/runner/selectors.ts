@@ -21,6 +21,7 @@ import {
   turnRight
 } from "./actions";
 import {
+  AT_FINISH,
   CLEAR_HAS_KEY,
   DOOR_IN_FRONT,
   DOOR_ON_LEFT,
@@ -87,7 +88,10 @@ export const onKey = (state: RunnerState) => {
   const { keyLocation } = getMaze(state);
 
   return (
-    !hasKey && keyLocation.x === location.x && keyLocation.y === location.y
+    !!keyLocation &&
+    !hasKey &&
+    keyLocation.x === location.x &&
+    keyLocation.y === location.y
   );
 };
 /** Returns true if the key has been picked up */
@@ -101,6 +105,7 @@ export const getLocation = (state: RunnerState) => state.location;
 export const getFacing = (state: RunnerState) => state.facing;
 export const getMaze = (state: RunnerState) => state.maze;
 export const getScript = (state: RunnerState) => state.script;
+export const getMovements = (state: RunnerState) => state.movements;
 export const getCurrentStepId = (state: RunnerState) => state.currStepId;
 export const getCurrentStep = (state: RunnerState) => {
   const stepId = getCurrentStepId(state);
@@ -246,7 +251,7 @@ const actions: { [actionName: string]: AnyAction } = {
 };
 
 const conditions: { [condition: string]: (state: RunnerState) => boolean } = {
-  atFinish: state => isAtFinish(state),
+  [AT_FINISH]: isAtFinish,
   [WALL_ON_LEFT]: wallOnLeft,
   [WALL_IN_FRONT]: wallInFront,
   [WALL_ON_RIGHT]: wallOnRight,

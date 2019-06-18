@@ -19,7 +19,7 @@ import StepList from "./services/script/containers/stepList";
 import reducers, { initialState } from "./reducers";
 import { Col, Row } from "react-bootstrap";
 import { addKey } from "./actions";
-import { checkCodes } from "./middleware";
+import { checkAchievements, checkCodes } from "./middleware";
 import { getRunner } from "./selectors";
 import Status from "./containers/status";
 
@@ -34,7 +34,8 @@ const store = createStore(
       executeActions(getRunner),
       resetOnScriptChange(getRunner),
       run(getRunner),
-      checkCodes
+      checkCodes,
+      checkAchievements
     )
   )
 );

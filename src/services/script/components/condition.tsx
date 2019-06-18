@@ -201,11 +201,6 @@ const conditionTarget = {
       !siblings[insertIdx] ||
       siblings[insertIdx].id !== draggedCondition.id
     ) {
-      console.log(
-        insertIdx,
-        siblings[insertIdx] && siblings[insertIdx].id,
-        draggedCondition.id
-      );
       dispatch(
         insertCondition(
           step.id,

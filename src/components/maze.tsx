@@ -51,7 +51,12 @@ const Maze = ({
         cellStyle.position = "relative";
         inner.push(...buildFinishMarker());
       }
-      if (showKey && maze.keyLocation.x === x && maze.keyLocation.y === y) {
+      if (
+        showKey &&
+        maze.keyLocation &&
+        maze.keyLocation.x === x &&
+        maze.keyLocation.y === y
+      ) {
         inner.push(
           <FontAwesomeIcon
             key="key"
