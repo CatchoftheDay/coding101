@@ -64,7 +64,10 @@ export const mazeRunner: Script = [
           {
             id: 1220,
             type: "conditional",
-            conditions: [{ id: 9005, condition: WALL_ON_LEFT, negated: true }],
+            conditions: [
+              { id: 9005, condition: WALL_ON_LEFT, negated: true },
+              { id: 9006, condition: DOOR_ON_LEFT, negated: true }
+            ],
             steps: [
               { id: 1221, type: "action", action: TURN_LEFT },
               { id: 1222, type: "action", action: MOVE_FORWARD }
@@ -74,8 +77,8 @@ export const mazeRunner: Script = [
             id: 1230,
             type: "conditional",
             conditions: [
-              { id: 9006, condition: DOOR_IN_FRONT },
-              { id: 9007, condition: HAS_KEY_SET }
+              { id: 9007, condition: DOOR_IN_FRONT },
+              { id: 9008, condition: HAS_KEY_SET }
             ],
             steps: [
               { id: 1231, type: "action", action: OPEN_DOOR },
@@ -85,7 +88,10 @@ export const mazeRunner: Script = [
           {
             id: 1240,
             type: "conditional",
-            conditions: [{ id: 9008, condition: WALL_IN_FRONT, negated: true }],
+            conditions: [
+              { id: 9009, condition: WALL_IN_FRONT, negated: true },
+              { id: 9010, condition: DOOR_IN_FRONT, negated: true }
+            ],
             steps: [{ id: 1241, type: "action", action: MOVE_FORWARD }]
           },
           {
