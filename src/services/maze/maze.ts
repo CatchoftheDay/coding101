@@ -36,22 +36,24 @@ class Maze {
   public readonly cells: ReadonlyArray<ReadonlyArray<number>>;
 
   /** Where the door that must be unlocked with the key is */
-  public readonly doorLocation: Location;
+  public readonly doorLocation: Location | undefined;
 
   /** Where the key that unlocks the door is */
-  public readonly keyLocation: Location;
+  public readonly keyLocation: Location | undefined;
 
   // noinspection JSSuspiciousNameCombination
   public constructor({
     randomSeed,
     width,
     height = width,
-    pathMaxLength = width * 2
+    pathMaxLength = width * 2,
+    addDoor = false
   }: {
     width: number;
     height?: number;
     pathMaxLength?: number;
     randomSeed?: string;
+    addDoor?: boolean;
   }) {
     if (width < 2 || height < 2) {
       throw new Error("Width and height must be at least 2");
@@ -59,7 +61,7 @@ class Maze {
     const random = seedrandom.alea(randomSeed);
     this.width = width;
     this.height = height;
-    this.doorLocation = { x: width - 1, y: height - 1 };
+    this.doorLocation = addDoor ? { x: width - 1, y: height - 1 } : undefined;
     this.cells = Maze.build(
       random,
       width,
@@ -67,7 +69,8 @@ class Maze {
       pathMaxLength,
       this.doorLocation
     );
-    this.keyLocation = Maze.placeKey(random, this.cells);
+
+    this.keyLocation = addDoor ? Maze.placeKey(random, this.cells) : undefined;
   }
 
   /**
@@ -119,7 +122,7 @@ class Maze {
     width: number,
     height: number,
     pathMaxLength: number,
-    doorLocation: Location
+    doorLocation?: Location
   ): number[][] {
     // Mark the location just outside the top left corner as a possible starting
     // point
@@ -150,7 +153,7 @@ class Maze {
     cells: number[][],
     pathStarts: Location[],
     pathMaxLength: number,
-    doorLocation: Location
+    doorLocation?: Location
   ) {
     const pathStartIdx = Math.floor(pathStarts.length * random());
     let currentLocation = Maze.addStep(
@@ -196,7 +199,7 @@ class Maze {
     random: seedrandom.prng,
     cells: number[][],
     location: Location,
-    doorLocation: Location
+    doorLocation?: Location
   ): Location | null {
     for (let direction of Maze.randomize(random, directions)) {
       const newLocation = move(location, direction);
@@ -210,7 +213,7 @@ class Maze {
         cells[x][y] &= ~EMPTY;
 
         if (
-          (x === doorLocation.x && y === doorLocation.y) ||
+          (doorLocation && x === doorLocation.x && y === doorLocation.y) ||
           (Maze.contains(cells, location) &&
             (cells[location.x][location.y] & AFTER_DOOR) === AFTER_DOOR)
         ) {

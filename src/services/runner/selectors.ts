@@ -87,7 +87,10 @@ export const onKey = (state: RunnerState) => {
   const { keyLocation } = getMaze(state);
 
   return (
-    !hasKey && keyLocation.x === location.x && keyLocation.y === location.y
+    !!keyLocation &&
+    !hasKey &&
+    keyLocation.x === location.x &&
+    keyLocation.y === location.y
   );
 };
 /** Returns true if the key has been picked up */

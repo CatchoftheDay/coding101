@@ -138,7 +138,7 @@ describe("Runner reducers", () => {
   });
 
   it("Should not be able to pick up key if not there", () => {
-    const maze = new Maze({ width: 2 });
+    const maze = new Maze({ width: 2, addDoor: true });
     const store = createStore(
       reducer,
       resetState({ ...initialState, maze, location: maze.doorLocation }),
@@ -151,7 +151,7 @@ describe("Runner reducers", () => {
   });
 
   it("Should not be able to open door if not there", () => {
-    const maze = new Maze({ width: 2 });
+    const maze = new Maze({ width: 2, addDoor: true });
     const store = createStore(
       reducer,
       resetState({ ...initialState, maze, location: maze.doorLocation }),
@@ -163,7 +163,7 @@ describe("Runner reducers", () => {
   });
 
   it("Should not be able to walk through closed doors", () => {
-    const maze = new Maze({ width: 2 });
+    const maze = new Maze({ width: 2, addDoor: true });
     let facing;
     if (maze.hasDoor(maze.doorLocation, Direction.LEFT)) {
       facing = Direction.LEFT;
