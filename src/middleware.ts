@@ -35,3 +35,24 @@ export const checkAchievements: Middleware<{}, TutorialState> = (
 
   return result;
 };
+
+export const saveState: Middleware<{}, TutorialState> = (
+  store: MiddlewareAPI<Dispatch, TutorialState>
+) => (next: Dispatch) => (action: AnyAction) => {
+  const result = next(action);
+
+  try {
+    const state = JSON.parse(JSON.stringify(store.getState()));
+
+    state.runner.running = false;
+    delete state.runner.runHandle;
+    delete state.runner.maze;
+    delete state.keystrokes;
+
+    localStorage.state = JSON.stringify(state);
+  } catch (e) {
+    // Doesn't matter if we can't save
+  }
+
+  return result;
+};

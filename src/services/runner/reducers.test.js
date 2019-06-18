@@ -163,7 +163,8 @@ describe("Runner reducers", () => {
   });
 
   it("Should not be able to walk through closed doors", () => {
-    const maze = new Maze({ width: 2, addDoor: true });
+    const mazeProps = { width: 2, addDoor: true, randomSeed: "seed" };
+    const maze = new Maze(mazeProps);
     let facing;
     if (maze.hasDoor(maze.doorLocation, Direction.LEFT)) {
       facing = Direction.LEFT;
@@ -175,7 +176,7 @@ describe("Runner reducers", () => {
       reducer,
       resetState({
         ...initialState,
-        maze,
+        ...mazeProps,
         location: maze.doorLocation,
         facing
       }),

@@ -1,28 +1,27 @@
 import { AnyAction, combineReducers } from "redux";
 import { createReducer } from "deox";
-import runnerReducer, { resetState } from "./services/runner/reducers";
+import runnerReducer, { addMaze, resetState } from "./services/runner/reducers";
 import { Stage, TutorialState } from "./types";
 import { addAchievement, addKey, advanceTo } from "./actions";
-import Maze from "./services/maze/maze";
 
 const mazePropsByState = {
   [Stage.ACTIONS]: {
     addDoor: false,
     mazeSize: 4,
     smallMaze: false,
-    maze: { addDoor: false, randomSeed: "hello" }
+    randomSeed: "hello"
   },
   [Stage.CONTROL]: {
     addDoor: false,
     mazeSize: 6,
     smallMaze: false,
-    maze: { addDoor: false }
+    randomSeed: "Hi there"
   },
   [Stage.VARIABLES]: {
     addDoor: true,
     mazeSize: 6,
     smallMaze: false,
-    maze: { addDoor: true, randomSeed: "catch" }
+    randomSeed: "maze"
   }
 };
 
@@ -63,14 +62,12 @@ const reducers = (state: TutorialState | undefined, action: AnyAction) => {
   if (state.stage !== oldStage) {
     state = {
       ...state,
-      runner: resetState({
-        ...state.runner,
-        ...mazePropsByState[state.stage],
-        maze: new Maze({
-          ...mazePropsByState[state.stage].maze,
-          width: mazePropsByState[state.stage].mazeSize
+      runner: resetState(
+        addMaze({
+          ...state.runner,
+          ...mazePropsByState[state.stage]
         })
-      })
+      )
     };
   }
 

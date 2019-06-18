@@ -23,6 +23,16 @@ import { getFirstStepId } from "../script/selectors";
 import { RunnerState } from "./types";
 import { getMaze, getNextStepId, isCrashed, onKey } from "./selectors";
 import { DeepImmutableObject } from "deox/dist/types";
+import { Omit } from "react-redux";
+
+export const addMaze = (state: Omit<RunnerState, "maze">): RunnerState => ({
+  ...state,
+  maze: new Maze({
+    width: state.smallMaze ? state.smallMazeSize : state.mazeSize,
+    addDoor: state.addDoor,
+    randomSeed: state.randomSeed
+  })
+});
 
 export const buildInitialState = (
   modelState: {
@@ -35,6 +45,7 @@ export const buildInitialState = (
     smallMazeSize?: number;
     mazeSize?: number;
     addDoor?: boolean;
+    randomSeed?: string;
   } = { script: [] }
 ): RunnerState => {
   const {
@@ -42,17 +53,14 @@ export const buildInitialState = (
     smallMaze = false,
     smallMazeSize = 3,
     mazeSize = 6,
-    addDoor = false
+    addDoor = false,
+    randomSeed = Math.random() + "y"
   } = modelState;
   const location = modelState.location || { x: 0, y: 0 };
   const facing = modelState.facing || Direction.RIGHT;
   const error = modelState.error;
-  const maze =
-    modelState.maze ||
-    new Maze({ width: smallMaze ? smallMazeSize : mazeSize });
 
-  return {
-    maze,
+  return addMaze({
     location,
     facing,
     error,
@@ -66,8 +74,9 @@ export const buildInitialState = (
     smallMaze,
     smallMazeSize,
     mazeSize,
-    addDoor
-  };
+    addDoor,
+    randomSeed
+  });
 };
 
 export const initialState = buildInitialState();
@@ -92,7 +101,7 @@ const runnerReducer = createReducer(initialState, handle => [
   })),
   handle(newMaze, state => buildNewMaze(state)),
   handle(setSmallMaze, (state, { payload: smallMaze }) =>
-    buildNewMaze({ ...state, smallMaze })
+    resetState({ ...state, smallMaze })
   ),
   handle(
     moveForward,
@@ -165,35 +174,21 @@ const runnerReducer = createReducer(initialState, handle => [
   )
 ]);
 
-export const resetState = ({
-  script,
-  maze,
-  runHandle,
-  addDoor,
-  smallMaze,
-  mazeSize,
-  smallMazeSize
-}: RunnerState) => ({
-  ...initialState,
-  maze,
-  script,
-  currStepId: getFirstStepId(script),
-  runHandle,
-  addDoor,
-  smallMaze,
-  smallMazeSize,
-  mazeSize
-});
+export const resetState = (state: RunnerState & { maze?: Maze }) =>
+  addMaze({
+    ...state,
+    currStepId: getFirstStepId(state.script),
+    location: initialState.location,
+    facing: initialState.facing,
+    hasKey: initialState.hasKey,
+    doorOpen: initialState.doorOpen,
+    variables: initialState.variables,
+    running: initialState.running,
+    error: initialState.error
+  });
 
 export const buildNewMaze = (state: RunnerState) =>
-  resetState({
-    ...state,
-    maze: new Maze({
-      width: state.smallMaze ? state.smallMazeSize : state.mazeSize,
-      addDoor: state.addDoor,
-      randomSeed: Math.random() + ""
-    })
-  });
+  addMaze({ ...state, randomSeed: Math.random() + "x" });
 
 const reducer = (
   state: RunnerState | DeepImmutableObject<RunnerState> | undefined,

@@ -19,18 +19,45 @@ import StepList from "./services/script/containers/stepList";
 import reducers, { initialState } from "./reducers";
 import { Col, Row } from "react-bootstrap";
 import { addKey } from "./actions";
-import { checkAchievements, checkCodes } from "./middleware";
+import { checkAchievements, checkCodes, saveState } from "./middleware";
 import { getRunner } from "./selectors";
 import Status from "./containers/status";
+import { addMaze } from "./services/runner/reducers";
+import { TutorialState } from "./types";
 
 const composeEnhancers =
   (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
+const getSavedState = () => {
+  // Allow the state to be reset
+  if (/[?&]reset(&|$)/.test(document.location.href)) {
+    delete localStorage.state;
+  }
+
+  try {
+    const state = JSON.parse(localStorage.state);
+
+    if (state && state.runner) {
+      return state;
+    }
+  } catch (e) {
+    // No state saved
+  }
+
+  return undefined;
+};
+
+const buildInitialState = (state: TutorialState) => ({
+  ...state,
+  runner: addMaze(state.runner)
+});
+
 const store = createStore(
   reducers,
-  initialState,
+  buildInitialState(getSavedState() || initialState),
   composeEnhancers(
     applyMiddleware(
+      saveState,
       executeActions(getRunner),
       resetOnScriptChange(getRunner),
       run(getRunner),

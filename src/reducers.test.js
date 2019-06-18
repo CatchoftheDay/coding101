@@ -14,7 +14,7 @@ import {
   isCrashed,
   isDone
 } from "./services/runner/selectors";
-import { resetState } from "./services/runner/reducers";
+import { addMaze, resetState } from "./services/runner/reducers";
 
 const initialState = {
   ...reducerInitialState,
@@ -29,12 +29,14 @@ describe("Tutorial reducers", () => {
   it("Should be able to get all the achievements", () => {
     const store = createStore(
       reducer,
-      initialState,
+      {
+        ...initialState,
+        runner: addMaze({ ...initialState.runner, addDoor: true })
+      },
       applyMiddleware(executeActions(getRunner), checkAchievements)
     );
     const maze = getMaze(getRunner(store.getState()));
     const maxSteps = maze.height * maze.width * 20;
-
     let stepNum = 0;
 
     while (
