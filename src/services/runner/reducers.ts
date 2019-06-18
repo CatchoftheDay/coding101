@@ -148,11 +148,12 @@ const runnerReducer = createReducer(initialState, handle => [
   )
 ]);
 
-export const resetState = ({ script, maze }: RunnerState) => ({
+export const resetState = ({ script, maze, runHandle }: RunnerState) => ({
   ...initialState,
   maze,
   script,
-  currStepId: getFirstStepId(script)
+  currStepId: getFirstStepId(script),
+  runHandle
 });
 
 const reducer = (
