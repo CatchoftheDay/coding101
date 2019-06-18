@@ -16,7 +16,8 @@ import {
 } from "../services/runner/actions";
 import { connect } from "react-redux";
 import { Stage, TutorialState } from "../types";
-import { getRunner, getStage } from "../selectors";
+import { getAchievements, getRunner, getStage } from "../selectors";
+import achievements from "../achievements";
 
 const mapStateToProps = (state: TutorialState) => ({
   crashed: isCrashed(getRunner(state)),
@@ -24,7 +25,9 @@ const mapStateToProps = (state: TutorialState) => ({
   running: isRunning(getRunner(state)),
   showNewMaze: getStage(state) >= Stage.CONTROL,
   smallMaze: isSmallMaze(getRunner(state)),
-  showSmallMaze: getStage(state) >= Stage.CONTROL
+  showSmallMaze: getStage(state) >= Stage.CONTROL,
+  achievementsGained: getAchievements(state).length,
+  totalAchievements: achievements.length
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({

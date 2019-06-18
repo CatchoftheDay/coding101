@@ -13,7 +13,9 @@ const Controls = ({
   showNewMaze,
   smallMaze,
   showSmallMaze,
-  onSetSmallMaze
+  onSetSmallMaze,
+  achievementsGained,
+  totalAchievements
 }: {
   running: boolean;
   crashed: boolean;
@@ -28,6 +30,8 @@ const Controls = ({
   showSmallMaze: boolean;
   smallMaze: boolean;
   onSetSmallMaze: (smallMaze: boolean) => void;
+  achievementsGained: number;
+  totalAchievements: number;
 }) => {
   return (
     <div
@@ -35,7 +39,8 @@ const Controls = ({
         borderBottom: "1px solid #ccc",
         padding: "5px",
         display: "flex",
-        justifyContent: "space-between"
+        justifyContent: "space-between",
+        alignItems: "center"
       }}
     >
       <div>
@@ -69,26 +74,33 @@ const Controls = ({
           </Button>
         )}
       </div>
-      <div>
-        {showSmallMaze && onSetSmallMaze && (
-          <Button
-            style={{ marginRight: "5px" }}
-            variant={smallMaze ? "secondary" : "outline-secondary"}
-            onClick={() => onSetSmallMaze(!smallMaze)}
-          >
-            Small maze
-          </Button>
-        )}
-        {showNewMaze && onNewMaze && (
-          <Button
-            style={{ marginRight: "5px" }}
-            variant="outline-secondary"
-            onClick={onNewMaze}
-          >
-            Generate new maze
-          </Button>
-        )}
-      </div>
+      {achievementsGained > 0 && (
+        <div
+          style={{ color: "#888" }}
+        >{`${achievementsGained}/${totalAchievements} achievements`}</div>
+      )}
+      {showSmallMaze && showNewMaze && (
+        <div>
+          {showSmallMaze && onSetSmallMaze && (
+            <Button
+              style={{ marginRight: "5px" }}
+              variant={smallMaze ? "secondary" : "outline-secondary"}
+              onClick={() => onSetSmallMaze(!smallMaze)}
+            >
+              Small maze
+            </Button>
+          )}
+          {showNewMaze && onNewMaze && (
+            <Button
+              style={{ marginRight: "5px" }}
+              variant="outline-secondary"
+              onClick={onNewMaze}
+            >
+              Generate new maze
+            </Button>
+          )}
+        </div>
+      )}
     </div>
   );
 };
