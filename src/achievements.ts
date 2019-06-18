@@ -20,7 +20,7 @@ const achievements: {
   {
     id: "firstStep",
     text: "Adding your first step",
-    check: state => !!getScript(state.runner) //true //getScript(getRunner(state)).length > 1
+    check: state => getScript(getRunner(state)).length > 0
   },
   {
     id: "threeSteps",
