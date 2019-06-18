@@ -20,7 +20,7 @@ const EventMonitor = ({
     if (stage === Stage.CONTROL) {
       toast.show({ text: "Welcome aboard, Captain!" });
     } else if (stage === Stage.VARIABLES) {
-      toast.show({ text: "Access granted" });
+      toast.show({ text: "Expert mode enabled!" });
     }
     lastStage.current = stage;
   }
