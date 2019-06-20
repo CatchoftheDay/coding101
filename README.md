@@ -8,7 +8,7 @@ This is a simple playground developed for the 2019 Coding 101 tutorial. It teach
 * Branching
 * Variables 
 
-A working version is currently hosted at <https://coding101.seatiger.org>. 
+A working version is currently hosted at <https://coding101.seatiger.org>. Note that students should be told about the "left-hand-rule", that is in a maze that has both the entrance and exit on the edge and no bridges, always following the wall on your left (or right!) side will eventually lead you to the exit. A complete program can be found in the `mazeRunner` constant defined in `src/services/script/constants.ts`.
 
 ## Stages
 
